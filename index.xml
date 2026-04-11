@@ -6,15 +6,15 @@
       version="2.0">
 <channel>
 <title>David&#39;s blog</title>
-<link>https://davidlindelof.com/</link>
-<atom:link href="https://davidlindelof.com/index.xml" rel="self" type="application/rss+xml"/>
+<link>https://blog.davidlindelof.com/</link>
+<atom:link href="https://blog.davidlindelof.com/index.xml" rel="self" type="application/rss+xml"/>
 <description>A blog built with Quarto</description>
 <generator>quarto-1.9.37</generator>
 <lastBuildDate>Sat, 11 Apr 2026 00:00:00 GMT</lastBuildDate>
 <item>
   <title>Post With Code</title>
   <dc:creator>Harlow Malloc</dc:creator>
-  <link>https://davidlindelof.com/posts/post-with-code/</link>
+  <link>https://blog.davidlindelof.com/posts/post-with-code/</link>
   <description><![CDATA[ 
 
 
@@ -30,14 +30,14 @@
   <category>news</category>
   <category>code</category>
   <category>analysis</category>
-  <guid>https://davidlindelof.com/posts/post-with-code/</guid>
+  <guid>https://blog.davidlindelof.com/posts/post-with-code/</guid>
   <pubDate>Sat, 11 Apr 2026 00:00:00 GMT</pubDate>
-  <media:content url="https://davidlindelof.com/posts/post-with-code/image.jpg" medium="image" type="image/jpeg"/>
+  <media:content url="https://blog.davidlindelof.com/posts/post-with-code/image.jpg" medium="image" type="image/jpeg"/>
 </item>
 <item>
   <title>Welcome To My Blog</title>
   <dc:creator>Tristan O&#39;Malley</dc:creator>
-  <link>https://davidlindelof.com/posts/welcome/</link>
+  <link>https://blog.davidlindelof.com/posts/welcome/</link>
   <description><![CDATA[ 
 
 
@@ -46,19 +46,19 @@
 
 
 <p>This is the first post in a Quarto blog. Welcome!</p>
-<p><img src="https://davidlindelof.com/posts/welcome/thumbnail.jpg" class="img-fluid"></p>
+<p><img src="https://blog.davidlindelof.com/posts/welcome/thumbnail.jpg" class="img-fluid"></p>
 <p>Since this post doesn’t specify an explicit <code>image</code>, the first image in the post will be used in the listing page of posts.</p>
 
 
 
  ]]></description>
   <category>news</category>
-  <guid>https://davidlindelof.com/posts/welcome/</guid>
+  <guid>https://blog.davidlindelof.com/posts/welcome/</guid>
   <pubDate>Wed, 08 Apr 2026 00:00:00 GMT</pubDate>
 </item>
 <item>
   <title>How Are P-values Distributed Under The Null?</title>
-  <link>https://davidlindelof.com/posts/2025/01/how-are-p-values-distributed-under-the-null/</link>
+  <link>https://blog.davidlindelof.com/posts/2025/01/how-are-p-values-distributed-under-the-null/</link>
   <description><![CDATA[ 
 
 
@@ -70,7 +70,7 @@
 <blockquote class="blockquote">
 <p>How are p-values distributed assuming the null hypothesis is true?</p>
 </blockquote>
-<p><img src="https://davidlindelof.com/posts/2025/01/how-are-p-values-distributed-under-the-null/images/DALL·E-2025-01-22-09.19.14-A-cartoon-style-illustration-of-a-data-scientist-struggling-at-a-job-interview.-The-scene-shows-a-person-in-a-shirt-and-tie-sitting-nervously-in-fron.webp" class="img-fluid"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2025/01/how-are-p-values-distributed-under-the-null/images/DALL·E-2025-01-22-09.19.14-A-cartoon-style-illustration-of-a-data-scientist-struggling-at-a-job-interview.-The-scene-shows-a-person-in-a-shirt-and-tie-sitting-nervously-in-fron.webp" class="img-fluid"></p>
 <p>I’ve heard a lot of reasonable answers, including:</p>
 <ul>
 <li><p>It should be centered towards large values</p></li>
@@ -129,7 +129,7 @@ font-style: inherit;">one_ttest</span>())</span>
 <span id="cb1-10"><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">hist</span>(p_values_ttest)</span></code></pre></div></div>
-<p><img src="https://davidlindelof.com/posts/2025/01/how-are-p-values-distributed-under-the-null/images/Pasted-image-20250109093750-1024x474.png" class="img-fluid"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2025/01/how-are-p-values-distributed-under-the-null/images/Pasted-image-20250109093750-1024x474.png" class="img-fluid"></p>
 <p>As expected, the p-values are uniformly distributed from 0 to 1. There is no evidence of any accumulation of mass towards higher values, nor is there any evidence that p-values smaller than 0.05 are less likely.</p>
 </section>
 <section id="the-binomial-test" class="level2">
@@ -182,7 +182,7 @@ font-style: inherit;">one_binomtest</span>())</span>
 <span id="cb2-10"><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">hist</span>(p_values_binomtest)</span></code></pre></div></div>
-<p><img src="https://davidlindelof.com/posts/2025/01/how-are-p-values-distributed-under-the-null/images/Pasted-image-20250109094309-1024x474.png" class="img-fluid"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2025/01/how-are-p-values-distributed-under-the-null/images/Pasted-image-20250109094309-1024x474.png" class="img-fluid"></p>
 <p>As above, there’s no reason to suspect that the p-values are anything else than uniformly distributed</p>
 </section>
 <section id="conclusion" class="level2">
@@ -198,12 +198,12 @@ font-style: inherit;">hist</span>(p_values_binomtest)</span></code></pre></div><
 
  ]]></description>
   <category>r</category>
-  <guid>https://davidlindelof.com/posts/2025/01/how-are-p-values-distributed-under-the-null/</guid>
+  <guid>https://blog.davidlindelof.com/posts/2025/01/how-are-p-values-distributed-under-the-null/</guid>
   <pubDate>Wed, 22 Jan 2025 00:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Your Classifier Is Broken, But It Is Still Useful</title>
-  <link>https://davidlindelof.com/posts/2025/01/estimating-the-true-prevalence-from-a-biased-classifier/</link>
+  <link>https://blog.davidlindelof.com/posts/2025/01/estimating-the-true-prevalence-from-a-biased-classifier/</link>
   <description><![CDATA[ 
 
 
@@ -229,7 +229,7 @@ where:</p>
 <p><img src="https://latex.codecogs.com/png.latex?%20%20%0A%5C%5Cbegin%7Baligned%7D%20%20%0A%5C%5CPr(%5C%5Chat%7By%7D=1)%20&amp;=%20%5C%5CPr(%5C%5Chat%7By%7D=1,%20y%20=%201)%20+%20%5C%5CPr(%5C%5Chat%7By%7D=1,%20y%20=%200)%20%5C%5C%5C%5C%20%20%0A&amp;=%20%5C%5CPr(%5C%5Chat%7By%7D=1%20%7C%20y%20=%201)%20%5C%5Ctimes%20%5C%5CPr(y%20=%201)%20+%20%5C%5CPr(%5C%5Chat%7By%7D=1%20%7C%20y%20=%200)%20%5C%5Ctimes%20%5C%5CPr(y%20=%200)%20%5C%5C%5C%5C%20%20%0A&amp;=%20R%20%5C%5Ctimes%20%5C%5CPr(y%20=%201)%20+%20(1%20-%20S)%20%5C%5Ctimes%20(1%20-%20Pr(y%20=%201))%20%20%0A%5C%5Cend%7Baligned%7D%20%20%0A"><br>
 Solving for <img src="https://latex.codecogs.com/png.latex?%5C%5CPr(y%20=%201)"> yields the formula above.</p>
 <p>Notice that this formula breaks down when the denominator <img src="https://latex.codecogs.com/png.latex?R%20-%20(1%20-%20S)"> becomes 0, or when recall becomes equal to the false positive rate <img src="https://latex.codecogs.com/png.latex?1-S">. But remember what a typical ROC curve looks like:</p>
-<p><img src="https://davidlindelof.com/posts/2025/01/estimating-the-true-prevalence-from-a-biased-classifier/images/Pasted-image-20241216172508.png" class="img-fluid"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2025/01/estimating-the-true-prevalence-from-a-biased-classifier/images/Pasted-image-20241216172508.png" class="img-fluid"></p>
 <p>An ROC curve like this one plots recall <img src="https://latex.codecogs.com/png.latex?R"> (aka true positive rate) against the false positive rate <img src="https://latex.codecogs.com/png.latex?1-S">, so a classifier for which <img src="https://latex.codecogs.com/png.latex?R%20=%20(1-S)"> is a classifier falling on the diagonal of the ROC diagram. This is a classifier that is, essentially, guessing randomly. True cases and false cases are equally likely to be classified positively by this classifier, so the classifier is completely non-informative, and you can’t learn anything from it–and certainly not the true prevalence.</p>
 <p>Enough theory, let’s see if this works in practice:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="co" style="color: #5E5E5E;
@@ -368,12 +368,12 @@ font-style: inherit;">mean</span>(y)</span></code></pre></div></div>
 
  ]]></description>
   <category>r</category>
-  <guid>https://davidlindelof.com/posts/2025/01/estimating-the-true-prevalence-from-a-biased-classifier/</guid>
+  <guid>https://blog.davidlindelof.com/posts/2025/01/estimating-the-true-prevalence-from-a-biased-classifier/</guid>
   <pubDate>Wed, 08 Jan 2025 00:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Things I wish they taught in school</title>
-  <link>https://davidlindelof.com/posts/2024/07/things-i-wish-they-taught-in-school/</link>
+  <link>https://blog.davidlindelof.com/posts/2024/07/things-i-wish-they-taught-in-school/</link>
   <description><![CDATA[ 
 
 
@@ -382,7 +382,7 @@ font-style: inherit;">mean</span>(y)</span></code></pre></div></div>
 
 
 <p>Before he became Spider-Man in the 1960s, Peter Parker was a chemistry and physics genius, an expert photographer, and–get this–<em>even knew how to tie a tie</em>. But he was also a shy, nerdy high-school student who couldn’t have been more than 16-18 years old:</p>
-<p><img src="https://davidlindelof.com/posts/2024/07/things-i-wish-they-taught-in-school/images/872c67abe10d4f7b7dbcddca1d8513ed.png" class="img-fluid"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2024/07/things-i-wish-they-taught-in-school/images/872c67abe10d4f7b7dbcddca1d8513ed.png" class="img-fluid"></p>
 <p>Wait, a high school student going around in a suit and tie? I know this is Marvel but where did they get <em>that</em> idea from?</p>
 <p>There seems to be plenty of evidence from comics, books, and movies that youngsters back then were far more mature than today. Could it be that schools used to teach kids fundamental skills earlier than they are taught today? Are there fundamental skills that schools don’t teach anymore? In this post I’ll list a few skills that I think are essential for success in life, yet are hardly taught anymore, not even in college.</p>
 <section id="public-speaking" class="level2">
@@ -408,7 +408,7 @@ font-style: inherit;">mean</span>(y)</span></code></pre></div></div>
 <p><a href="https://en.wikipedia.org/wiki/Touch_typing">Touch typing</a> is the ability to type without looking at the keyboard, relying instead on muscle memory to find the positions of the keys. Ever wondered what those small raised indentations on the F and J key are for? They’re for repositioning your index fingers when you touch type.</p>
 <p>What’s that got to do with vi? Well vi is designed with touch typists in mind. Navigating through a document is done with the H (left), J (up), K (down), and L (right) keys. Similarly, the most common editing operations are done through keys on the home row (D for delete, F for find, S for substitute etc).</p>
 <p>I have invested in a <a href="https://www.daskeyboard.com/">Das Keyboard</a> with blank keys and work most of the time without looking at the keys. Am I any good at it? I’m not sure. But I’m definitely a faster typer than when I began to learn touch typing, and can transcribe a passage from a book or an article without looking either at the screen or the keyboard. And boy do I love vi now (more on that below).<br>
-<img src="https://davidlindelof.com/posts/2024/07/things-i-wish-they-taught-in-school/images/Pasted-image-20230712083814-6-300x300.png" class="img-fluid"><img src="https://davidlindelof.com/posts/2024/07/things-i-wish-they-taught-in-school/images/9e41bf8f44ad61b2c0e9b1d3459954b9.png" class="img-fluid"></p>
+<img src="https://blog.davidlindelof.com/posts/2024/07/things-i-wish-they-taught-in-school/images/Pasted-image-20230712083814-6-300x300.png" class="img-fluid"><img src="https://blog.davidlindelof.com/posts/2024/07/things-i-wish-they-taught-in-school/images/9e41bf8f44ad61b2c0e9b1d3459954b9.png" class="img-fluid"></p>
 </section>
 <section id="note-taking" class="level2">
 <h2 class="anchored" data-anchor-id="note-taking">Note-taking</h2>
@@ -416,7 +416,7 @@ font-style: inherit;">mean</span>(y)</span></code></pre></div></div>
 <p>But that’s not what this is about. This is about taking meeting notes. (What follows applies equally well to taking lecture notes.)</p>
 <p>Most meetings should have a dedicated note-taker. Meeting notes are important to ensure that there’s a written artifact that captures the information and decisions made during the meeting. But most people take notes by opening a Word or Google Doc and write a bullet point for every information item they notice. This is a terrible way to keep meeting notes.</p>
 <p>First, ditch the laptop. There’s plenty of evidence that handwriting does something to the brain that increases recall. Second, use the <a href="https://en.wikipedia.org/wiki/Cornell_Notes">Cornell note-taking system</a>. In a nutshell, you draw a vertical line across the page that divides it into two columns, the rightmost of which is about double the width of the leftmost. Don’t draw the line to the bottom but keep a few lines for your summary.</p>
-<p><img src="https://davidlindelof.com/posts/2024/07/things-i-wish-they-taught-in-school/images/NotesCornell-1-6.png" class="img-fluid"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2024/07/things-i-wish-they-taught-in-school/images/NotesCornell-1-6.png" class="img-fluid"></p>
 <p>In the note-taking column on the right you capture the key ideas from the meeting or the lecture. Use symbols or abbreviations liberally. Keywords or key question are recorded in the recall column (on the left). If necessary, use the summary space for, for example, capturing action items.</p>
 <p>It’s the best method I’ve come across for effective note-taking. The Manager Tools people also endorse it and have a <a href="https://www.manager-tools.com/2007/07/how-to-take-notes">podcast episode about it</a>. It is a mystery to me why such a system isn’t taught in schools, where it would be most beneficial.</p>
 <p>(If you want to take your note-taking skills to the next level you might want also to look into <a href="https://rohdesign.com/sketchnotes">sketchnotes</a>. Introduced by Mike Rohde in 2007, the idea is to combine drawing with notes. I still use that system in church, capturing sermons that way.)</p>
@@ -451,8 +451,8 @@ font-style: inherit;">mean</span>(y)</span></code></pre></div></div>
 <h2 class="anchored" data-anchor-id="hand-writing">Hand writing</h2>
 <p>I’m going to bet that you think you have a terrible handwriting. So do most of us. And that’s not even the fault of the school system. My son, in middle school here in Switzerland, had to learn a certain way of tracing letters and God forbid that he should deviate from the norm. Only problem was that the handwriting system he was taught was not only ugly, it was also slow and impractical.</p>
 <p>Some years ago I became interested in improving my own handwriting and came across the <a href="https://handwritingsuccess.com/">Getty-Dubay handwriting system</a>. It’s a self study guide, a beautiful book (entirely handwritten itself!) that teaches you two handwriting systems, an italic one and a cursive one. Here’s a sample of my handwriting before the course and after:</p>
-<p><img src="https://davidlindelof.com/posts/2024/07/things-i-wish-they-taught-in-school/images/2024-07-16-19-21-5-1024x563.jpg" class="img-fluid"></p>
-<p><img src="https://davidlindelof.com/posts/2024/07/things-i-wish-they-taught-in-school/images/b3c3fc6be4c930e6c6714c6a37c11210-1024x544.jpg" class="img-fluid"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2024/07/things-i-wish-they-taught-in-school/images/2024-07-16-19-21-5-1024x563.jpg" class="img-fluid"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2024/07/things-i-wish-they-taught-in-school/images/b3c3fc6be4c930e6c6714c6a37c11210-1024x544.jpg" class="img-fluid"></p>
 <p>Most adults I know would definitely benefit from working through this course.</p>
 </section>
 <section id="bookkeeping" class="level2">
@@ -476,12 +476,12 @@ font-style: inherit;">mean</span>(y)</span></code></pre></div></div>
 </section>
 
  ]]></description>
-  <guid>https://davidlindelof.com/posts/2024/07/things-i-wish-they-taught-in-school/</guid>
+  <guid>https://blog.davidlindelof.com/posts/2024/07/things-i-wish-they-taught-in-school/</guid>
   <pubDate>Mon, 22 Jul 2024 00:00:00 GMT</pubDate>
 </item>
 <item>
   <title>How to set up a reverse SSH tunnel with Amazon Web Services</title>
-  <link>https://davidlindelof.com/posts/2023/05/how-to-set-up-a-reverse-ssh-tunnel-with-amazon-web-services/</link>
+  <link>https://blog.davidlindelof.com/posts/2023/05/how-to-set-up-a-reverse-ssh-tunnel-with-amazon-web-services/</link>
   <description><![CDATA[ 
 
 
@@ -493,17 +493,17 @@ font-style: inherit;">mean</span>(y)</span></code></pre></div></div>
 <p>Some of us came together and figured it could be possible to resume collecting that data, and showcase the benefits of having our system installed on your house. The first problem was, how do we connect to these netbooks? And at near-zero cost?</p>
 <p>Warning: hacks ahead.</p>
 <p>We figured that step one would be to establish a reverse SSH tunnel to each of these netbooks. A reverse SSH tunnel is set up when an otherwise-inaccessible device (in our case, the netbooks) connects to a publicly available SSH server, opens a port on the server, and forwards (“tunnels”) all incoming connections to that port back to the device. This is the best solution to connect to a device that’s not exposed to the public internet short of setting up a proper VPN solution.</p>
-<p><img src="https://davidlindelof.com/posts/2023/05/how-to-set-up-a-reverse-ssh-tunnel-with-amazon-web-services/images/image-5.png" class="img-fluid"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2023/05/how-to-set-up-a-reverse-ssh-tunnel-with-amazon-web-services/images/image-5.png" class="img-fluid"></p>
 <p>To set up a reverse SSH tunnel you first need a publicly available machine running an SSH server and that will accept reverse tunnels. The good news is that you can all have one by <a href="https://aws.amazon.com/free/?trk=f17b4b4e-aa1b-4189-b0c4-81a19b53f625&amp;sc_channel=ps&amp;ef_id=CjwKCAjwscGjBhAXEiwAswQqNPxA3h4EaldAOteOFNJWQtQmuWHHFB-EcdIVMoZIByFZ2rC0nQSm-RoCRpEQAvD_BwE:G:s&amp;s_kwcid=AL!4422!3!645186168166!e!!g!!aws!19579892551!148838343321&amp;all-free-tier.sort-by=item.additionalFields.SortRank&amp;all-free-tier.sort-order=asc&amp;awsf.Free%20Tier%20Types=*all&amp;awsf.Free%20Tier%20Categories=*all">signing up to Amazon Web Services</a> (AWS) and going to the Elastic Cloud 2 (EC2) service:</p>
-<p><img src="https://davidlindelof.com/posts/2023/05/how-to-set-up-a-reverse-ssh-tunnel-with-amazon-web-services/images/image-270x300.png" class="img-fluid"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2023/05/how-to-set-up-a-reverse-ssh-tunnel-with-amazon-web-services/images/image-270x300.png" class="img-fluid"></p>
 <p>Next you want to launch an instance:</p>
-<p><img src="https://davidlindelof.com/posts/2023/05/how-to-set-up-a-reverse-ssh-tunnel-with-amazon-web-services/images/image-1-300x147.png" class="img-fluid"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2023/05/how-to-set-up-a-reverse-ssh-tunnel-with-amazon-web-services/images/image-1-300x147.png" class="img-fluid"></p>
 <p>You really want the smallest, freeest possible machine here that runs Linux:</p>
-<p><img src="https://davidlindelof.com/posts/2023/05/how-to-set-up-a-reverse-ssh-tunnel-with-amazon-web-services/images/image-2-932x1024.png" class="img-fluid"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2023/05/how-to-set-up-a-reverse-ssh-tunnel-with-amazon-web-services/images/image-2-932x1024.png" class="img-fluid"></p>
 <p>Make sure you have generated a key pair for this instance (and that you have saved the private key!) and that the machine accepts SSH from anywhere:</p>
-<p><img src="https://davidlindelof.com/posts/2023/05/how-to-set-up-a-reverse-ssh-tunnel-with-amazon-web-services/images/image-3-878x1024.png" class="img-fluid"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2023/05/how-to-set-up-a-reverse-ssh-tunnel-with-amazon-web-services/images/image-3-878x1024.png" class="img-fluid"></p>
 <p>But when you set up an SSH tunnel you will also need to make sure the EC2 instance accepts SSH traffic on the ports that will be opened by the tunnel. These are up to you; I have created two tunnels, one on port 7030 and one on 7040, so navigate to the settings for the security group of your instance and make sure the instance will accept TCP traffic to these ports:</p>
-<p><img src="https://davidlindelof.com/posts/2023/05/how-to-set-up-a-reverse-ssh-tunnel-with-amazon-web-services/images/image-4-1024x223.png" class="img-fluid"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2023/05/how-to-set-up-a-reverse-ssh-tunnel-with-amazon-web-services/images/image-4-1024x223.png" class="img-fluid"></p>
 <p>That’s all on the server side. On the netbook side you need to do three things: 1) get the private key, 2) change the file permissions on the key, 3) establish the tunnel.</p>
 <p>Getting the private key to the netbook is entirely up to you. What I did, and which is absolutely not recommended, was to place the private key <code>neurobat.pem</code> on the same web server hosting this blog. Then I was able to get the key with</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><span class="fu" style="color: #4758AB;
@@ -558,12 +558,12 @@ font-style: inherit;">&gt;</span> -p 7000</span></code></pre></div></div>
 
 
  ]]></description>
-  <guid>https://davidlindelof.com/posts/2023/05/how-to-set-up-a-reverse-ssh-tunnel-with-amazon-web-services/</guid>
+  <guid>https://blog.davidlindelof.com/posts/2023/05/how-to-set-up-a-reverse-ssh-tunnel-with-amazon-web-services/</guid>
   <pubDate>Wed, 31 May 2023 00:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Deep silence or deep work</title>
-  <link>https://davidlindelof.com/posts/2023/05/deep-silence-or-deep-work/</link>
+  <link>https://blog.davidlindelof.com/posts/2023/05/deep-silence-or-deep-work/</link>
   <description><![CDATA[ 
 
 
@@ -572,7 +572,7 @@ font-style: inherit;">&gt;</span> -p 7000</span></code></pre></div></div>
 
 
 <p>It’s Monday afternoon. It’s a holiday but I have a couple of things to catch up from last week that I didn’t finish. The rest of the family is either on holiday camp or taking a nap in the bedroom. I’m working from home. But the home is anything but silent.</p>
-<p><img src="https://davidlindelof.com/posts/2023/05/deep-silence-or-deep-work/images/image-1.png" class="img-fluid"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2023/05/deep-silence-or-deep-work/images/image-1.png" class="img-fluid"></p>
 <p>I can hear the girls’ muffled chatting, from the sound of it they’re making up some story with their dolls. The village church bell just tolled a single note for the quarter past the hour. My phone’s notification just dinged, and in a rare moment of self discipline I don’t pick it up. Some birds are chirping outside. The convection oven in the kitchen has had a malfunction in years and emits a beep every 10 seconds that I have learned to ignore. Occasionally a plane comes in overhead to land on Geneva’s airport; there’s only one landing strip and depending on the direction of the wind, planes come in from the direction of our village. And on top of it all I hear some kind of background whine that’s very soft–I usually don’t notice it but it’s definitely there and I don’t know if it comes from outside of me or from inside my head.</p>
 <p>That’s a lot of noise. It’s also the best possible working conditions I’ve ever experienced. Today I’ve chosen to deliberately notice all these sounds and now I cannot unhear them.</p>
 <p>Then there’s the visual distractions. I’ve been working for the past three years from a corner in the living room, the rest of which fills my field of view, as well as parts of the kitchen.</p>
@@ -583,12 +583,12 @@ font-style: inherit;">&gt;</span> -p 7000</span></code></pre></div></div>
 
 
  ]]></description>
-  <guid>https://davidlindelof.com/posts/2023/05/deep-silence-or-deep-work/</guid>
+  <guid>https://blog.davidlindelof.com/posts/2023/05/deep-silence-or-deep-work/</guid>
   <pubDate>Wed, 17 May 2023 00:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Is The Ratio of Normal Variables Normal?</title>
-  <link>https://davidlindelof.com/posts/2023/05/auto-draft/</link>
+  <link>https://blog.davidlindelof.com/posts/2023/05/auto-draft/</link>
   <description><![CDATA[ 
 
 
@@ -654,12 +654,12 @@ font-style: inherit;">/</span> Y</span></code></pre></div></div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">hist</span>(Z)</span></code></pre></div></div>
-<p><img src="https://davidlindelof.com/posts/2023/05/auto-draft/images/image-2-1024x731.png" class="img-fluid"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2023/05/auto-draft/images/image-2-1024x731.png" class="img-fluid"></p>
 <p>Which is confirmed by a q-q plot:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">qqnorm</span>(Z)</span></code></pre></div></div>
-<p><img src="https://davidlindelof.com/posts/2023/05/auto-draft/images/image-3-1024x731.png" class="img-fluid"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2023/05/auto-draft/images/image-3-1024x731.png" class="img-fluid"></p>
 <p>What about the mean and variance?</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><span class="fu" style="color: #4758AB;
 background-color: null;
@@ -729,24 +729,24 @@ font-style: inherit;">/</span> Y</span></code></pre></div></div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">hist</span>(Z)</span></code></pre></div></div>
-<p><img src="https://davidlindelof.com/posts/2023/05/auto-draft/images/image-4-1024x731.png" class="img-fluid"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2023/05/auto-draft/images/image-4-1024x731.png" class="img-fluid"></p>
 <p>Which is also clear with a q-q plot:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">qqnorm</span>(Z)</span></code></pre></div></div>
-<p><img src="https://davidlindelof.com/posts/2023/05/auto-draft/images/image-5-1024x731.png" class="img-fluid"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2023/05/auto-draft/images/image-5-1024x731.png" class="img-fluid"></p>
 <p>In other words, it is generally true that ratio metrics where the denominator is far from 0 will also be close enough to a normal distribution for practical purposes. But when the denominator’s mean is, say, closer than 5 sigmas from 0 that assumption breaks down.</p>
 
 
 
  ]]></description>
   <category>r</category>
-  <guid>https://davidlindelof.com/posts/2023/05/auto-draft/</guid>
+  <guid>https://blog.davidlindelof.com/posts/2023/05/auto-draft/</guid>
   <pubDate>Wed, 03 May 2023 00:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Working with that data scientist</title>
-  <link>https://davidlindelof.com/posts/2023/04/working-with-that-data-scientist/</link>
+  <link>https://blog.davidlindelof.com/posts/2023/04/working-with-that-data-scientist/</link>
   <description><![CDATA[ 
 
 
@@ -755,7 +755,7 @@ font-style: inherit;">qqnorm</span>(Z)</span></code></pre></div></div>
 
 
 <p>In my current team we have decided to split up the work in a number of <em>workstreams</em>, which are in effect subteams responsible for different aspects of the product. One workstream might be responsible for product instrumentation, another for improving the recommendation algorithms, another responsible for the application’s look and feel. Each workstream has its own backlog and its own set of quarterly commitments, which map nicely to quarterly <a href="https://en.wikipedia.org/wiki/OKR">OKR</a>s.</p>
-<p><img src="https://davidlindelof.com/posts/2023/04/working-with-that-data-scientist/images/image.png" class="img-fluid"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2023/04/working-with-that-data-scientist/images/image.png" class="img-fluid"></p>
 <p>Workstreams aren’t necessarily disjoint: the same person might contribute to more than one work stream. Indeed for specialists (UX researchers, UI specialists, data science), that is almost the norm. As an aspiring data scientist myself, I contribute to several workstreams; I may entirely own a key result assigned to a workstream, or provide input (e.g.&nbsp;statistical advice, experiment sizing, etc) to another.</p>
 <p>We don’t do <a href="https://en.wikipedia.org/wiki/Stand-up_meeting">daily standups</a>, not even among the software engineers. Instead we meet twice weekly for 30 minutes and review the current plans, update the board, and make sure no one is blocked.</p>
 <p>We’ve adopted this process early this year. The response from the team has been generally positive. Compared to a more traditional front-end vs back-end division of labour, the team has cited the following benefits:</p>
@@ -777,12 +777,12 @@ font-style: inherit;">qqnorm</span>(Z)</span></code></pre></div></div>
 
 
  ]]></description>
-  <guid>https://davidlindelof.com/posts/2023/04/working-with-that-data-scientist/</guid>
+  <guid>https://blog.davidlindelof.com/posts/2023/04/working-with-that-data-scientist/</guid>
   <pubDate>Thu, 20 Apr 2023 00:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Controlling for covariates is not the same as “slicing”</title>
-  <link>https://davidlindelof.com/posts/2023/04/controlling-for-covariates-is-not-the-same-as-slicing/</link>
+  <link>https://blog.davidlindelof.com/posts/2023/04/controlling-for-covariates-is-not-the-same-as-slicing/</link>
   <description><![CDATA[ 
 
 
@@ -792,7 +792,7 @@ font-style: inherit;">qqnorm</span>(Z)</span></code></pre></div></div>
 
 <p>To detect small effects in experiments you need to reduce the experimental noise as much as possible. You can do it by working with larger sample sizes, but that doesn’t scale well. A far better approach consists in controlling for covariates that are correlated with your response.</p>
 <p>I recently gave a talk at our company on the design of online experiments, and someone pointed out that our automated experiment analysis tool implemented “slicing”, that is, running separate analyses on subsets of the data. Wasn’t that the same thing as controlling for covariates?</p>
-<p><img src="https://davidlindelof.com/posts/2023/04/controlling-for-covariates-is-not-the-same-as-slicing/images/no-no-no-no-margaret-thatcher.gif" class="img-fluid"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2023/04/controlling-for-covariates-is-not-the-same-as-slicing/images/no-no-no-no-margaret-thatcher.gif" class="img-fluid"></p>
 <p>Controlling for covariates means you include them in your statistical model. Running separate analyses means each of your sub-analyses has a smaller sample size; you may gain in precision because your response will be less variable in each subset, but you lose the benefits that come from using a larger sample size.</p>
 <p>Let’s illustrate this with a simulation. Let’s say we wish to measure the impact of some treatment, whose effect is about 10 times smaller than the standard deviation of the error term:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1">mu <span class="ot" style="color: #003B4F;
@@ -946,7 +946,7 @@ background-color: null;
 font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">geom_boxplot</span>()</span></code></pre></div></div>
-<p><img src="https://davidlindelof.com/posts/2023/04/controlling-for-covariates-is-not-the-same-as-slicing/images/image-1-1024x731.png" class="img-fluid"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2023/04/controlling-for-covariates-is-not-the-same-as-slicing/images/image-1-1024x731.png" class="img-fluid"></p>
 <p>Fitting the full model yields the following confidence intervals:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1">mod_full <span class="ot" style="color: #003B4F;
 background-color: null;
@@ -1039,12 +1039,12 @@ treatcontrol -0.3825046 -0.03425957</code></pre>
 
  ]]></description>
   <category>r</category>
-  <guid>https://davidlindelof.com/posts/2023/04/controlling-for-covariates-is-not-the-same-as-slicing/</guid>
+  <guid>https://blog.davidlindelof.com/posts/2023/04/controlling-for-covariates-is-not-the-same-as-slicing/</guid>
   <pubDate>Wed, 05 Apr 2023 00:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Getting into data science</title>
-  <link>https://davidlindelof.com/posts/2023/03/getting-into-data-science/</link>
+  <link>https://blog.davidlindelof.com/posts/2023/03/getting-into-data-science/</link>
   <description><![CDATA[ 
 
 
@@ -1056,13 +1056,13 @@ treatcontrol -0.3825046 -0.03425957</code></pre>
 <section id="absolute-must-reads" class="level2">
 <h2 class="anchored" data-anchor-id="absolute-must-reads"><strong>Absolute must-reads</strong></h2>
 <figure class="figure">
-<p><img src="https://davidlindelof.com/posts/2023/03/getting-into-data-science/images/image-1.png" class="img-fluid figure-img"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2023/03/getting-into-data-science/images/image-1.png" class="img-fluid figure-img"></p>
 <figcaption>
 <p><a href="https://www.statlearning.com/">An Introduction to Statistical Learning</a>&nbsp;</p>
 </figcaption>
 </figure>
 <figure class="figure">
-<p><img src="https://davidlindelof.com/posts/2023/03/getting-into-data-science/images/image-2.png" class="img-fluid figure-img"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2023/03/getting-into-data-science/images/image-2.png" class="img-fluid figure-img"></p>
 <figcaption>
 <p><a href="https://jakevdp.github.io/PythonDataScienceHandbook/">Python Data Science Handbook</a></p>
 </figcaption>
@@ -1072,14 +1072,14 @@ treatcontrol -0.3825046 -0.03425957</code></pre>
 <section id="great-too" class="level2">
 <h2 class="anchored" data-anchor-id="great-too"><strong>Great too</strong></h2>
 <figure class="figure">
-<p><img src="https://davidlindelof.com/posts/2023/03/getting-into-data-science/images/image-3.png" class="img-fluid figure-img"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2023/03/getting-into-data-science/images/image-3.png" class="img-fluid figure-img"></p>
 <figcaption>
 <p><a href="https://learningstatisticswithr.com/">Learning Statistics with R</a></p>
 </figcaption>
 </figure>
 <p>One of the clearest expositions of fundamental statistical concepts I’ve read. It’s also well written and avoids dry, lifeless prose; the author does a great job at discussing the pros and cons of each technique, and frequently gives templates on how to present the results. One of the most memorable passages was his/her (read the text to understand…) rant against the use of p-values AFTER looking at the data. Free book.</p>
 <figure class="figure">
-<p><img src="https://davidlindelof.com/posts/2023/03/getting-into-data-science/images/image-4.png" class="img-fluid figure-img"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2023/03/getting-into-data-science/images/image-4.png" class="img-fluid figure-img"></p>
 <figcaption>
 <p><a href="https://r4ds.had.co.nz/">R for Data Science</a></p>
 </figcaption>
@@ -1089,14 +1089,14 @@ treatcontrol -0.3825046 -0.03425957</code></pre>
 <section id="for-the-brave" class="level2">
 <h2 class="anchored" data-anchor-id="for-the-brave"><strong>For the brave</strong></h2>
 <figure class="figure">
-<p><img src="https://davidlindelof.com/posts/2023/03/getting-into-data-science/images/image-5.png" class="img-fluid figure-img"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2023/03/getting-into-data-science/images/image-5.png" class="img-fluid figure-img"></p>
 <figcaption>
 <p><a href="https://web.stanford.edu/~hastie/ElemStatLearn/">The Elements of Statistical Learning</a></p>
 </figcaption>
 </figure>
 <p>The “grown-up” version of ISLR (mentioned above). Covers a lot of theoretical ground, including a great discussion of the variance-bias tradeoff so beloved of interviewers. That book taught me to stop <a href="https://davidlindelof.com/feature-standardization-considered-harmful/">blindly normalizing covariates</a> before running clustering algorithms.</p>
 <figure class="figure">
-<p><img src="https://davidlindelof.com/posts/2023/03/getting-into-data-science/images/image-6.png" class="img-fluid figure-img"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2023/03/getting-into-data-science/images/image-6.png" class="img-fluid figure-img"></p>
 <figcaption>
 <p><a href="https://hbiostat.org/doc/rms.pdf">Regression Modeling Strategies</a></p>
 </figcaption>
@@ -1106,7 +1106,7 @@ treatcontrol -0.3825046 -0.03425957</code></pre>
 <section id="summer-reading" class="level2">
 <h2 class="anchored" data-anchor-id="summer-reading"><strong>Summer reading</strong></h2>
 <figure class="figure">
-<p><img src="https://davidlindelof.com/posts/2023/03/getting-into-data-science/images/image-7.png" class="img-fluid figure-img"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2023/03/getting-into-data-science/images/image-7.png" class="img-fluid figure-img"></p>
 <figcaption>
 <p><a href="https://www.amazon.com/Data-Science-Scratch-Principles-Python/dp/149190142X">Data Science from Scratch</a></p>
 </figcaption>
@@ -1116,13 +1116,13 @@ treatcontrol -0.3825046 -0.03425957</code></pre>
 <section id="oh-you-think-you-know-statistics" class="level2">
 <h2 class="anchored" data-anchor-id="oh-you-think-you-know-statistics"><strong>Oh you think you know statistics?</strong></h2>
 <figure class="figure">
-<p><img src="https://davidlindelof.com/posts/2023/03/getting-into-data-science/images/image-8.png" class="img-fluid figure-img"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2023/03/getting-into-data-science/images/image-8.png" class="img-fluid figure-img"></p>
 <figcaption>
 <p><a href="https://www.amazon.com/Statistical-Evidence-Likelihood-Monographs-Probability/dp/0412044110">Statistical Evidence</a></p>
 </figcaption>
 </figure>
 <figure class="figure">
-<p><img src="https://davidlindelof.com/posts/2023/03/getting-into-data-science/images/image-9.png" class="img-fluid figure-img"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2023/03/getting-into-data-science/images/image-9.png" class="img-fluid figure-img"></p>
 <figcaption>
 <p><a href="https://www.amazon.com/Causal-Inference-Statistics-Judea-Pearl/dp/1119186846">Causal Inference in Statistics: A Primer</a></p>
 </figcaption>
@@ -1141,12 +1141,12 @@ treatcontrol -0.3825046 -0.03425957</code></pre>
 </section>
 
  ]]></description>
-  <guid>https://davidlindelof.com/posts/2023/03/getting-into-data-science/</guid>
+  <guid>https://blog.davidlindelof.com/posts/2023/03/getting-into-data-science/</guid>
   <pubDate>Wed, 22 Mar 2023 00:00:00 GMT</pubDate>
 </item>
 <item>
   <title>The law of total probability applied to a conditional probability</title>
-  <link>https://davidlindelof.com/posts/2023/03/the-law-of-total-probability-applied-to-a-conditional-probability/</link>
+  <link>https://blog.davidlindelof.com/posts/2023/03/the-law-of-total-probability-applied-to-a-conditional-probability/</link>
   <description><![CDATA[ 
 
 
@@ -1157,7 +1157,7 @@ treatcontrol -0.3825046 -0.03425957</code></pre>
 <p>Dear future self,</p>
 <p>I’ve just lost (again) about half an hour of my life trying to find a vaguely remembered formula that generalizes the law of total probability to the case of conditional probabilities. Here it is. You’re welcome.</p>
 <figure class="figure">
-<p><img src="https://davidlindelof.com/posts/2023/03/the-law-of-total-probability-applied-to-a-conditional-probability/images/conditional_risk.png" class="img-fluid figure-img"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2023/03/the-law-of-total-probability-applied-to-a-conditional-probability/images/conditional_risk.png" class="img-fluid figure-img"></p>
 <figcaption>
 <p><em>So what is the probability of dying from a lighting strike if you’re an American who knows this statistic?</em></p>
 </figcaption>
@@ -1171,12 +1171,12 @@ treatcontrol -0.3825046 -0.03425957</code></pre>
 
 
  ]]></description>
-  <guid>https://davidlindelof.com/posts/2023/03/the-law-of-total-probability-applied-to-a-conditional-probability/</guid>
+  <guid>https://blog.davidlindelof.com/posts/2023/03/the-law-of-total-probability-applied-to-a-conditional-probability/</guid>
   <pubDate>Wed, 08 Mar 2023 00:00:00 GMT</pubDate>
 </item>
 <item>
   <title>xkcd and Data Science</title>
-  <link>https://davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/</link>
+  <link>https://blog.davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/</link>
   <description><![CDATA[ 
 
 
@@ -1185,188 +1185,188 @@ treatcontrol -0.3825046 -0.03425957</code></pre>
 
 
 <p>I’ve been collecting all <a href="https://xkcd.com/">xkcd comics</a> related to Data Science and/or Statistics. Here they are, but if you think I’m missing any please let me know in the comments. Use at will in your data visualisations but remember to attribute. Sorted in reverse chronological order.</p>
-<p><a href="https://xkcd.com/3007/"><img src="https://davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/probabilistic_uncertainty_2x.png" class="img-fluid"></a></p>
-<p><a href="https://xkcd.com/2918/"><img src="https://davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/tick_marks_2x.png" class="img-fluid"></a></p>
-<p><a href="https://xkcd.com/2884/"><img src="https://davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/log_alignment_2x.png" class="img-fluid"></a></p>
-<p><a href="https://xkcd.com/2899/"><img src="https://davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/goodharts_law_2x.png" class="img-fluid"></a></p>
-<p><a href="https://xkcd.com/2864/"><img src="https://davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/compact_graphs_2x.png" class="img-fluid"></a></p>
-<p><a href="https://xkcd.com/2755/"><img src="https://davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/effect_size_2x.png" class="img-fluid"></a></p>
+<p><a href="https://xkcd.com/3007/"><img src="https://blog.davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/probabilistic_uncertainty_2x.png" class="img-fluid"></a></p>
+<p><a href="https://xkcd.com/2918/"><img src="https://blog.davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/tick_marks_2x.png" class="img-fluid"></a></p>
+<p><a href="https://xkcd.com/2884/"><img src="https://blog.davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/log_alignment_2x.png" class="img-fluid"></a></p>
+<p><a href="https://xkcd.com/2899/"><img src="https://blog.davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/goodharts_law_2x.png" class="img-fluid"></a></p>
+<p><a href="https://xkcd.com/2864/"><img src="https://blog.davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/compact_graphs_2x.png" class="img-fluid"></a></p>
+<p><a href="https://xkcd.com/2755/"><img src="https://blog.davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/effect_size_2x.png" class="img-fluid"></a></p>
 <figure class="figure">
-<p><img src="https://davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/k_means_clustering.png" class="img-fluid figure-img"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/k_means_clustering.png" class="img-fluid figure-img"></p>
 <figcaption>
 <p><a href="https://xkcd.com/2731/">K-Means Clustering</a></p>
 </figcaption>
 </figure>
 <figure class="figure">
-<p><img src="https://davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/methodology_trial.png" class="img-fluid figure-img"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/methodology_trial.png" class="img-fluid figure-img"></p>
 <figcaption>
 <p><a href="https://xkcd.com/2726/">Methodology Trial</a></p>
 </figcaption>
 </figure>
 <figure class="figure">
-<p><img src="https://davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/euler_diagrams.png" class="img-fluid figure-img"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/euler_diagrams.png" class="img-fluid figure-img"></p>
 <figcaption>
 <p><a href="https://xkcd.com/2721/">Euler Diagrams</a></p>
 </figcaption>
 </figure>
 <figure class="figure">
-<p><img src="https://davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/data_point.png" class="img-fluid figure-img"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/data_point.png" class="img-fluid figure-img"></p>
 <figcaption>
 <p><a href="https://xkcd.com/2713/">Data Point</a></p>
 </figcaption>
 </figure>
 <figure class="figure">
-<p><img src="https://davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/change_in_slope.png" class="img-fluid figure-img"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/change_in_slope.png" class="img-fluid figure-img"></p>
 <figcaption>
 <p><a href="https://xkcd.com/2701/">Change in Slope</a></p>
 </figcaption>
 </figure>
 <figure class="figure">
-<p><img src="https://davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/proxy_variable.png" class="img-fluid figure-img"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/proxy_variable.png" class="img-fluid figure-img"></p>
 <figcaption>
 <p><a href="https://xkcd.com/2652">Proxy Variable</a></p>
 </figcaption>
 </figure>
 <figure class="figure">
-<p><img src="https://davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/health_data.png" class="img-fluid figure-img"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/health_data.png" class="img-fluid figure-img"></p>
 <figcaption>
 <p><a href="https://xkcd.com/2620">Health Data</a></p>
 </figcaption>
 </figure>
 <figure class="figure">
-<p><img src="https://davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/garbage_math.png" class="img-fluid figure-img"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/garbage_math.png" class="img-fluid figure-img"></p>
 <figcaption>
 <p><a href="https://xkcd.com/2295/">Garbage Math</a></p>
 </figcaption>
 </figure>
 <figure class="figure">
-<p><img src="https://davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/selection_bias.png" class="img-fluid figure-img"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/selection_bias.png" class="img-fluid figure-img"></p>
 <figcaption>
 <p><a href="https://xkcd.com/2618/">Selection Bias</a></p>
 </figcaption>
 </figure>
 <figure class="figure">
-<p><img src="https://davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/spacecraft_debris_odds_ratio.png" class="img-fluid figure-img"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/spacecraft_debris_odds_ratio.png" class="img-fluid figure-img"></p>
 <figcaption>
 <p><a href="https://xkcd.com/2599/">Spacecraft Debris Odds Ratio</a></p>
 </figcaption>
 </figure>
 <figure class="figure">
-<p><img src="https://davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/control_group.png" class="img-fluid figure-img"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/control_group.png" class="img-fluid figure-img"></p>
 <figcaption>
 <p><a href="https://xkcd.com/2576/">Control Group</a></p>
 </figcaption>
 </figure>
 <figure class="figure">
-<p><img src="https://davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/confounding_variables.png" class="img-fluid figure-img"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/confounding_variables.png" class="img-fluid figure-img"></p>
 <figcaption>
 <p><a href="https://xkcd.com/2560/">Confounding Variables</a></p>
 </figcaption>
 </figure>
 <figure class="figure">
-<p><img src="https://davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/bayes_theorem.png" class="img-fluid figure-img"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/bayes_theorem.png" class="img-fluid figure-img"></p>
 <figcaption>
 <p><a href="https://xkcd.com/2545/">Bayes’ Theorem</a></p>
 </figcaption>
 </figure>
 <figure class="figure">
-<p><img src="https://davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/slope_hypothesis_testing.png" class="img-fluid figure-img"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/slope_hypothesis_testing.png" class="img-fluid figure-img"></p>
 <figcaption>
 <p><a href="https://xkcd.com/2533/">Slope Hypothesis Testing</a></p>
 </figcaption>
 </figure>
 <figure class="figure">
-<p><img src="https://davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/flawed_data.png" class="img-fluid figure-img"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/flawed_data.png" class="img-fluid figure-img"></p>
 <figcaption>
 <p><a href="https://xkcd.com/2494/">Flawed Data</a></p>
 </figcaption>
 </figure>
 <figure class="figure">
-<p><img src="https://davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/error_types.png" class="img-fluid figure-img"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/error_types.png" class="img-fluid figure-img"></p>
 <figcaption>
 <p><a href="https://xkcd.com/2303/">Error Types</a></p>
 </figcaption>
 </figure>
 <figure class="figure">
-<p><img src="https://davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/modified_bayes_theorem.png" class="img-fluid figure-img"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/modified_bayes_theorem.png" class="img-fluid figure-img"></p>
 <figcaption>
 <p><a href="https://xkcd.com/2059/">Modified Bayes’ Theorem</a></p>
 </figcaption>
 </figure>
 <figure class="figure">
-<p><img src="https://davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/curve_fitting.png" class="img-fluid figure-img"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/curve_fitting.png" class="img-fluid figure-img"></p>
 <figcaption>
 <p><a href="https://xkcd.com/2048/">Curve-Fitting</a></p>
 </figcaption>
 </figure>
 <figure class="figure">
-<p><img src="https://davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/machine_learning.png" class="img-fluid figure-img"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/machine_learning.png" class="img-fluid figure-img"></p>
 <figcaption>
 <p><a href="https://xkcd.com/1838/">Machine Learning</a></p>
 </figcaption>
 </figure>
 <figure class="figure">
-<p><img src="https://davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/linear_regression.png" class="img-fluid figure-img"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/linear_regression.png" class="img-fluid figure-img"></p>
 <figcaption>
 <p><a href="https://xkcd.com/1725/">Linear Regression</a></p>
 </figcaption>
 </figure>
 <figure class="figure">
-<p><img src="https://davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/p_values.png" class="img-fluid figure-img"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/p_values.png" class="img-fluid figure-img"></p>
 <figcaption>
 <p><a href="https://xkcd.com/1478/">P-Values</a></p>
 </figcaption>
 </figure>
 <figure class="figure">
-<p><img src="https://davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/t_distribution.png" class="img-fluid figure-img"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/t_distribution.png" class="img-fluid figure-img"></p>
 <figcaption>
 <p><a href="https://xkcd.com/1347/">t Distribution</a></p>
 </figcaption>
 </figure>
 <figure class="figure">
-<p><img src="https://davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/increased_risk.png" class="img-fluid figure-img"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/increased_risk.png" class="img-fluid figure-img"></p>
 <figcaption>
 <p><a href="https://xkcd.com/1252/">Increased Risk</a></p>
 </figcaption>
 </figure>
 <figure class="figure">
-<p><img src="https://davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/seashell.png" class="img-fluid figure-img"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/seashell.png" class="img-fluid figure-img"></p>
 <figcaption>
 <p><a href="https://xkcd.com/1236/">Seashell</a></p>
 </figcaption>
 </figure>
 <figure class="figure">
-<p><img src="https://davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/log_scale.png" class="img-fluid figure-img"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/log_scale.png" class="img-fluid figure-img"></p>
 <figcaption>
 <p><a href="https://xkcd.com/1162/">Log Scale</a></p>
 </figcaption>
 </figure>
 <figure class="figure">
-<p><img src="https://davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/cell_phones.png" class="img-fluid figure-img"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/cell_phones.png" class="img-fluid figure-img"></p>
 <figcaption>
 <p><a href="https://xkcd.com/925/">Cell Phones</a></p>
 </figcaption>
 </figure>
 <figure class="figure">
-<p><img src="https://davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/significant.png" class="img-fluid figure-img"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/significant.png" class="img-fluid figure-img"></p>
 <figcaption>
 <p><a href="https://xkcd.com/882/">Significant</a></p>
 </figcaption>
 </figure>
 <figure class="figure">
-<p><img src="https://davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/conditional_risk.png" class="img-fluid figure-img"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/conditional_risk.png" class="img-fluid figure-img"></p>
 <figcaption>
 <p><a href="https://xkcd.com/795/">Conditional Risk</a></p>
 </figcaption>
 </figure>
 <figure class="figure">
-<p><img src="https://davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/correlation.png" class="img-fluid figure-img"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/correlation.png" class="img-fluid figure-img"></p>
 <figcaption>
 <p><a href="https://xkcd.com/552/">Correlation</a></p>
 </figcaption>
 </figure>
 <figure class="figure">
-<p><img src="https://davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/boyfriend.png" class="img-fluid figure-img"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/images/boyfriend.png" class="img-fluid figure-img"></p>
 <figcaption>
 <p><a href="https://xkcd.com/539/">Boyfriend</a></p>
 </figcaption>
@@ -1375,12 +1375,12 @@ treatcontrol -0.3825046 -0.03425957</code></pre>
 
 
  ]]></description>
-  <guid>https://davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/</guid>
+  <guid>https://blog.davidlindelof.com/posts/2023/02/data-science-the-xkcd-edition/</guid>
   <pubDate>Mon, 20 Feb 2023 00:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Quick note about bootstrapping</title>
-  <link>https://davidlindelof.com/posts/2023/02/quick-note-about-bootstrapping/</link>
+  <link>https://blog.davidlindelof.com/posts/2023/02/quick-note-about-bootstrapping/</link>
   <description><![CDATA[ 
 
 
@@ -1402,12 +1402,12 @@ treatcontrol -0.3825046 -0.03425957</code></pre>
 
 
  ]]></description>
-  <guid>https://davidlindelof.com/posts/2023/02/quick-note-about-bootstrapping/</guid>
+  <guid>https://blog.davidlindelof.com/posts/2023/02/quick-note-about-bootstrapping/</guid>
   <pubDate>Mon, 06 Feb 2023 00:00:00 GMT</pubDate>
 </item>
 <item>
   <title>The most under-rated programming books</title>
-  <link>https://davidlindelof.com/posts/2021/06/the-most-under-rated-programming-books/</link>
+  <link>https://blog.davidlindelof.com/posts/2021/06/the-most-under-rated-programming-books/</link>
   <description><![CDATA[ 
 
 
@@ -1422,7 +1422,7 @@ treatcontrol -0.3825046 -0.03425957</code></pre>
 <h2 class="anchored" data-anchor-id="growing-object-oriented-software-guided-by-tests"><a href="https://lesen.amazon.de/kp/embed?asin=B002TIOYVW&amp;preview=newtab&amp;linkCode=kpe&amp;ref_=cm_sw_r_kb_dp_GZV27G0F7TCFK4VE5JM6">Growing Object-Oriented Software, Guided by Tests</a></h2>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="https://davidlindelof.com/posts/2021/06/the-most-under-rated-programming-books/images/B002TIOYVW.01.L.jpg" class="img-fluid figure-img"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2021/06/the-most-under-rated-programming-books/images/B002TIOYVW.01.L.jpg" class="img-fluid figure-img"></p>
 <figcaption>Cover of “Growing Object-Oriented Software, Guided by Tests</figcaption>
 </figure>
 </div>
@@ -1434,7 +1434,7 @@ treatcontrol -0.3825046 -0.03425957</code></pre>
 </section>
 <section id="your-code-as-a-crime-scene" class="level2">
 <h2 class="anchored" data-anchor-id="your-code-as-a-crime-scene"><a href="https://lesen.amazon.de/kp/embed?asin=B00ZB5XWBI&amp;preview=newtab&amp;linkCode=kpe&amp;ref_=cm_sw_r_kb_dp_TFMG2EGZE39B63Q4GPEX">Your Code as a Crime Scene</a></h2>
-<p><img src="https://davidlindelof.com/posts/2021/06/the-most-under-rated-programming-books/images/B00ZB5XWBI.01.L.jpg" class="img-fluid"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2021/06/the-most-under-rated-programming-books/images/B00ZB5XWBI.01.L.jpg" class="img-fluid"></p>
 <p>Version-control systems such as Git are essential for coordinating work between team members and for occasionally rolling back a system that fails in production. But they also provide priceless insights into potential issues with your development process.</p>
 <p>Adam Tornhill wrote this amazing introduction to <em>Software Forensics</em>: mining the history of your version-control system to detect signs of bad design (such as overly complex classes or excessive coupling), and forecasting where bugs are more likely to lurk.</p>
 <p>Every chapter is immediately actionable, whether by a software engineering manager or by the team itself. During my startup days I was able to run this on our codebase, correlating change frequency with module size, and came up with a <a href="https://davidlindelof.com/predicting-where-the-bugs-are/">heatmap I’ve documented elsewhere</a>, showing where to focus testing efforts. Sure enough, the largest, most frequently changed modules were the most prone to defects.</p>
@@ -1442,13 +1442,13 @@ treatcontrol -0.3825046 -0.03425957</code></pre>
 </section>
 <section id="applying-uml-and-patterns" class="level2">
 <h2 class="anchored" data-anchor-id="applying-uml-and-patterns"><a href="https://www.amazon.com/dp/0131489062/ref=cm_sw_em_r_mt_dp_HKGR39RMX1RNMV3C6M6T">Applying UML and Patterns</a></h2>
-<p><a href="https://www.amazon.com/dp/0131489062"><img src="https://davidlindelof.com/posts/2021/06/the-most-under-rated-programming-books/images/51gVLEtrCNL._SX398_BO1,204,203,200_.jpg" class="img-fluid"></a></p>
+<p><a href="https://www.amazon.com/dp/0131489062"><img src="https://blog.davidlindelof.com/posts/2021/06/the-most-under-rated-programming-books/images/51gVLEtrCNL._SX398_BO1,204,203,200_.jpg" class="img-fluid"></a></p>
 <p>When used correctly, UML can be a great tool for communicating design decisions in an unambiguous manner. Even as a data scientist, I frequently use UML in my notes to understand the relationships between the entities represented in the datasets. Sadly, misguided attempts to generate code from UML and other myths have given UML an undeserved reputation for being a failed attempt at design formalism, and UML doesn’t seem to be widely used (or understood) these days.</p>
 <p>This book is another “peek over the shoulders of a giant” book where we follow the evolution of two non-trivial applications: a board game and a cash register. Design decisions are expressed with UML throughout the book and updated as the developer learns more about the problem space. I still vividly remember the <em>Aha!</em> moment when the author realised that the playing piece and the player were not separate concepts, and did not need their own classes; they were effectively the same class.</p>
 </section>
 <section id="the-little-schemer-series" class="level2">
 <h2 class="anchored" data-anchor-id="the-little-schemer-series"><a href="https://www.amazon.com/dp/0262560992/ref=cm_sw_em_r_mt_dp_2ZRT5Q0DPDT2KB8NGAP2">The Little Schemer</a> series</h2>
-<p><a href="https://www.amazon.com/dp/0262560992"><img src="https://davidlindelof.com/posts/2021/06/the-most-under-rated-programming-books/images/41d3h12T4PL._SX403_BO1,204,203,200_.jpg" class="img-fluid"></a></p>
+<p><a href="https://www.amazon.com/dp/0262560992"><img src="https://blog.davidlindelof.com/posts/2021/06/the-most-under-rated-programming-books/images/41d3h12T4PL._SX403_BO1,204,203,200_.jpg" class="img-fluid"></a></p>
 <p><em>Is it true that this is an atom?</em><br>
 <code>atom</code></p>
 <p>Yes, because <code>atom</code> is a string of characters beginning with the letter <code>a</code>.</p>
@@ -1458,7 +1458,7 @@ treatcontrol -0.3825046 -0.03425957</code></pre>
 <h2 class="anchored" data-anchor-id="refactoring-databases"><a href="https://www.amazon.com/dp/B001QAP36E/ref=cm_sw_em_r_mt_dp_CNR605ZVVD62TC5N8CHS">Refactoring Databases</a></h2>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="https://davidlindelof.com/posts/2021/06/the-most-under-rated-programming-books/images/51mMhFDXhHL.jpg" class="img-fluid figure-img"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2021/06/the-most-under-rated-programming-books/images/51mMhFDXhHL.jpg" class="img-fluid figure-img"></p>
 <figcaption>Refactoring Databases: Evolutionary Database Design (Addison-Wesley Signature Series (Fowler)) by [Scott W. Ambler, Pramod J. Sadalage, Martin Fowler, John Graham, Sachin Rekhi, Paul Dorsey]</figcaption>
 </figure>
 </div>
@@ -1470,7 +1470,7 @@ treatcontrol -0.3825046 -0.03425957</code></pre>
 </section>
 <section id="why-programs-fail" class="level2">
 <h2 class="anchored" data-anchor-id="why-programs-fail"><a href="https://www.amazon.com/dp/B0092L8LCW/ref=cm_sw_em_r_mt_dp_6SYV5NRSK8Z0CGD5FX6Q">Why Programs Fail</a></h2>
-<p><img src="https://davidlindelof.com/posts/2021/06/the-most-under-rated-programming-books/images/51sQtQzMs2L._SX402_BO1,204,203,200_.jpg" class="img-fluid"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2021/06/the-most-under-rated-programming-books/images/51sQtQzMs2L._SX402_BO1,204,203,200_.jpg" class="img-fluid"></p>
 <p>Between 40% and 80% of software costs are spent on maintenance, adding new features, or fixing bugs (<a href="https://www.amazon.com/dp/B001TKD4RG/ref=cm_sw_em_r_mt_dp_4Y79VTTW33F60NZPGD63">Facts and Fallacies of Software Engineering</a>). I’m not sure how much time is spent fixing bugs alone but it’s clearly a significant part of the software lifecycle costs. Yet all our curricula and programming books are mainly focused on the initial software development part.</p>
 <p><em>Why Programs Fail</em> is the only book I know that is entirely devoted to the subject of debugging. Instead of the traditional method of stepping through the program with a debugger, mindlessly observing the program until something doesn’t seem right, Andrea Zeller proposes a far more active use of the debugger, informed by hypothesis testing and the construction of mental models of how the program should behave.</p>
 <p>This book taught me a method to find the root cause, or fault, of any software error by successively refuting a sequence of hypotheses on the cause of the error. My engineering notebooks are full of entries that follow the same pattern:</p>
@@ -1488,7 +1488,7 @@ treatcontrol -0.3825046 -0.03425957</code></pre>
 <p>The following books are not strictly speaking programming books, yet I believe they belong on the shelf of any serious programmer who cares about their craft or their brain.</p>
 <section id="pragmatic-thinking-and-learning" class="level3">
 <h3 class="anchored" data-anchor-id="pragmatic-thinking-and-learning"><a href="https://www.amazon.com/dp/1934356050/ref=cm_sw_em_r_mt_dp_K4Y19YEF0SWR98SPN986">Pragmatic Thinking and Learning</a></h3>
-<p><img src="https://davidlindelof.com/posts/2021/06/the-most-under-rated-programming-books/images/51vzTtzCFmL._SX415_BO1,204,203,200_.jpg" class="img-fluid"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2021/06/the-most-under-rated-programming-books/images/51vzTtzCFmL._SX415_BO1,204,203,200_.jpg" class="img-fluid"></p>
 <p>Andy Hunt, co-author of <em>The Pragmatic Programmer</em> and co-founder of <em>The Pragmatic Bookshelf</em>, has collected in a single accessible volume all that you need to know about how your brain works and how to use it better. He does an excellent job at explaining the two main modes by which the brain operates, the <em>Rich</em> mode and the <em>Linear</em> mode, and the importance of regularly switching from one to the other.</p>
 <p>The book also includes great tips on how to learn efficiently, how to manage your focus, and how to think of your own journey towards expertise.</p>
 <p>Over the years I’ve come across many other resources that discuss how the brain works and how to make it work better, but there was almost never anything new that hadn’t been described by Andy in this book.</p>
@@ -1496,7 +1496,7 @@ treatcontrol -0.3825046 -0.03425957</code></pre>
 </section>
 <section id="hackers-delight" class="level2">
 <h2 class="anchored" data-anchor-id="hackers-delight"><a href="https://www.amazon.com/dp/0321842685/ref=cm_sw_em_r_mt_dp_G2AQSVZP5NQK4FP2HVWR">Hacker’s delight</a></h2>
-<p><img src="https://davidlindelof.com/posts/2021/06/the-most-under-rated-programming-books/images/412u4+9U3LL._SX339_BO1,204,203,200_.jpg" class="img-fluid"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2021/06/the-most-under-rated-programming-books/images/412u4+9U3LL._SX339_BO1,204,203,200_.jpg" class="img-fluid"></p>
 <p>On the face of it, <em>Hacker’s Delight</em> will only be of interest to compiler writers. Who else needs to know that</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb1-1"><span class="cf" style="color: #003B4F;
 background-color: null;
@@ -1536,7 +1536,7 @@ font-style: inherit;">;</span></span></code></pre></div></div>
 </section>
 <section id="concrete-mathematics" class="level2">
 <h2 class="anchored" data-anchor-id="concrete-mathematics"><a href="https://www.amazon.com/dp/0201558025/ref=cm_sw_em_r_mt_dp_8FJH12JKM95GXQKB440P">Concrete mathematics</a></h2>
-<p><img src="https://davidlindelof.com/posts/2021/06/the-most-under-rated-programming-books/images/61oqP3wQsiL._SX350_BO1,204,203,200_.jpg" class="img-fluid"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2021/06/the-most-under-rated-programming-books/images/61oqP3wQsiL._SX350_BO1,204,203,200_.jpg" class="img-fluid"></p>
 <p>When it comes to day-to-day programming, <em>Concrete Mathematics</em> is probably the least useful book on this list–but boy was it a joy to read. Clearly intended for a theoretical computer scientist, this book is far more accessible than its older cousins forming the <em>Art of Computer Programming</em> series. It covers everything you need to know about the analysis of algorithms and related topics.</p>
 <p>But what’s really fascinating about this book is the way it shows how a mathematician <em>thinks</em>. Take for example the analysis of the Tower of Hanoi algorithm that introduces the book. It starts with the first few examples, which are enough to form a guess of what the most general formula is; and this guess later informs the search for mathematical proofs. This is <em>not</em> how the analysis of algorithms is generally taught, and I’m really grateful to the authors for showing me that they are human too.</p>
 <p>Oh, and did I mention the marginal notes contributed by the authors’ students? These are worth the price of the book alone, such as this gem:</p>
@@ -1546,12 +1546,12 @@ font-style: inherit;">;</span></span></code></pre></div></div>
 </section>
 
  ]]></description>
-  <guid>https://davidlindelof.com/posts/2021/06/the-most-under-rated-programming-books/</guid>
+  <guid>https://blog.davidlindelof.com/posts/2021/06/the-most-under-rated-programming-books/</guid>
   <pubDate>Wed, 16 Jun 2021 00:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Feature standardization considered harmful</title>
-  <link>https://davidlindelof.com/posts/2021/06/feature-standardization-considered-harmful/</link>
+  <link>https://blog.davidlindelof.com/posts/2021/06/feature-standardization-considered-harmful/</link>
   <description><![CDATA[ 
 
 
@@ -1561,7 +1561,7 @@ font-style: inherit;">;</span></span></code></pre></div></div>
 
 <p>Many statistical learning algorithms perform better when the covariates are on similar scales. For example, it is common practice to standardize the features used by an artificial neural network so that the gradient of its objective function doesn’t depend on the physical units in which the features are described.</p>
 <p>The same advice is frequently given for K-means clustering (see <a href="https://datascience.stackexchange.com/q/22795/69539">Do Clustering algorithms need feature scaling in the pre-processing stage?</a>, <a href="https://stats.stackexchange.com/q/21222/4370">Are mean normalization and feature scaling needed for k-means clustering?</a>, and <a href="https://stats.stackexchange.com/q/372521/4370">In cluster analysis should I scale (standardize) my data if variables are in the same units?</a>), but there’s a great counter-example given in <a href="https://g.co/kgs/wvHyxB">The Elements of Statistical Learning</a> that I try to reproduce here.</p>
-<p><img src="https://davidlindelof.com/posts/2021/06/feature-standardization-considered-harmful/images/img_7703.jpg" class="img-fluid"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2021/06/feature-standardization-considered-harmful/images/img_7703.jpg" class="img-fluid"></p>
 <p>Consider two point clouds (<img src="https://latex.codecogs.com/png.latex?n=50">&nbsp;each), randomly drawn around two origins 3 units away from the origin:</p>
 <!--more-->
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="fu" style="color: #4758AB;
@@ -1652,7 +1652,7 @@ background-color: null;
 font-style: inherit;">1</span>] <span class="sc" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">+</span> d</span></code></pre></div></div>
-<p><img src="https://davidlindelof.com/posts/2021/06/feature-standardization-considered-harmful/images/image-1024x731.png" class="img-fluid"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2021/06/feature-standardization-considered-harmful/images/image-1024x731.png" class="img-fluid"></p>
 <p>The K-means algorithm has no problem in classifying these points:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1">km <span class="ot" style="color: #003B4F;
 background-color: null;
@@ -1669,7 +1669,7 @@ font-style: inherit;">$</span>centers</span></code></pre></div></div>
 <pre><code>##        [,1]         [,2]
 ## 1  2.922143  0.098422541
 ## 2 -2.991026 -0.003131757</code></pre>
-<p><img src="https://davidlindelof.com/posts/2021/06/feature-standardization-considered-harmful/images/image-1-1024x731.png" class="img-fluid"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2021/06/feature-standardization-considered-harmful/images/image-1-1024x731.png" class="img-fluid"></p>
 <p>Let’s see now what happens when we standardize each feature. Since their mean is already zero, we merely divide by their standard deviation:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1">x_scaled <span class="ot" style="color: #003B4F;
 background-color: null;
@@ -1710,7 +1710,7 @@ background-color: null;
 font-style: inherit;">centers =</span> <span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">2</span>)</span></code></pre></div></div>
-<p><img src="https://davidlindelof.com/posts/2021/06/feature-standardization-considered-harmful/images/image-2-1024x731.png" class="img-fluid"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2021/06/feature-standardization-considered-harmful/images/image-2-1024x731.png" class="img-fluid"></p>
 <p>We see that K-means has completely failed to identify the clusters, because ‘standardizing’ the features has destroyed the clear separation between the clusters.</p>
 <p>So what’s the lesson here? Clearly, for K-means you should not blindly standardize the features unless there are clear reasons to do so. In this toy example, we didn’t know what the features represent, so it’s impossible to say whether standardizing the features was the right thing to do. Perhaps the clusters seen pre-standardization were mere artefacts of our choice of units! As a rule of thumb, I suggest that features that are expressed in the same units and that represent the same ‘stuff’ (such as width and length) should not be standardized. If you have deeper insights into this I’d love to hear your comments.</p>
 
@@ -1718,12 +1718,12 @@ font-style: inherit;">2</span>)</span></code></pre></div></div>
 
  ]]></description>
   <category>r</category>
-  <guid>https://davidlindelof.com/posts/2021/06/feature-standardization-considered-harmful/</guid>
+  <guid>https://blog.davidlindelof.com/posts/2021/06/feature-standardization-considered-harmful/</guid>
   <pubDate>Fri, 11 Jun 2021 00:00:00 GMT</pubDate>
 </item>
 <item>
   <title>No, you have not controlled for confounders</title>
-  <link>https://davidlindelof.com/posts/2021/02/no-you-have-not-controlled-for-confounders/</link>
+  <link>https://blog.davidlindelof.com/posts/2021/02/no-you-have-not-controlled-for-confounders/</link>
   <description><![CDATA[ 
 
 
@@ -1734,7 +1734,7 @@ font-style: inherit;">2</span>)</span></code></pre></div></div>
 <p>When observational data includes a treatment indicator and some possible confounders, it is very tempting to simply regress the outcome on all features (confounders and treatment alike), extract the coefficients associated with the treatment indicator, and proudly proclaim that “we have controlled for confounders and estimated the treatment effect”.</p>
 <p>This approach is wrong. Very wrong. At least as wrong as that DIY electrical job you did last week: it looks all good and neat but you’ve made a critical mistake and there’s no way you can find out without killing yourself.</p>
 <figure class="figure">
-<p><img src="https://davidlindelof.com/posts/2021/02/no-you-have-not-controlled-for-confounders/images/image.png" class="img-fluid figure-img"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2021/02/no-you-have-not-controlled-for-confounders/images/image.png" class="img-fluid figure-img"></p>
 <figcaption>
 <p><em>Or worse, by thinking you’ve controlled for confounders when you haven’t</em></p>
 </figcaption>
@@ -3086,12 +3086,12 @@ font-style: inherit;">data.frame</span>(X, W, Y))</span></code></pre></div></div
 
  ]]></description>
   <category>r</category>
-  <guid>https://davidlindelof.com/posts/2021/02/no-you-have-not-controlled-for-confounders/</guid>
+  <guid>https://blog.davidlindelof.com/posts/2021/02/no-you-have-not-controlled-for-confounders/</guid>
   <pubDate>Wed, 10 Feb 2021 00:00:00 GMT</pubDate>
 </item>
 <item>
   <title>A/B testing my resume</title>
-  <link>https://davidlindelof.com/posts/2020/11/a-b-testing-my-resume/</link>
+  <link>https://blog.davidlindelof.com/posts/2020/11/a-b-testing-my-resume/</link>
   <description><![CDATA[ 
 
 
@@ -3417,7 +3417,7 @@ font-style: inherit;">ylab</span>(<span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'Estimated probability of success'</span>)</span></code></pre></div></div>
 <figure class="figure">
-<p><img src="https://davidlindelof.com/posts/2020/11/a-b-testing-my-resume/images/image-5-1024x731.png" class="img-fluid figure-img"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2020/11/a-b-testing-my-resume/images/image-5-1024x731.png" class="img-fluid figure-img"></p>
 <figcaption>
 <p><em>Wouldn’t that be nice</em></p>
 </figcaption>
@@ -3437,12 +3437,12 @@ font-style: inherit;">'Estimated probability of success'</span>)</span></code></
 
  ]]></description>
   <category>r</category>
-  <guid>https://davidlindelof.com/posts/2020/11/a-b-testing-my-resume/</guid>
+  <guid>https://blog.davidlindelof.com/posts/2020/11/a-b-testing-my-resume/</guid>
   <pubDate>Tue, 24 Nov 2020 00:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Unit testing SQL with PySpark</title>
-  <link>https://davidlindelof.com/posts/2020/11/unit-testing-sql-with-pyspark/</link>
+  <link>https://blog.davidlindelof.com/posts/2020/11/unit-testing-sql-with-pyspark/</link>
   <description><![CDATA[ 
 
 
@@ -3454,7 +3454,7 @@ font-style: inherit;">'Estimated probability of success'</span>)</span></code></
 <p>There doesn’t seem to be much guidance on how to verify that these queries are correct. All mainstream programming languages have embraced unit tests as the primary tool to verify the correctness of the language’s smallest building blocks—all, that is, except SQL.</p>
 <p>And yet, SQL is a programming language and SQL queries are computer programs, which should be tested just like every other unit of the application.</p>
 <figure class="figure">
-<p><img src="https://davidlindelof.com/posts/2020/11/unit-testing-sql-with-pyspark/images/image-4.png" class="img-fluid figure-img"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2020/11/unit-testing-sql-with-pyspark/images/image-4.png" class="img-fluid figure-img"></p>
 <figcaption>
 <p><em>I’m not responsible</em></p>
 </figcaption>
@@ -6226,12 +6226,12 @@ font-style: inherit;">set</span>(df.name)</span></code></pre></div></div>
 
  ]]></description>
   <category>python</category>
-  <guid>https://davidlindelof.com/posts/2020/11/unit-testing-sql-with-pyspark/</guid>
+  <guid>https://blog.davidlindelof.com/posts/2020/11/unit-testing-sql-with-pyspark/</guid>
   <pubDate>Mon, 16 Nov 2020 00:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Scraping real estate for fun</title>
-  <link>https://davidlindelof.com/posts/2020/11/scraping-real-estate-for-fun-and-profit/</link>
+  <link>https://blog.davidlindelof.com/posts/2020/11/scraping-real-estate-for-fun-and-profit/</link>
   <description><![CDATA[ 
 
 
@@ -6242,7 +6242,7 @@ font-style: inherit;">set</span>(df.name)</span></code></pre></div></div>
 <p>Here’s a fun weekend project: scrape the real estate classifieds of the website of your choice, and do some analytics on the data. I did just that last weekend, using the <a href="https://scrapy.org/">Scrapy</a> Python library for web scraping, which I then let loose on one of the major real estate classifieds website in Switzerland (can’t tell you which one—not sure they would love me for it).</p>
 <p>After about 10 minutes I had the data for 12’124 apartments or houses for sale across Switzerland, with room count, area, price, city, and canton.</p>
 <p>I’ve imported the data in R, and log-transformed the room count, area, and price because of extreme skewness. Here’s the resulting scatterplot matrix, obtained with <code>ggpairs()</code>:</p>
-<p><img src="https://davidlindelof.com/posts/2020/11/scraping-real-estate-for-fun-and-profit/images/image-3-1024x629.png" class="img-fluid"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2020/11/scraping-real-estate-for-fun-and-profit/images/image-3-1024x629.png" class="img-fluid"></p>
 <p>There’s a number of interesting features, even from this raw, unclean dataset:</p>
 <ul>
 <li>there are about twice as many apartments for sale than houses</li>
@@ -6261,7 +6261,7 @@ font-style: inherit;">set</span>(df.name)</span></code></pre></div></div>
 
 
  ]]></description>
-  <guid>https://davidlindelof.com/posts/2020/11/scraping-real-estate-for-fun-and-profit/</guid>
+  <guid>https://blog.davidlindelof.com/posts/2020/11/scraping-real-estate-for-fun-and-profit/</guid>
   <pubDate>Fri, 06 Nov 2020 00:00:00 GMT</pubDate>
 </item>
 </channel>

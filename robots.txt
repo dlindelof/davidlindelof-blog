@@ -1,1 +1,1 @@
-Sitemap: https://davidlindelof.com/sitemap.xml
+Sitemap: https://blog.davidlindelof.com/sitemap.xml
