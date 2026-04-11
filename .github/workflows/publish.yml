@@ -4,6 +4,10 @@ on:
 
 name: Render and Deploy Quarto Blog
 
+# Forcing the underlying runner to use the updated Node.js 24 runtime
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   build-deploy:
     runs-on: ubuntu-latest
