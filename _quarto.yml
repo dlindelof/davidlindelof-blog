@@ -3,7 +3,7 @@ project:
 
 website:
   description: "A blog built with Quarto"
-  site-url: https://davidlindelof.com
+  site-url: https://blog.davidlindelof.com
   title: "David's blog"
   navbar:
     right:
