@@ -4,10 +4,6 @@ on:
 
 name: Render and Deploy Quarto Blog
 
-# Forcing the underlying runner to use the updated Node.js 24 runtime
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-
 jobs:
   build-deploy:
     runs-on: ubuntu-latest
@@ -15,8 +11,8 @@ jobs:
       contents: write
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
-
+        uses: actions/checkout@v6
+        
       - name: Set up Quarto
         uses: quarto-dev/quarto-actions/setup@v2
 
