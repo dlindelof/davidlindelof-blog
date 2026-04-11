@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.37">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="dcterms.date" content="2007-06-30">
+
+<title>OSGi Community Event, Munich 26-27 June 2007 – davidlindelof-blog</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../../">
+<script src="../../../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../../site_libs/bootstrap/bootstrap-158031087360bce0ff56dc785ce39e06.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../../../../styles.css">
+</head>
+
+<body class="nav-fixed fullcontent quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../../../index.html">
+    <span class="navbar-title">davidlindelof-blog</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://bsky.app/"> <i class="bi bi-bluesky" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">OSGi Community Event, Munich 26-27 June 2007</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">home-automation</div>
+                <div class="quarto-category">osgi</div>
+                <div class="quarto-category">programming</div>
+                <div class="quarto-category">tools</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">June 30, 2007</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+<p>I have already mentioned <a href="http://www.visnet.ch/smartbuildings/review-decompiling-java/">elsewhere</a> that the <a href="http://en.wikipedia.org/wiki/Osgi">OSGi</a> technology is likely to play an important part in the computerization of current and future buildings. It is a very attractive programming model for building management systems, especially with respect to its software lifecycle model (stopping, updating and restarting) that does not require a reboot of the whole system—nor indeed of your own application.</p>
+<p>In a nutshell, OSGi is an extension to the Java programming language whereby a framework program (just called the “framework”) runs continuously, in which small applications packaged as “bundles” (which are nothing else but jarfiles with some extra description information in their manifest) are installed, registered, started, stopped, updated and uninstalled. Each bundle can register “services” in the framework, i.e.&nbsp;objects available for use to other bundles. In a carefully designed OSGi program, when a bundle is uninstalled all bundles forget everything about it, and in particular its classes are eventually unloaded—something that never ever happens in classic Java (or any other language that I know of). For this reason, OSGi has more than once been referred to as “ClassLoaders on steroids”.</p>
+<p>This being my weblog on building automation, I report here what I found to be relevant for that field in the <a href="http://www2.osgi.org/Conference/2007CommunityEvent">OSGi Community Event</a> held in Munich, Germany, June 26-27 2007.</p>
+<p>(Full disclaimer: my trip was financed by <a href="http://www.adhoco.com">Adhoco AG</a>, with whom I work, but I promise will be as unbiased as I can.)</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/648174077_5adbbf5e58_m.jpg" class="img-fluid figure-img"></p>
+<figcaption>OSGi Community Event</figcaption>
+</figure>
+</div>
+<section id="osgi-and-home-automation" class="level3">
+<h3 class="anchored" data-anchor-id="osgi-and-home-automation">OSGi and home automation</h3>
+<p>There wasn’t actually that much of a specific focus on building automation per se—only Miguel García Longaró, from Telefónica Ivestigación y Desarrollo in Spain, and Marquart Franz from Siemens showed us products for the home automation. I found Miguel’s product to be particularly intriguing, as he claimed it could indifferently talk to devices on different kinds of underlying hardware (he listed EIB/KNX, Hometronic, Busing, Dinitel and X10). This is exactly what we offer with Adhoco’s product too.</p>
+<p>One discussion that always comes up when discussing home automation with potential customers (and that is very often ignored by academicians) is the cost of the system. Miguel argues that for home automation to become a reality the residential gateways must cost less than about € 100.–. Over coffee I had an interesting discussion with Fred Verstraaten from Luminis, in the Netherlands. He argued that in the future, home automation should be a feature of the modem/router boxes you get for (almost) free when you sign up for high-speed internet. Those who want home automation pay higher monthly fees and get the bigger box, and buy the sensors/actuators separately.</p>
+<p>I find it difficult to find faults with that line of reasoning. It’s in the interest of providers of home automation to guarantee a steady stream of revenue, something a subscription model can provide. And the cost barrier is, indeed, probably a major reason why home automation is not more widespread than it is today.</p>
+<p>Home automation and industrial automation have a lot in common. Daniel Grossmann (from the Technical University of Munich) described an architecture whereby a central server manages all devices in a plant or factory, and provides OSGi bundles to client machines that need to access the data in these devices. Providing data from an arbitrary number and types of devices to client systems is a challenging problem, one that we face with home automation too. Daniel told us about the <a href="http://www.eddl.org/">Electronic Device Description Language</a> (EDDL), a formal language that describes the functions and data available from any device. His server reads this information from the devices in the plant and provides the adequate OSGi bundles.</p>
+<p>I suppose this is an approach we could try with home automation as well, but what he is doing sounds awfully similar to the Device Access service specified in the official OSGi specs. When I asked him about this, he replied that device manufacturers prefer to distribute EDDLs for intellectual property reasons, which was (apparently) why he couldn’t use this service.</p>
+<p>I must however confess being thoroughly confused by this service specification at the moment. I spent three hours on the train trying to understand it (once more) but gave up. I’ve started a thread about this on the Apache Felix (an open-source OSGi implementation) <a href="http://www.mail-archive.com/users@felix.apache.org/">mailing-list</a>.</p>
+<p>I’ve often wondered whether it is better to have one central service responsible for dealing out references to the devices to client bundles, or if each device should be represented by a service. (This dilemma is faced by anyone architecting a distributed computing environment, such as network of automatic teller machines—do you have each ATM communicate with on object that represents the bank, or with thousands of smaller objects that each represent an account?) Richard Hall, author of the Apache Felix OSGi implementation, suggested that the latter model is better, as it allows client bundles to react to the “disapperance” of devices.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/648174807_0a14c9cfaf_m.jpg" class="img-fluid figure-img"></p>
+<figcaption>OSGi technical discussions</figcaption>
+</figure>
+</div>
+</section>
+<section id="osgi-technical-discussions" class="level3">
+<h3 class="anchored" data-anchor-id="osgi-technical-discussions">OSGi technical discussions</h3>
+<p>BJ Hargrave gave us a quick overview of the new features in OSGi 4.1. Only two important changes for the normal OSGi user:</p>
+<ol type="1">
+<li><p>Bundles can now be transiently started/stopped. This means, e.g., that if I transiently stop a bundle but forget to restart it, and the framework restarts for some reason, then the bundle will be restarted too. In release 4.0, if a bundle was stopped, this status was persistently saved no matter what, until you remembered to start the bundle again.</p></li>
+<li><p>Lazy activation: it is now possible to specify that bundles are to be activated “for real” only when a class from them is loaded for the first time. They are still marked as Active before that (as I understood it). That can be nice if you have a large number of bundles that each take quite a long time to start but whose services are not necessarily immediately required.</p></li>
+</ol>
+<p>Then we had also BJ Hargrave and Peter Kriens, resident <a href="http://www.osgi.org/blog">OSGi evangelist</a>, give a duet talk on OSGi best practices. This is what I noted:</p>
+<p><strong>Portable Code</strong></p>
+<p>You never know against what virtual machine your code will run, so always compile your code against the minimum suitable class libraries. OSGi defines Execution Environments (EE) for that.</p>
+<p><strong>Proper Imports</strong></p>
+<p>Never, ever import classes from libraries without a corresponding Import-Package statement in your manifest. The exception is java.* libraries. You should never assume the existence of library classes on your system—in particular libraries such as javax.*. (I could trade endless horror stories about my fights with XML parsers.)</p>
+<p>By giving the proper Import-Package statement you guarantee that your application will die early (upon resolving, in fact) if those libraries are not available.</p>
+<p><strong>Minimize dependencies</strong></p>
+<p>A strong value that OSGi provides is the possibility to use different implementations of the same service. It usually makes no sense (and makes your application unnecessarily complex) to require a specific implementation of a given service.</p>
+<p>Thus, prefer the use of Import-Package over Require-Bundle. The latter binds your application irrevocably to a particular bundle (and its provider) while the latter lets you chose which bundle, that implements the service you need, you want to install.</p>
+<p>For related reasons, do not overspecify the bundle version you require but use version ranges.</p>
+<p><strong>Hide Implementation Details</strong></p>
+<p>Contrary to normal Java jarfiles, OSGi allows you to select which packages in the jarfile to make publicly available (to export, in OSGi parlance). It is generally recommended to put everything the client bundle needs (i.e.&nbsp;service interfaces) in the exported package and to hide all the implementation in their own, unexported packages.</p>
+<p>I’ve seen different styles on how to implement this. You usually end up with two packages per service (or set of services). I have seen these naming conventions (with the interface package coming always first):</p>
+<pre><code>foo.bar.service.*
+foo.bar.serviceImpl.*Impl
+
+foo.bar.*
+foo.bar.impl.*
+
+foo.bar.service.*
+foo.bar.*
+
+foo.bar.osgi.*
+foo.bar.*
+</code></pre>
+<p>It’s a matter of taste and readability. I am uncomfortable with having an interface and its implementing class with the same names (but in different packages), but on the other hand I dislike all these dangling Impls. I personally prefer the two latter examples.</p>
+<p>An added advantage with having the “real” classes in the package with the shorter name is if your bundle is designed to be usable outside of the OSGi framework. You want people to import foo.bar.*, not import foo.bar.impl.*.</p>
+<p><strong>Avoid ClassLoader Hierarchy Dependencies</strong></p>
+<p>Dan Bandera, president of the OSGi Alliance, closed the OSGi event by saying that there must have been some really good technical talks because he did not understand any of it. I feel a bit the same with this point.</p>
+<p>The bottom line was, don’t use Class.forName(). Don’t ask me why.</p>
+<p><strong>Avoid Start Ordering Dependencies</strong></p>
+<p>A canonical mistake I know I have been doing (now) is to fiddle with the framework’s start levels to make sure that my client bundle does not start before that HttpService bundle has been started.</p>
+<p>It is much better, safer and cleaner to use the ServiceTracker or ServiceTrackerCustomizer classes. Your bundle should start as normal and wait until the HttpService service has been registered with the framework.</p>
+<p><strong>Handle Service Dynamism</strong></p>
+<p>This is very related to the point above: your bundles will be all the more robust if you remember that services can come and go. Always write your bundle as if there was a chance that the services it depends on could be (even temporarily) unregistered. Again, the ServiceTracker or ServiceTrackerCustomizer make this job easy.</p>
+<p><strong>WhiteBoard Pattern</strong></p>
+<p>Suppose you register an object as a listener with, say, LogReaderService.addLogListener(). Now the LogReaderService holds a reference to your object and will never, ever release it unless you call removeLogListener(). But suppose your bundle gets stopped, uninstalled or updated before?</p>
+<p>This is an example where the classic Observer design pattern encounters problems with OSGi. You cannot any longer simply pass objects as event listeners if there’s any chance that these objects parent bundle can go away, with no possibility to inform the observed object.</p>
+<p>The somewhat surprising idea is instead to have each listener register itself as a service. Then the observed object can query the service registry for all registered listeners and notify them of the event.</p>
+<p>There a good whitepaper on this approach <a href="http://osgi.org/documents/osgi_technology/whiteboard.pdf">here</a>.</p>
+<p><strong>Extender Model</strong></p>
+<p>Suppose you have a desktop application with a help system. You’d like to give client bundles the possibility to provide content to this help system.</p>
+<p>One possibility is to have each client bundle register their content themselves with the help system. The problem is, again, what happens if the bundles goes away and does not remove the content?</p>
+<p>The proposed solution is to have the help system (or any other content publisher) specify the format and location of the data it expects from each bundle—and then goes and fetches the data himself from the active bundles. For instance, it could specify that all help content should follow such-and-such XML format and be given in a help.xml file under META-INF. Then any client bundle who wants to publish help information includes that data in this help.xml file, which is retrieved by the content publisher.</p>
+<p><strong>Avoid OSGi Framework API coupling</strong></p>
+<p>This basically says that you should always keep the number of classes that import things from org.osgi.* to a minimum.</p>
+<p>Personally I always try to design a bundle as if it would be used outside of OSGi. Most, if not all, of the OSGi calls can be restricted to a small number of classes (including the bundle activator). This will also make your application much easier to test and debug—you won’t necessarily have a OSGi framework handy when running your unit tests.</p>
+<p><strong>Return Quickly from Framework Callbacks</strong></p>
+<p>Although the specs are often silent on this point, most framework callbacks are synchronous. For instance, the BundleActivator.start() methods are usually called one after the other. But this means that if your bundle’s startup time is significantly long (say, more than one second) then the total startup time of your application can become unacceptable. Again, this depends on your kind of application.</p>
+<p>But try to keep those startup times short. Less than one second is good. Use lazy activation if you can, now that it is available. Have all framework callbacks return in a timely manner. As a last resort, consider spinning a new thread off so the callback can return while you continue the “real” activation of your bundle.</p>
+<p><strong>Thread Safety</strong></p>
+<p>Like many other of these best practices, this one holds for any Java application and is not restricted to OSGi. This is a complex subject, with some members of the meeting nominating Brian Goetz et al’s book <em>Java Concurrency in Practice</em> as a required reading for any serious Java developer.</p>
+<p>I am by no means a concurrency expert, but a common cause of deadlocks is when you make foreign method calls inside a synchronized block. Do not, ever, do this. You have no idea what that method you are calling might be doing—in particular, it might well try to acquire your own lock, resulting in a deadlock and a frozen application.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/648206061_4770680940_m.jpg" class="img-fluid figure-img"></p>
+<figcaption>OSGi evangelist in action</figcaption>
+</figure>
+</div>
+</section>
+<section id="miscellaneous" class="level3">
+<h3 class="anchored" data-anchor-id="miscellaneous">Miscellaneous</h3>
+<p>When he wrote the original open-source Oscar implementation of the OSGi specs, Richard Hall introduced the idea of a bundle repository: a centralized place from where OSGi bundles can be downloaded, and whose contents are described in a XML format.</p>
+<p>He gave a talk on the history of what is today called the <a href="http://www2.osgi.org/Repository/HomePage">OSGi Bundle Repository</a> (OBR), the logical continuation of his original idea. This is the official OSGi bundle repository to which vendors are encouraged to contribute, but the OBR also allows one to setup a private bundle repository. Felix comes with a OBR service to communicate with such repositories.</p>
+<p>In my line of work I have found the OBR idea very useful, and a great tool for setting up a remote management system. Such a repository can hold different versions of the same bundle, making lifecycle management easy. What makes the developer’s life even easier is the availability of the <a href="http://www2.osgi.org/Repository/BIndex">Bindex</a> tool from Peter Kriens to generate the repository’s description XML file.</p>
+<p>Stuart McCulloch talked about other tools for bundle developers. It was from him that I heard for the first time about the <a href="http://www.aqute.biz/Code/Bnd">Bnd</a> tool to help create OSGi bundles. Like probably many others, I’m still relying on good old Ant scripts to do that, so any tool that might make it easier is welcome indeed.</p>
+<p>Remote management was often mentioned during the event. Kai Hackbarth, from ProSyst AG, gave a talk on the challenge of managing the lifecycles of potentially millions of OSGi devices in the field, not all of which can be assumed to be connected to the internet at all times. He presented the <a href="http://www.prosyst.com/products/back_end_mgmt.html">mPRM</a> software product that his company makes, a product that helps automate this daunting task.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/648174457_383db4bbc8_m.jpg" class="img-fluid figure-img"></p>
+<figcaption>OSGi discussions</figcaption>
+</figure>
+</div>
+</section>
+<section id="overall-impression" class="level3">
+<h3 class="anchored" data-anchor-id="overall-impression">Overall impression</h3>
+<p>This was the second OSGi event I attend, the first one having been the 2005 OSGi World Congress in Paris. I personally found the Munich event somewhat less informative for my own interests, possibly due to the high percentage of business presentations. The technical presentations were, however, excellent and I managed to make more contacts than in Paris. I would have loved to see more “hands-on” presentations, showing examples of the use people make of OSGi but more into the technical aspects. But I guess that’s just not possible in a two-day plenary meeting, and the organizers did a fantastic job for this community event.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/your-website-url\.example\.com");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
