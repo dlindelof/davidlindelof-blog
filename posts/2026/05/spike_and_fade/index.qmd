@@ -34,7 +34,7 @@ retention. I'll explain.
 When measuring retention, it is incredibly tempting to reach for simple binary
 outcomes. We ask questions like, *"On average, what proportion of users return within 7 days after using the product?"*
 
-DAU has the same limitation at the aggregate level: it tells us how much
+[DAU](https://en.wikipedia.org/wiki/Active_users) has the same limitation at the aggregate level: it tells us how much
 activity happened, but not whether the launch created durable habits among
 individual users. A one-off spike and sustained retention can produce similar
 short-term DAU numbers.
@@ -56,15 +56,16 @@ activation from the effect on sustained repeat usage among those already
 activated.
 
 I claim that there is a statistical tool that addresses all three problems. It
-is *survival analysis*, applied to recurrent events. But let's first look at an
-example.
+is [*survival analysis*](https://en.wikipedia.org/wiki/Survival_analysis),
+applied to [recurrent events](https://en.wikipedia.org/wiki/Recurrent_event_analysis).
+But let's first look at an example.
 
 # Meet Alice and Bob
 
 Let's look at the timelines of two hypothetical users who enroll in our
 experiment on different calendar days. We analyze both users on calendar day 14,
-so they are censored at the same calendar time but have different amounts of
-follow-up.
+so they are [censored](https://en.wikipedia.org/wiki/Censoring_%28statistics%29)
+at the same calendar time but have different amounts of follow-up.
 
 Here's what their timelines might look like:
 
@@ -132,25 +133,28 @@ like Bob from the analysis is a serious mistake.
 
 # Using the Cox Model for Product Usage
 
-To analyze these timelines rigorously, we use the **Cox proportional hazards
-model** for recurrent events.
+To analyze these timelines rigorously, we use the **[Cox proportional hazards
+model](https://en.wikipedia.org/wiki/Proportional_hazards_model)** for recurrent
+events.
 
 If you took a statistics class, you might remember survival analysis being used
 in medical research where an "event" means failure or death.
 
 (Whether we like it or not, biostatisticians got there first and named the
-concepts, which is why terms such as "hazard ratio" and "survival curve" can
-sound counterintuitive in a product context. I always need a couple of minutes
-to explain this to a non-technical audience.)
+concepts, which is why terms such as "[hazard
+ratio](https://en.wikipedia.org/wiki/Hazard_ratio)" and "survival curve" can sound
+counterintuitive in a product context. I always need a couple of minutes to
+explain this to a non-technical audience.)
 
 For product usage, we define an **event** as *any day on which the user used the
 product at least once*.
 
 ## Interpreting Survival Analysis Outcomes
 
-The hazard rate is the fundamental quantity in a survival model. When we compare
-two treatments, our key metric is their hazard ratio. It sounds like a terrible
-thing, but in this setting it is exactly what we want to be high.
+The [hazard rate](https://en.wikipedia.org/wiki/Failure_rate#Hazard_rate) is the
+fundamental quantity in a survival model. When we compare two treatments, our
+key metric is their hazard ratio. It sounds like a terrible thing, but in this
+setting it is exactly what we want to be high.
 
 -   **The Hazard Rate ($h(t)$)**: Think of this as a user's *instantaneous momentum*—the instantaneous rate of engagement at time $t$, given that they haven't engaged yet in the current interval.
 -   **The Hazard Ratio (HR)**: This is our ultimate success metric. It compares the engagement momentum of our treatment group to the control group ($HR = h_{treatment}(t) / h_{control}(t)$).
@@ -163,15 +167,16 @@ thing, but in this setting it is exactly what we want to be high.
 When applying this model, we rely on four fundamental assumptions:
 
 1.  **Proportional Hazards**: We assume that the hazard ratio is constant over time. If our shiny new UI doubles a user's instantaneous return rate on Day 2, it should also roughly double it on Day 8.
-2.  **Non-informative Censoring**: We assume that users being censored (their window ending) tells us nothing about their underlying habits. I find this hard to wrap my head
+2.  **[Non-informative Censoring](https://en.wikipedia.org/wiki/Censoring_%28statistics%29#Types)**: We assume that users being censored (their window ending) tells us nothing about their underlying habits. I find this hard to wrap my head
 around, but it mainly means that we run the analysis at a date that has nothing
 to do with whether we're still waiting for some users to act. A fixed
 administrative cutoff makes this assumption plausible, provided that the cutoff
 is unrelated to the users' underlying propensity to return.
 3.  **Independence Across Clusters**: While Alice's repeat events are obviously correlated with each other, we assume Alice's behavior is completely independent of Bob's.
-4.  **Shared Frailty**: We assume that each user's unobserved propensity to
-engage is constant over the observation window and follows a gamma distribution
-across users.
+4.  **[Shared Frailty](https://en.wikipedia.org/wiki/Recurrent_event_analysis#Frailty_models)**:
+We assume that each user's unobserved propensity to engage is constant over the
+observation window and follows a [gamma
+distribution](https://en.wikipedia.org/wiki/Gamma_distribution) across users.
 
 # A Simulation
 
@@ -288,9 +293,12 @@ users depletes faster.
 The shared-frailty term explicitly models each user's persistent, unobserved
 propensity to return. The resulting treatment effects are conditional on that
 frailty: they compare treated and control users with the same latent propensity
-for engagement. This differs from a marginal model with cluster-robust standard
-errors, which adjusts the uncertainty for repeated observations without
-explicitly modeling the user-level heterogeneity.
+for engagement. This differs from a [marginal
+model](https://en.wikipedia.org/wiki/Recurrent_event_analysis#Marginal_means/rates_model)
+with [cluster-robust standard
+errors](https://en.wikipedia.org/wiki/Clustered_standard_errors), which adjusts
+the uncertainty for repeated observations without explicitly modeling the
+user-level heterogeneity.
 
 ## How to Read the Output
 
@@ -303,8 +311,9 @@ When reading your summary tables, keep these rules in mind:
 1.  **Exponentiate**: The `coef` column is additive on the log-hazards scale.
 Run `exp(coef)` to convert log-hazards into interpretable Hazard Ratios.
 2.  **Reference Level**: The first row (with just `treatment`) represents the
-impact on repeat usage; remember that we have an interaction term which means
-the impact can be different for first usage (activation) where
+impact on repeat usage; remember that we have an [interaction
+term](https://en.wikipedia.org/wiki/Interaction_%28statistics%29) which means the
+impact can be different for first usage (activation) where
 `is_first_event = TRUE`, the second row. The first row has implicitly
 `is_first_event = FALSE`.
 3.  **Interaction as Difference**: Speaking of interaction, the interaction
