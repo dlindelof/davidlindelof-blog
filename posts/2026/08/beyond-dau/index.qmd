@@ -2,6 +2,8 @@
 title: "Beyond DAU: How to Measure User Retention with Survival Analysis"
 author: "dlindelof"
 date: "2026-08-23"
+categories:
+  - R
 format: html
 execute:
   eval: true
@@ -277,18 +279,7 @@ model <- coxph(
 summary(model)
 ```
 
-# The "Frailty Attenuation" Gotcha
-
-If you run the code above, you might notice something odd when you exponentiate
-the coefficients (`exp(coef)`): the recovered hazard ratios will be slightly
-lower than our true simulated values of 2.0 and 3.0. This is a statistical
-gotcha known as **frailty attenuation**. This is a known phenomenon, but it
-doesn't change the main inference by much.
-
-Think of our gap-time risk intervals as a waiting pool. Because our treatment is
-successful, the treated "power users" (high frailty) trigger their events faster
-and reset their clocks earlier than low-frailty users. So the pool of treated
-users depletes faster.
+# Reading the Model Output
 
 The shared-frailty term explicitly models each user's persistent, unobserved
 propensity to return. The resulting treatment effects are conditional on that
@@ -300,29 +291,41 @@ errors](https://en.wikipedia.org/wiki/Clustered_standard_errors), which adjusts
 the uncertainty for repeated observations without explicitly modeling the
 user-level heterogeneity.
 
-## How to Read the Output
-
 For product decisions, this conditional interpretation answers an important
 question: *"Does the treatment get otherwise similar users to come back to the
 product more frequently?"*
 
-When reading your summary tables, keep these rules in mind:
+The `coef` column is additive on the log-hazard scale. Exponentiating a
+coefficient converts it into a hazard-ratio multiplier. Because
+`is_first_event = FALSE` is the reference stratum, the `treatment` coefficient
+describes repeat usage:
 
-1.  **Exponentiate**: The `coef` column is additive on the log-hazards scale.
-Run `exp(coef)` to convert log-hazards into interpretable Hazard Ratios.
-2.  **Reference Level**: The first row (with just `treatment`) represents the
-impact on repeat usage; remember that we have an [interaction
-term](https://en.wikipedia.org/wiki/Interaction_%28statistics%29) which means the
-impact can be different for first usage (activation) where
-`is_first_event = TRUE`, the second row. The first row has implicitly
-`is_first_event = FALSE`.
-3.  **Interaction as Difference**: Speaking of interaction, the interaction
-term `treatment:strata(...)` is the *difference* between activation and repeat
-usage. You're meant to add this to the main effect before exponentiating to
-find your true initial activation impact.
+$$
+HR_{\text{repeat}} = \exp(\beta_{\text{treatment}}) \approx 2.925
+$$
 
+This is close to the simulated repeat-use hazard ratio of 3.0.
 
-## In Real Life
+The [interaction term](https://en.wikipedia.org/wiki/Interaction_%28statistics%29)
+does not represent the first-use hazard ratio by itself. It represents the ratio
+between the first-use and repeat-use hazard ratios. Its exponentiated estimate
+is about 0.626, reasonably close to the simulated target of $2/3 \approx 0.667$.
+To recover the first-use effect, add the two coefficients on the log-hazard
+scale---or, equivalently, multiply their exponentiated values:
+
+$$
+HR_{\text{first}} = \exp(\beta_{\text{treatment}} + \beta_{\text{interaction}})
+           = 2.925 \times 0.626
+           \approx 1.83
+$$
+
+This is close to the simulated first-use hazard ratio of 2.0. The estimates do
+not reproduce the inputs exactly because they come from a finite random sample.
+Finally, the `frailty(...)` line in the summary is not another treatment
+coefficient; it describes the contribution of the shared user-level random
+effect.
+
+# In Real Life
 
 I presented this method at my day job, where it was accepted as a valid way to
 measure user retention. It will now be included in the playbook for future
