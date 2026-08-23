@@ -176,7 +176,7 @@ across users.
 # A Simulation
 
 Let's test this model by simulating a reasonably realistic dataset. We will
-generate 200 users who experience varying numbers of repeat events within a
+generate 2,000 users who experience varying numbers of repeat events within a
 fixed 10-day window. Events occur on a daily grid, so each user can have at most
 one event per day.
 
@@ -192,7 +192,7 @@ library(survival)
 # Set seed for reproducibility
 set.seed(123)
 
-n_users <- 200
+n_users <- 2000
 obs_window <- 10 # 10-day follow-up window per user
 
 # 1. Simulate Treatment Allocation and Inherent Frailty
