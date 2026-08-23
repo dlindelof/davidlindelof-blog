@@ -1,0 +1,320 @@
+---
+title: "Beyond DAU: How to Measure User Retention with Survival Analysis"
+author: "dlindelof"
+date: "2026-08-23"
+format: html
+execute:
+  eval: true
+---
+
+# The Team's Nightmare: Spike and Baseline
+
+Here's an all-too-common scenario: your team makes a heroic effort to implement
+a new product feature, finally launches it, and everyone celebrates the initial
+burst of daily usage---until the graph flattens and returns to its pre-launch
+baseline. You have launched a dud.
+
+What makes this scenario particularly disturbing is that a proper launch
+experiment, in which we'd ramp up feature availability and compare the treatment
+group with a control group, would probably have registered a positive impact on
+daily usage, fueled mostly by hype and word-of-mouth. But once the initial
+excitement is over, and users realize they didn't need the new feature, it's back
+to baseline.
+
+Getting a user to click a shiny new button once is easy. The true test of a
+feature's value---of its *utility* to the user---is whether it contributes to
+user retention. I'll go so far as to claim that the best proxy for *any*
+product's quality is user retention.
+
+How do we measure user retention? Certainly not by measuring week-over-week
+retention. I'll explain.
+
+# The Week-over-Week Retention Siren Song
+
+When measuring retention, it is incredibly tempting to reach for simple binary
+outcomes. We ask questions like, *"On average, what proportion of users return within 7 days after using the product?"*
+
+DAU has the same limitation at the aggregate level: it tells us how much
+activity happened, but not whether the launch created durable habits among
+individual users. A one-off spike and sustained retention can produce similar
+short-term DAU numbers.
+
+Although simple to query and easy to explain, these metrics are inefficient and
+can lead to misleading insights:
+
+1.  **Arbitrary Time Horizons**: Why 7 days? Why not 30 days? Fixed windows are
+arbitrary. Suppose your users use the product once every week, and the feature
+makes them come back twice a week. A metric like week-over-week retention would
+be blind to such a dramatic impact.
+2.  **Masking Acceleration**: A fantastic feature might do more than merely
+bring users back; it might bring them back *faster*. A fixed-window binary
+metric only asks *if* they returned, not *how much sooner*.
+3.  **Confounding Activation with Retention**: If your UI change successfully
+activates a massive wave of new users, a simple population-wide return metric
+can be heavily skewed. We need a framework that isolates the effect on initial
+activation from the effect on sustained repeat usage among those already
+activated.
+
+I claim that there is a statistical tool that addresses all three problems. It
+is *survival analysis*, applied to recurrent events. But let's first look at an
+example.
+
+# Meet Alice and Bob
+
+Let's look at the timelines of two hypothetical users who enroll in our
+experiment on different calendar days. We analyze both users on calendar day 14,
+so they are censored at the same calendar time but have different amounts of
+follow-up.
+
+Here's what their timelines might look like:
+
+```{r}
+#| echo: false
+
+suppressPackageStartupMessages(library(ggplot2))
+
+# Create dummy timelines for our two characters
+data <- data.frame(
+  user = c(rep("Alice (Habitual)", 4), "Bob (Bounced)"),
+  day = c(1, 3, 6, 9, 4), # Alice starts Day 1, Bob starts Day 4
+  event_type = c("Exposure", "First Event", "Repeat Event", "Repeat Event", "Exposure"),
+  censored = c(FALSE, FALSE, FALSE, FALSE, FALSE)
+)
+
+# Both users are administratively censored when the analysis is run
+analysis_day <- 14
+
+censoring_data <- data.frame(
+  user = c("Alice (Habitual)", "Bob (Bounced)"),
+  day = c(analysis_day, analysis_day),
+  event_type = c("Censored", "Censored"),
+  censored = c(TRUE, TRUE)
+)
+
+full_data <- rbind(data, censoring_data)
+
+# Plot their journeys
+p <- ggplot(full_data, aes(x = day, y = user, color = event_type, shape = event_type)) +
+  geom_line(aes(group = user), color = "gray") +
+  geom_vline(xintercept = analysis_day, linetype = "dashed", color = "gray50") +
+  geom_point(size = 4) +
+  scale_shape_manual(values = c("Exposure" = 17, "First Event" = 18, "Repeat Event" = 16, "Censored" = 4)) +
+  scale_color_manual(values = c("Exposure" = "#2b8cbe", "First Event" = "#8856a7", "Repeat Event" = "#2ca25f", "Censored" = "#de2d26")) +
+  theme_minimal() +
+  labs(title = "User Engagement Timelines (Calendar Scale)",
+       subtitle = "Both users are censored when the analysis is run on Day 14",
+       x = "Calendar Day",
+       y = "",
+       color = "Milestone",
+       shape = "Milestone") +
+  ylim("Bob (Bounced)", "Alice (Habitual)")
+
+print(p)
+```
+
+Here's the story told by this plot:
+
+-   **Alice** enrolls on Day 1, tries the feature on Day 3, and triggers
+multiple repeat events before she is censored on the analysis date, Day 14.
+-   **Bob** enrolls on Day 4, gets exposed, but never triggers a single event
+before being censored on that same analysis date.
+
+The key insight here is that we're going to model two different kinds of
+gap times:
+
+1. The time until the first use of the product (at most one gap time per user)
+2. The time between subsequent uses of the product (zero or more such intervals
+per user)
+
+The simple aggregate metrics discussed above struggle with Alice's repeated
+events and do not handle Bob's right-censoring correctly. Simply excluding users
+like Bob from the analysis is a serious mistake.
+
+# Using the Cox Model for Product Usage
+
+To analyze these timelines rigorously, we use the **Cox proportional hazards
+model** for recurrent events.
+
+If you took a statistics class, you might remember survival analysis being used
+in medical research where an "event" means failure or death.
+
+(Whether we like it or not, biostatisticians got there first and named the
+concepts, which is why terms such as "hazard ratio" and "survival curve" can
+sound counterintuitive in a product context. I always need a couple of minutes
+to explain this to a non-technical audience.)
+
+For product usage, we define an **event** as *any day on which the user used the
+product at least once*.
+
+## Interpreting Survival Analysis Outcomes
+
+The hazard rate is the fundamental quantity in a survival model. When we compare
+two treatments, our key metric is their hazard ratio. It sounds like a terrible
+thing, but in this setting it is exactly what we want to be high.
+
+-   **The Hazard Rate ($h(t)$)**: Think of this as a user's *instantaneous momentum*—the instantaneous rate of engagement at time $t$, given that they haven't engaged yet in the current interval.
+-   **The Hazard Ratio (HR)**: This is our ultimate success metric. It compares the engagement momentum of our treatment group to the control group ($HR = h_{treatment}(t) / h_{control}(t)$).
+    -   **$HR > 1$**: The treatment accelerates usage. Users return faster and more frequently. **This is what we want.**
+    -   **$HR = 1$**: Flat impact.
+    -   **$HR < 1$**: The treatment slows down engagement.
+
+## Key Model Assumptions
+
+When applying this model, we rely on four fundamental assumptions:
+
+1.  **Proportional Hazards**: We assume that the hazard ratio is constant over time. If our shiny new UI doubles a user's instantaneous return rate on Day 2, it should also roughly double it on Day 8.
+2.  **Non-informative Censoring**: We assume that users being censored (their window ending) tells us nothing about their underlying habits. I find this hard to wrap my head
+around, but it mainly means that we run the analysis at a date that has nothing
+to do with whether we're still waiting for some users to act. A fixed
+administrative cutoff makes this assumption plausible, provided that the cutoff
+is unrelated to the users' underlying propensity to return.
+3.  **Independence Across Clusters**: While Alice's repeat events are obviously correlated with each other, we assume Alice's behavior is completely independent of Bob's.
+4.  **Shared Frailty**: We assume that each user's unobserved propensity to
+engage is constant over the observation window and follows a gamma distribution
+across users.
+
+# A Simulation
+
+Let's test this model by simulating a reasonably realistic dataset. We will
+generate 200 users who experience varying numbers of repeat events within a
+fixed 10-day window. Events occur on a daily grid, so each user can have at most
+one event per day.
+
+To make it more realistic, we inject a **gamma frailty** (a random effect) per
+user. This simulates the fact that some people are inherently "power users"
+while others are inherently casual, inducing true within-user correlation.
+
+Here is the complete simulation code, including the model fitting:
+
+```{r}
+library(survival)
+
+# Set seed for reproducibility
+set.seed(123)
+
+n_users <- 200
+obs_window <- 10 # 10-day follow-up window per user
+
+# 1. Simulate Treatment Allocation and Inherent Frailty
+# A gamma distribution with mean 1 centers our "average" user
+user_frailty <- rgamma(n_users, shape = 2, rate = 2)
+users <- data.frame(
+  user_id = 1:n_users,
+  treatment = rbinom(n_users, 1, 0.5),
+  frailty = user_frailty
+)
+
+simulated_data <- list()
+
+# 2. Generate timelines using a gap-time formulation
+for (i in 1:n_users) {
+  u <- users[i, ]
+  current_time <- 0
+  event_count <- 0
+
+  while (current_time < obs_window) {
+    is_first <- (event_count == 0)
+
+    # Baseline rates: harder to activate initially, easier to trigger repeat usage
+    base_rate <- if (is_first) 0.05 else 0.15
+
+    # Let's say our treatment is amazing: doubles activation (HR=2), triples repeat usage (HR=3)
+    hr <- if (u$treatment == 1) {
+      if (is_first) 2.0 else 3.0
+    } else {
+      1.0
+    }
+
+    # The latent daily rate combines baseline, treatment boost, and personal frailty
+    rate <- base_rate * hr * u$frailty
+
+    # Geometric waiting times are whole days and are always at least one,
+    # ensuring at most one event per user per day.
+    daily_event_probability <- 1 - exp(-rate)
+    t_next <- rgeom(1, prob = daily_event_probability) + 1
+
+    if (current_time + t_next <= obs_window) {
+      # Event occurs inside the window! Reset the gap-time clock.
+      event_count <- event_count + 1
+      current_time <- current_time + t_next
+
+      simulated_data[[length(simulated_data) + 1]] <- data.frame(
+        user_id = u$user_id,
+        treatment = u$treatment,
+        is_first_event = is_first,
+        time = t_next, # Whole days since the last event
+        event = 1
+      )
+    } else {
+      # Window ends before the next event occurs. Censor the remaining time.
+      t_censored <- obs_window - current_time
+      simulated_data[[length(simulated_data) + 1]] <- data.frame(
+        user_id = u$user_id,
+        treatment = u$treatment,
+        is_first_event = is_first,
+        time = t_censored,
+        event = 0 # Censored observation
+      )
+      break
+    }
+  }
+}
+
+df <- do.call(rbind, simulated_data)
+
+# 3. Fit a Cox model with shared gamma frailty
+# strata(...) gives activation and repeat usage separate baseline hazards.
+model <- coxph(
+  Surv(time, event) ~ treatment * strata(is_first_event) +
+    frailty(user_id, distribution = "gamma"),
+  data = df
+)
+summary(model)
+```
+
+# The "Frailty Attenuation" Gotcha
+
+If you run the code above, you might notice something odd when you exponentiate
+the coefficients (`exp(coef)`): the recovered hazard ratios will be slightly
+lower than our true simulated values of 2.0 and 3.0. This is a statistical
+gotcha known as **frailty attenuation**. This is a known phenomenon, but it
+doesn't change the main inference by much.
+
+Think of our gap-time risk intervals as a waiting pool. Because our treatment is
+successful, the treated "power users" (high frailty) trigger their events faster
+and reset their clocks earlier than low-frailty users. So the pool of treated
+users depletes faster.
+
+The shared-frailty term explicitly models each user's persistent, unobserved
+propensity to return. The resulting treatment effects are conditional on that
+frailty: they compare treated and control users with the same latent propensity
+for engagement. This differs from a marginal model with cluster-robust standard
+errors, which adjusts the uncertainty for repeated observations without
+explicitly modeling the user-level heterogeneity.
+
+## How to Read the Output
+
+For product decisions, this conditional interpretation answers an important
+question: *"Does the treatment get otherwise similar users to come back to the
+product more frequently?"*
+
+When reading your summary tables, keep these rules in mind:
+
+1.  **Exponentiate**: The `coef` column is additive on the log-hazards scale.
+Run `exp(coef)` to convert log-hazards into interpretable Hazard Ratios.
+2.  **Reference Level**: The first row (with just `treatment`) represents the
+impact on repeat usage; remember that we have an interaction term which means
+the impact can be different for first usage (activation) where
+`is_first_event = TRUE`, the second row. The first row has implicitly
+`is_first_event = FALSE`.
+3.  **Interaction as Difference**: Speaking of interaction, the interaction
+term `treatment:strata(...)` is the *difference* between activation and repeat
+usage. You're meant to add this to the main effect before exponentiating to
+find your true initial activation impact.
+
+
+## In Real Life
+
+I presented this method at my day job, where it was accepted as a valid way to
+measure user retention. It will now be included in the playbook for future
+launches.
