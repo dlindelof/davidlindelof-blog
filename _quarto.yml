@@ -10,10 +10,14 @@ website:
   navbar:
     right:
       - about.qmd
+      - text: R-bloggers
+        href: https://www.r-bloggers.com/
       - icon: github
         href: https://github.com/
       - icon: bluesky
         href: https://bsky.app/
+      - icon: rss
+        href: index.xml
 format:
   html:
     theme:
@@ -25,4 +29,3 @@ format:
 execute:
   freeze: auto
   eval: false
-
