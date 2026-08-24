@@ -6,6 +6,8 @@ project:
 website:
   description: "A blog built with Quarto"
   site-url: https://blog.davidlindelof.com
+  plausible-analytics:
+    path: _plausible_snippet.html
   title: "David's blog"
   navbar:
     right:
