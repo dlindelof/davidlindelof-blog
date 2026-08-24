@@ -6,14 +6,20 @@ project:
 website:
   description: "A blog built with Quarto"
   site-url: https://blog.davidlindelof.com
+  plausible-analytics:
+    path: _plausible_snippet.html
   title: "David's blog"
   navbar:
     right:
       - about.qmd
+      - text: R-bloggers
+        href: https://www.r-bloggers.com/
       - icon: github
         href: https://github.com/
       - icon: bluesky
         href: https://bsky.app/
+      - icon: rss
+        href: index.xml
 format:
   html:
     theme:
@@ -25,4 +31,3 @@ format:
 execute:
   freeze: auto
   eval: false
-
