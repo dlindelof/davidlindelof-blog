@@ -1,0 +1,5 @@
+/.quarto/
+**/*.quarto_ipynb
+.Rproj.user
+.positai
+.env.local
