@@ -1,0 +1,47 @@
+---
+title: "Making sense of non-parametric tests"
+date: 2026-08-27
+draft: true
+categories:
+  - r
+  - statistics
+execute:
+  eval: true
+---
+
+When I was studying physics we had our required share of lab work, which was
+also our introduction to experimental statistics. It was there that I heard
+for the first time about hypothesis testing, in particular about the t-test.
+And since I never formally studied Statistics, this is what I always
+assumed to be one of the most fundamental tests there was. How wrong.
+
+The problem with the t-test, which is often overlooked, lies in the assumptions
+it relies on---particularly the normality assumption. Violations of this
+assumption, we're told, can introduce bias. This makes it sound as if the
+error is minor at worst; in fact it can lead to completely wrong conclusions.
+
+Imagine we have an experiment with 300 pairs of matched subjects, where one
+member of each pair, chosen at random, gets some treatment. For each pair $i$
+we measure $d_i = r_{Ti} - r_{Ci}$, the difference in responses between the
+treated unit and the control unit. Let's assume now that $d_i$ isn't
+normally distributed but, say, lognormally distributed up to some constant:
+
+```{r}
+set.seed(20260826)
+
+n <- 300
+d <- rlnorm(n, meanlog = 0, sdlog = 1) - 1.4
+
+w <- wilcox.test(
+  d,
+  mu = 0,
+  conf.int = TRUE,
+  exact = FALSE
+)
+
+print(c(
+  mean   = mean(d),
+  median = median(d),
+  HL     = unname(w$estimate)
+))
+```
