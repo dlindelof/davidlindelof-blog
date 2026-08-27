@@ -1,0 +1,15 @@
+{
+  "hash": "4df7dbd70e6da479518e2166193ff1f1",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"Making sense of non-parametric tests\"\ndate: 2026-08-27\ndraft: true\ncategories:\n  - r\n  - statistics\nexecute:\n  eval: true\n---\n\nWhen I was studying physics we had our required share of lab work, which was\nalso our introduction to experimental statistics. It was there that I heard\nfor the first time about hypothesis testing, in particular about the t-test.\nAnd since I never formally studied Statistics, this is what I always\nassumed to be one of the most fundamental tests there was. How wrong.\n\nThe problem with the t-test, which is often overlooked, lies in the assumptions\nit relies on---particularly the normality assumption. Violations of this\nassumption, we're told, can introduce bias. This makes it sound as if the\nerror is minor at worst; in fact it can lead to completely wrong conclusions.\n\nImagine we have an experiment with 300 pairs of matched subjects, where one\nmember of each pair, chosen at random, gets some treatment. For each pair $i$\nwe measure $d_i = r_{Ti} - r_{Ci}$, the difference in responses between the\ntreated unit and the control unit. Let's assume now that $d_i$ isn't\nnormally distributed but, say, lognormally distributed up to some constant:\n\n\n::: {.cell}\n\n```{.r .cell-code}\nset.seed(20260826)\n\nn <- 300\nd <- rlnorm(n, meanlog = 0, sdlog = 1) - 1.4\n\nw <- wilcox.test(\n  d,\n  mu = 0,\n  conf.int = TRUE,\n  exact = FALSE\n)\n\nprint(c(\n  mean   = mean(d),\n  median = median(d),\n  HL     = unname(w$estimate)\n))\n```\n\n::: {.cell-output .cell-output-stdout}\n\n```\n      mean     median         HL \n 0.3181297 -0.3297339 -0.1049871 \n```\n\n\n:::\n:::\n\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}
