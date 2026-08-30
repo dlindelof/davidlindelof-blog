@@ -4,16 +4,31 @@ image: profile.jpg
 about:
   template: jolla
   links:
-    - icon: bluesky
-      text: Bluesky
-      href: https://bsky.app/
+    - icon: github
+      text: GitHub
+      href: https://github.com/dlindelof
+    - icon: twitter
+      text: Twitter
+      href: https://twitter.com/dlindelof
     - icon: linkedin
       text: LinkedIn
-      href: https://linkedin.com
-    - icon: github
-      text: Github
-      href: https://github.com
+      href: https://www.linkedin.com/in/dlindelof/
 
 ---
 
-About this blog
+I'm David Lindelöf. My work and interests span statistics, data science,
+software engineering, and scientific computing, informed by a background in
+physics and building science.
+
+I use this blog to work through ideas in public, with practical explanations,
+reproducible analyses, and lessons from building software and using data to
+answer real questions. Follow along if you value technically careful writing
+that connects theory with practice.
+
+I occasionally help teams with statistical analysis, experiment design, and
+practical R training---especially when a problem sits between statistical
+methodology and implementation. If you think I might be useful for a project or
+workshop, feel free to get in touch.
+
+The easiest way to reach me is through
+[LinkedIn](https://www.linkedin.com/in/dlindelof/).

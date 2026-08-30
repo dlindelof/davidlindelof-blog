@@ -4,7 +4,7 @@ project:
     - CNAME
 
 website:
-  description: "A blog built with Quarto"
+  description: "Notes on statistics, data science, software engineering, and scientific computing."
   site-url: https://blog.davidlindelof.com
   plausible-analytics:
     path: _plausible_snippet.html
@@ -15,11 +15,17 @@ website:
       - text: R-bloggers
         href: https://www.r-bloggers.com/
       - icon: github
-        href: https://github.com/
-      - icon: bluesky
-        href: https://bsky.app/
+        href: https://github.com/dlindelof
+        aria-label: GitHub
+      - icon: twitter
+        href: https://twitter.com/dlindelof
+        aria-label: Twitter
+      - icon: linkedin
+        href: https://www.linkedin.com/in/dlindelof/
+        aria-label: LinkedIn
       - icon: rss
         href: index.xml
+        aria-label: RSS
 format:
   html:
     theme:
