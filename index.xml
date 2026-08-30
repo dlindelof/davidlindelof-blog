@@ -10,7 +10,519 @@
 <atom:link href="https://blog.davidlindelof.com/index.xml" rel="self" type="application/rss+xml"/>
 <description>Notes on statistics, data science, software engineering, and scientific computing.</description>
 <generator>quarto-1.10.18</generator>
-<lastBuildDate>Wed, 22 Jan 2025 00:00:00 GMT</lastBuildDate>
+<lastBuildDate>Sun, 23 Aug 2026 00:00:00 GMT</lastBuildDate>
+<item>
+  <title>Beyond DAU: How to Measure User Retention with Survival Analysis</title>
+  <dc:creator>dlindelof </dc:creator>
+  <link>https://blog.davidlindelof.com/posts/2026/08/beyond-dau/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+
+<section id="the-teams-nightmare-spike-and-baseline" class="level1">
+<h1>The Team’s Nightmare: Spike and Baseline</h1>
+<p>Here’s an all-too-common scenario: your team makes a heroic effort to implement a new product feature, finally launches it, and everyone celebrates the initial burst of daily usage—until the graph flattens and returns to its pre-launch baseline. You have launched a dud.</p>
+<p>What makes this scenario particularly disturbing is that a proper launch experiment, in which we’d ramp up feature availability and compare the treatment group with a control group, would probably have registered a positive impact on daily usage, fueled mostly by hype and word-of-mouth. But once the initial excitement is over, and users realize they didn’t need the new feature, it’s back to baseline.</p>
+<p>Getting a user to click a shiny new button once is easy. The true test of a feature’s value—of its <em>utility</em> to the user—is whether it contributes to user retention. I’ll go so far as to claim that the best proxy for <em>any</em> product’s quality is user retention.</p>
+<p>How do we measure user retention? Certainly not by measuring week-over-week retention. I’ll explain.</p>
+</section>
+<section id="the-week-over-week-retention-siren-song" class="level1">
+<h1>The Week-over-Week Retention Siren Song</h1>
+<p>When measuring retention, it is incredibly tempting to reach for simple binary outcomes. We ask questions like, <em>“On average, what proportion of users return within 7 days after using the product?”</em></p>
+<p><a href="https://en.wikipedia.org/wiki/Active_users">DAU</a> has the same limitation at the aggregate level: it tells us how much activity happened, but not whether the launch created durable habits among individual users. A one-off spike and sustained retention can produce similar short-term DAU numbers.</p>
+<p>Although simple to query and easy to explain, these metrics are inefficient and can lead to misleading insights:</p>
+<ol type="1">
+<li><strong>Arbitrary Time Horizons</strong>: Why 7 days? Why not 30 days? Fixed windows are arbitrary. Suppose your users use the product once every week, and the feature makes them come back twice a week. A metric like week-over-week retention would be blind to such a dramatic impact.</li>
+<li><strong>Masking Acceleration</strong>: A fantastic feature might do more than merely bring users back; it might bring them back <em>faster</em>. A fixed-window binary metric only asks <em>if</em> they returned, not <em>how much sooner</em>.</li>
+<li><strong>Confounding Activation with Retention</strong>: If your UI change successfully activates a massive wave of new users, a simple population-wide return metric can be heavily skewed. We need a framework that isolates the effect on initial activation from the effect on sustained repeat usage among those already activated.</li>
+</ol>
+<p>I claim that there is a statistical tool that addresses all three problems. It is <a href="https://en.wikipedia.org/wiki/Survival_analysis"><em>survival analysis</em></a>, applied to <a href="https://en.wikipedia.org/wiki/Recurrent_event_analysis">recurrent events</a>. But let’s first look at an example.</p>
+</section>
+<section id="meet-alice-and-bob" class="level1">
+<h1>Meet Alice and Bob</h1>
+<p>Let’s look at the timelines of two hypothetical users who enroll in our experiment on different calendar days. We analyze both users on calendar day 14, so they are <a href="https://en.wikipedia.org/wiki/Censoring_%28statistics%29">censored</a> at the same calendar time but have different amounts of follow-up.</p>
+<p>Here’s what their timelines might look like:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://blog.davidlindelof.com/posts/2026/08/beyond-dau/index_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Here’s the story told by this plot:</p>
+<ul>
+<li><strong>Alice</strong> enrolls on Day 1, tries the feature on Day 3, and triggers multiple repeat events before she is censored on the analysis date, Day 14.</li>
+<li><strong>Bob</strong> enrolls on Day 4, gets exposed, but never triggers a single event before being censored on that same analysis date.</li>
+</ul>
+<p>The key insight here is that we’re going to model two different kinds of gap times:</p>
+<ol type="1">
+<li>The time until the first use of the product (at most one gap time per user)</li>
+<li>The time between subsequent uses of the product (zero or more such intervals per user)</li>
+</ol>
+<p>The simple aggregate metrics discussed above struggle with Alice’s repeated events and do not handle Bob’s right-censoring correctly. Simply excluding users like Bob from the analysis is a serious mistake.</p>
+</section>
+<section id="using-the-cox-model-for-product-usage" class="level1">
+<h1>Using the Cox Model for Product Usage</h1>
+<p>To analyze these timelines rigorously, we use the <strong><a href="https://en.wikipedia.org/wiki/Proportional_hazards_model">Cox proportional hazards model</a></strong> for recurrent events.</p>
+<p>If you took a statistics class, you might remember survival analysis being used in medical research where an “event” means failure or death.</p>
+<p>(Whether we like it or not, biostatisticians got there first and named the concepts, which is why terms such as “<a href="https://en.wikipedia.org/wiki/Hazard_ratio">hazard ratio</a>” and “survival curve” can sound counterintuitive in a product context. I always need a couple of minutes to explain this to a non-technical audience.)</p>
+<p>For product usage, we define an <strong>event</strong> as <em>any day on which the user used the product at least once</em>.</p>
+<section id="interpreting-survival-analysis-outcomes" class="level2">
+<h2 class="anchored" data-anchor-id="interpreting-survival-analysis-outcomes">Interpreting Survival Analysis Outcomes</h2>
+<p>The <a href="https://en.wikipedia.org/wiki/Failure_rate#Hazard_rate">hazard rate</a> is the fundamental quantity in a survival model. When we compare two treatments, our key metric is their hazard ratio. It sounds like a terrible thing, but in this setting it is exactly what we want to be high.</p>
+<ul>
+<li><strong>The Hazard Rate (<img src="https://latex.codecogs.com/png.latex?h(t)">)</strong>: Think of this as a user’s <em>instantaneous momentum</em>—the instantaneous rate of engagement at time <img src="https://latex.codecogs.com/png.latex?t">, given that they haven’t engaged yet in the current interval.</li>
+<li><strong>The Hazard Ratio (HR)</strong>: This is our ultimate success metric. It compares the engagement momentum of our treatment group to the control group (<img src="https://latex.codecogs.com/png.latex?HR%20=%20h_%7Btreatment%7D(t)%20/%20h_%7Bcontrol%7D(t)">).
+<ul>
+<li><strong><img src="https://latex.codecogs.com/png.latex?HR%20%3E%201"></strong>: The treatment accelerates usage. Users return faster and more frequently. <strong>This is what we want.</strong></li>
+<li><strong><img src="https://latex.codecogs.com/png.latex?HR%20=%201"></strong>: Flat impact.</li>
+<li><strong><img src="https://latex.codecogs.com/png.latex?HR%20%3C%201"></strong>: The treatment slows down engagement.</li>
+</ul></li>
+</ul>
+</section>
+<section id="key-model-assumptions" class="level2">
+<h2 class="anchored" data-anchor-id="key-model-assumptions">Key Model Assumptions</h2>
+<p>When applying this model, we rely on four fundamental assumptions:</p>
+<ol type="1">
+<li><strong>Proportional Hazards</strong>: We assume that the hazard ratio is constant over time. If our shiny new UI doubles a user’s instantaneous return rate on Day 2, it should also roughly double it on Day 8.</li>
+<li><strong><a href="https://en.wikipedia.org/wiki/Censoring_%28statistics%29#Types">Non-informative Censoring</a></strong>: We assume that users being censored (their window ending) tells us nothing about their underlying habits. I find this hard to wrap my head around, but it mainly means that we run the analysis at a date that has nothing to do with whether we’re still waiting for some users to act. A fixed administrative cutoff makes this assumption plausible, provided that the cutoff is unrelated to the users’ underlying propensity to return.</li>
+<li><strong>Independence Across Clusters</strong>: While Alice’s repeat events are obviously correlated with each other, we assume Alice’s behavior is completely independent of Bob’s.</li>
+<li><strong><a href="https://en.wikipedia.org/wiki/Recurrent_event_analysis#Frailty_models">Shared Frailty</a></strong>: We assume that each user’s unobserved propensity to engage is constant over the observation window and follows a <a href="https://en.wikipedia.org/wiki/Gamma_distribution">gamma distribution</a> across users.</li>
+</ol>
+</section>
+</section>
+<section id="a-simulation" class="level1">
+<h1>A Simulation</h1>
+<p>Let’s test this model by simulating a reasonably realistic dataset. We will generate 2,000 users who experience varying numbers of repeat events within a fixed 10-day window. Events occur on a daily grid, so each user can have at most one event per day.</p>
+<p>To make it more realistic, we inject a <strong>gamma frailty</strong> (a random effect) per user. This simulates the fact that some people are inherently “power users” while others are inherently casual, inducing true within-user correlation.</p>
+<p>Here is the complete simulation code, including the model fitting:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(survival)</span>
+<span id="cb1-2"></span>
+<span id="cb1-3"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Set seed for reproducibility</span></span>
+<span id="cb1-4"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">set.seed</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">123</span>)</span>
+<span id="cb1-5"></span>
+<span id="cb1-6">n_users <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2000</span></span>
+<span id="cb1-7">obs_window <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span> <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># 10-day follow-up window per user</span></span>
+<span id="cb1-8"></span>
+<span id="cb1-9"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># 1. Simulate Treatment Allocation and Inherent Frailty</span></span>
+<span id="cb1-10"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># A gamma distribution with mean 1 centers our "average" user</span></span>
+<span id="cb1-11">user_frailty <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rgamma</span>(n_users, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">shape =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">rate =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>)</span>
+<span id="cb1-12">users <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">data.frame</span>(</span>
+<span id="cb1-13">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">user_id =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:</span>n_users,</span>
+<span id="cb1-14">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">treatment =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rbinom</span>(n_users, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span>),</span>
+<span id="cb1-15">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">frailty =</span> user_frailty</span>
+<span id="cb1-16">)</span>
+<span id="cb1-17"></span>
+<span id="cb1-18">simulated_data <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">list</span>()</span>
+<span id="cb1-19"></span>
+<span id="cb1-20"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># 2. Generate timelines using a gap-time formulation</span></span>
+<span id="cb1-21"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> (i <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:</span>n_users) {</span>
+<span id="cb1-22">  u <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> users[i, ]</span>
+<span id="cb1-23">  current_time <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span></span>
+<span id="cb1-24">  event_count <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span></span>
+<span id="cb1-25"></span>
+<span id="cb1-26">  <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">while</span> (current_time <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&lt;</span> obs_window) {</span>
+<span id="cb1-27">    is_first <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> (event_count <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>)</span>
+<span id="cb1-28"></span>
+<span id="cb1-29">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Baseline rates: harder to activate initially, easier to trigger repeat usage</span></span>
+<span id="cb1-30">    base_rate <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> (is_first) <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.05</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">else</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.15</span></span>
+<span id="cb1-31"></span>
+<span id="cb1-32">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Let's say our treatment is amazing: doubles activation (HR=2), triples repeat usage (HR=3)</span></span>
+<span id="cb1-33">    hr <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> (u<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>treatment <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>) {</span>
+<span id="cb1-34">      <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> (is_first) <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2.0</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">else</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3.0</span></span>
+<span id="cb1-35">    } <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">else</span> {</span>
+<span id="cb1-36">      <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1.0</span></span>
+<span id="cb1-37">    }</span>
+<span id="cb1-38"></span>
+<span id="cb1-39">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># The latent daily rate combines baseline, treatment boost, and personal frailty</span></span>
+<span id="cb1-40">    rate <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> base_rate <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> hr <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> u<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>frailty</span>
+<span id="cb1-41"></span>
+<span id="cb1-42">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Geometric waiting times are whole days and are always at least one,</span></span>
+<span id="cb1-43">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># ensuring at most one event per user per day.</span></span>
+<span id="cb1-44">    daily_event_probability <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">exp</span>(<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span>rate)</span>
+<span id="cb1-45">    t_next <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rgeom</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">prob =</span> daily_event_probability) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span></span>
+<span id="cb1-46"></span>
+<span id="cb1-47">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> (current_time <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> t_next <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&lt;=</span> obs_window) {</span>
+<span id="cb1-48">      <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Event occurs inside the window! Reset the gap-time clock.</span></span>
+<span id="cb1-49">      event_count <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> event_count <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span></span>
+<span id="cb1-50">      current_time <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> current_time <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> t_next</span>
+<span id="cb1-51"></span>
+<span id="cb1-52">      simulated_data[[<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">length</span>(simulated_data) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>]] <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">data.frame</span>(</span>
+<span id="cb1-53">        <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">user_id =</span> u<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>user_id,</span>
+<span id="cb1-54">        <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">treatment =</span> u<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>treatment,</span>
+<span id="cb1-55">        <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">is_first_event =</span> is_first,</span>
+<span id="cb1-56">        <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">time =</span> t_next, <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Whole days since the last event</span></span>
+<span id="cb1-57">        <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">event =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span></span>
+<span id="cb1-58">      )</span>
+<span id="cb1-59">    } <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">else</span> {</span>
+<span id="cb1-60">      <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Window ends before the next event occurs. Censor the remaining time.</span></span>
+<span id="cb1-61">      t_censored <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> obs_window <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> current_time</span>
+<span id="cb1-62">      simulated_data[[<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">length</span>(simulated_data) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>]] <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">data.frame</span>(</span>
+<span id="cb1-63">        <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">user_id =</span> u<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>user_id,</span>
+<span id="cb1-64">        <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">treatment =</span> u<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>treatment,</span>
+<span id="cb1-65">        <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">is_first_event =</span> is_first,</span>
+<span id="cb1-66">        <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">time =</span> t_censored,</span>
+<span id="cb1-67">        <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">event =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span> <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Censored observation</span></span>
+<span id="cb1-68">      )</span>
+<span id="cb1-69">      <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">break</span></span>
+<span id="cb1-70">    }</span>
+<span id="cb1-71">  }</span>
+<span id="cb1-72">}</span>
+<span id="cb1-73"></span>
+<span id="cb1-74">df <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">do.call</span>(rbind, simulated_data)</span>
+<span id="cb1-75"></span>
+<span id="cb1-76"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># 3. Fit a Cox model with shared gamma frailty</span></span>
+<span id="cb1-77"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># strata(...) gives activation and repeat usage separate baseline hazards.</span></span>
+<span id="cb1-78">model <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">coxph</span>(</span>
+<span id="cb1-79">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">Surv</span>(time, event) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span> treatment <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">strata</span>(is_first_event) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb1-80">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">frailty</span>(user_id, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">distribution =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"gamma"</span>),</span>
+<span id="cb1-81">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">data =</span> df</span>
+<span id="cb1-82">)</span>
+<span id="cb1-83"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">summary</span>(model)</span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Call:
+coxph(formula = Surv(time, event) ~ treatment * strata(is_first_event) + 
+    frailty(user_id, distribution = "gamma"), data = df)
+
+  n= 4137, number of events= 2439 
+
+                          coef    se(coef) se2     Chisq  DF    p      
+treatment                  1.0732 0.0760   0.06576 199.37   1.0 2.9e-45
+frailty(user_id, distribu                          927.77 569.1 1.2e-19
+treatment:strata(is_first -0.4691 0.1034   0.09505  20.57   1.0 5.7e-06
+
+                                                    exp(coef) exp(-coef)
+treatment                                              2.9246     0.3419
+treatment:strata(is_first_event)is_first_event=TRUE    0.6256     1.5985
+                                                    lower .95 upper .95
+treatment                                              2.5198    3.3944
+treatment:strata(is_first_event)is_first_event=TRUE    0.5108    0.7661
+
+Iterations: 6 outer, 45 Newton-Raphson
+     Variance of random effect= 0.402791   I-likelihood = -17064.6 
+Degrees of freedom for terms=   0.7 569.1   0.8 
+Concordance= 0.786  (se = 0.005 )
+Likelihood ratio test= 1481  on 570.6 df,   p=&lt;2e-16</code></pre>
+</div>
+</div>
+</section>
+<section id="reading-the-model-output" class="level1">
+<h1>Reading the Model Output</h1>
+<p>The shared-frailty term explicitly models each user’s persistent, unobserved propensity to return. The resulting treatment effects are conditional on that frailty: they compare treated and control users with the same latent propensity for engagement. This differs from a <a href="https://en.wikipedia.org/wiki/Recurrent_event_analysis#Marginal_means/rates_model">marginal model</a> with <a href="https://en.wikipedia.org/wiki/Clustered_standard_errors">cluster-robust standard errors</a>, which adjusts the uncertainty for repeated observations without explicitly modeling the user-level heterogeneity.</p>
+<p>For product decisions, this conditional interpretation answers an important question: <em>“Does the treatment get otherwise similar users to come back to the product more frequently?”</em></p>
+<p>The <code>coef</code> column is additive on the log-hazard scale. Exponentiating a coefficient converts it into a hazard-ratio multiplier. Because <code>is_first_event = FALSE</code> is the reference stratum, the <code>treatment</code> coefficient describes repeat usage:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0AHR_%7B%5Ctext%7Brepeat%7D%7D%20=%20%5Cexp(%5Cbeta_%7B%5Ctext%7Btreatment%7D%7D)%20%5Capprox%202.925%0A"></p>
+<p>This is close to the simulated repeat-use hazard ratio of 3.0.</p>
+<p>The <a href="https://en.wikipedia.org/wiki/Interaction_%28statistics%29">interaction term</a> does not represent the first-use hazard ratio by itself. It represents the ratio between the first-use and repeat-use hazard ratios. Its exponentiated estimate is about 0.626, reasonably close to the simulated target of <img src="https://latex.codecogs.com/png.latex?2/3%20%5Capprox%200.667">. To recover the first-use effect, add the two coefficients on the log-hazard scale—or, equivalently, multiply their exponentiated values:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0AHR_%7B%5Ctext%7Bfirst%7D%7D%20=%20%5Cexp(%5Cbeta_%7B%5Ctext%7Btreatment%7D%7D%20+%20%5Cbeta_%7B%5Ctext%7Binteraction%7D%7D)%0A%20%20%20%20%20%20%20%20%20%20%20=%202.925%20%5Ctimes%200.626%0A%20%20%20%20%20%20%20%20%20%20%20%5Capprox%201.83%0A"></p>
+<p>This is close to the simulated first-use hazard ratio of 2.0. The estimates do not reproduce the inputs exactly because they come from a finite random sample. Finally, the <code>frailty(...)</code> line in the summary is not another treatment coefficient; it describes the contribution of the shared user-level random effect.</p>
+</section>
+<section id="in-real-life" class="level1">
+<h1>In Real Life</h1>
+<p>I presented this method at my day job, where it was accepted as a valid way to measure user retention. It will now be included in the playbook for future launches.</p>
+
+
+</section>
+
+ ]]></description>
+  <category>r</category>
+  <guid>https://blog.davidlindelof.com/posts/2026/08/beyond-dau/</guid>
+  <pubDate>Sun, 23 Aug 2026 00:00:00 GMT</pubDate>
+</item>
 <item>
   <title>How Are P-values Distributed Under The Null?</title>
   <link>https://blog.davidlindelof.com/posts/2025/01/how-are-p-values-distributed-under-the-null/</link>
@@ -7675,300 +8187,6 @@ RuntimeWarning: overflow encountered in reduce
   <category>python</category>
   <guid>https://blog.davidlindelof.com/posts/2020/10/testing-scientific-software-with-hypothesis/</guid>
   <pubDate>Wed, 28 Oct 2020 00:00:00 GMT</pubDate>
-</item>
-<item>
-  <title>Monty Hall: a programmer’s explanation</title>
-  <link>https://blog.davidlindelof.com/posts/2020/10/monty-hall-a-programmers-explanation/</link>
-  <description><![CDATA[ 
-
-
-
-
-
-
-<p>I take it we’re all familiar with the infamous <a href="https://en.wikipedia.org/wiki/Monty_Hall_problem">Monty Hall problem</a>:</p>
-<blockquote class="blockquote">
-<p>Suppose you’re on a game show, and you’re given the choice of three doors: Behind one door is a car; behind the others, goats. You pick a door, say A, and the host, who knows what’s behind the doors, opens another door, say C, which has a goat. He then says to you, “Do you want to pick door B?” Is it to your advantage to switch your choice?</p>
-</blockquote>
-<p>The correct strategy consists in accepting the offer to switch doors. The expected gain when doing so is 2/3, vs 1/3 when choosing not to change doors (there are only two doors left closed, so one of them must have the car; hence the expected gains sum to 1).</p>
-<figure class="figure">
-<p><img src="https://blog.davidlindelof.com/posts/2020/10/monty-hall-a-programmers-explanation/images/monty_hall.png" class="img-fluid figure-img"></p>
-<figcaption>
-<p><a href="https://xkcd.com/1282/">https://xkcd.com/1282/</a></p>
-</figcaption>
-</figure>
-<p>The mathematical proof is straightforward but most people (including me) have a hard time understanding intuitively what’s going on. There are plenty of explanations available online, but I’ve recently simulated the problem and come across one that I think is simpler and more elegant than anything I’ve seen so far. And I didn’t make it up; the simulation code did. Here’s how.</p>
-<section id="classic-monty" class="level2">
-<h2 class="anchored" data-anchor-id="classic-monty">Classic Monty</h2>
-<p>Let’s simulate 10,000 rounds of the game. The <code>car</code> vector will hold the door which has the car behind it:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1">n <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">10000</span></span>
-<span id="cb1-2">car <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">sample</span>(<span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">c</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'A'</span>, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'B'</span>, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'C'</span>), <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">size =</span> n, <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">replace =</span> <span class="cn" style="color: #8f5902;
-background-color: null;
-font-style: inherit;">TRUE</span>)</span></code></pre></div></div>
-<p>Quick check that the door appears randomly assigned:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">table</span>(car)</span>
-<span id="cb2-2"><span class="do" style="color: #5E5E5E;
-background-color: null;
-font-style: italic;">## car</span></span>
-<span id="cb2-3"><span class="do" style="color: #5E5E5E;
-background-color: null;
-font-style: italic;">##    A    B    C </span></span>
-<span id="cb2-4"><span class="do" style="color: #5E5E5E;
-background-color: null;
-font-style: italic;">## 3329 3310 3361</span></span></code></pre></div></div>
-<p>Let’s now simulate the door being opened by Monty. Without loss of generality, let’s assume you choose door A. Then if the car is behind door A, Monty will open door B or C at random; else he will open the door that has a goat.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1">door <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">ifelse</span>(</span>
-<span id="cb3-2">  car <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">==</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'A'</span>,</span>
-<span id="cb3-3">  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">sample</span>(<span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">c</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'B'</span>, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'C'</span>), <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">size =</span> n, <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">replace =</span> <span class="cn" style="color: #8f5902;
-background-color: null;
-font-style: inherit;">TRUE</span>), <span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># chosen at random </span></span>
-<span id="cb3-4">  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">ifelse</span>(car <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">==</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'B'</span>, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'C'</span>, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'B'</span>))  <span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># otherwise whichever door has a goat</span></span></code></pre></div></div>
-<p>Now the gain, when declining to switch, is given by how many cases have the car behind door A:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">sum</span>(car <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">==</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'A'</span>) <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">/</span> n</span>
-<span id="cb4-2"><span class="do" style="color: #5E5E5E;
-background-color: null;
-font-style: italic;">## [1] 0.3329</span></span></code></pre></div></div>
-<p>As expected, it is about 1/3.</p>
-<p>The gain, when switching doors, is given by how many times the unopened door has the car:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1">unopened <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">ifelse</span>(door <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">==</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'B'</span>, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'C'</span>, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'B'</span>)</span>
-<span id="cb5-2"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">sum</span>(car <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">==</span> unopened) <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">/</span> n</span>
-<span id="cb5-3"><span class="do" style="color: #5E5E5E;
-background-color: null;
-font-style: italic;">## [1] 0.6671</span></span></code></pre></div></div>
-<p>But the car is either behind the unopened door or behind A; you win if the car is not behind A. So the last expression is equivalent to</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">sum</span>(car <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">!=</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'A'</span>) <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">/</span> n</span>
-<span id="cb6-2"><span class="do" style="color: #5E5E5E;
-background-color: null;
-font-style: italic;">## [1] 0.6671</span></span></code></pre></div></div>
-<p>And this gives exactly the same result. The probability of winning the car when declining to switch is the probability that the car is behind door A. The probability of winning when switching is <em>just the probability that the car is not behind door A</em>, i.e., 2/3. And that’s the simplest, most elegant explanation of the paradox I’ve ever found.</p>
-<p>But there’s more. Notice that in our final expression, we had no need to know which door was opened. And this has interesting consequences for a variation of the game which I’ll call the <em>deterministic Monty Hall</em>.</p>
-</section>
-<section id="deterministic-monty" class="level2">
-<h2 class="anchored" data-anchor-id="deterministic-monty">Deterministic Monty</h2>
-<p>In the classic version of the game, Monty will select a door at random between B and C if the car happens to be behind A, the door chosen by the player. Let’s now suppose instead that when the car is behind A, Monty <em>always</em> chooses to open door B. Will that information change our strategy?</p>
-<p>On one hand, we would feel that when Monty opens door B, the car will more likely be behind door A, and perhaps we should instead choose to stay. Well, let’s simulate this.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1">door_deterministic <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">ifelse</span>(</span>
-<span id="cb7-2">  car <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">==</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'A'</span>, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'B'</span>, <span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># not chosen at random anymore</span></span>
-<span id="cb7-3">  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">ifelse</span>(car <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">==</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'B'</span>, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'C'</span>, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'B'</span>))</span></code></pre></div></div>
-<p>The expression for the expected gains are very similar. If choosing to stay, the expected gain remains</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">sum</span>(car <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">==</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'A'</span>) <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">/</span> n</span>
-<span id="cb8-2"><span class="do" style="color: #5E5E5E;
-background-color: null;
-font-style: italic;">## [1] 0.3329</span></span></code></pre></div></div>
-<p>While when choosing to switch, the gain becomes</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1">unopened_deterministic <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">ifelse</span>(door_deterministic <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">==</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'B'</span>, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'C'</span>, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'B'</span>)</span>
-<span id="cb9-2"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">sum</span>(car <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">==</span> unopened_deterministic) <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">/</span> n</span>
-<span id="cb9-3"><span class="do" style="color: #5E5E5E;
-background-color: null;
-font-style: italic;">## [1] 0.6671</span></span></code></pre></div></div>
-<p>But this last expression is <em>again</em> simply equal to</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">sum</span>(car <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">!=</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'A'</span>) <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">/</span> n</span>
-<span id="cb10-2"><span class="do" style="color: #5E5E5E;
-background-color: null;
-font-style: italic;">## [1] 0.6671</span></span></code></pre></div></div>
-<p>because no matter which strategy Monty used, the car still has to be behind A or the unopened door.</p>
-<p>Now this was completely counterintuitive to me: surely, knowing Monty’s strategy should give you an edge? But let’s consider separately the two possibilities:</p>
-<section id="monty-opens-b" class="level3">
-<h3 class="anchored" data-anchor-id="monty-opens-b">Monty opens B</h3>
-<p>Unlike the preceding scenario, this happens in <em>all</em> scenarios where the car is behind A or C (2/3 of the cases). And among these scenarios, in exactly half the cases the car is behind A. So you know that the car is equally likely to be behind A or C, and switching doors will neither help nor hurt you. So this scenario contributes <img src="https://latex.codecogs.com/png.latex?2/3%20%5C%5Ctimes%201/2%20=%201/3"> to the total expected gain.</p>
-</section>
-<section id="monty-opens-c" class="level3">
-<h3 class="anchored" data-anchor-id="monty-opens-c">Monty opens C</h3>
-<p>This can only happen when the car is behind B, so you certainly benefit from switching doors. But this happens only 1/3 of the time, and this scenario contributes <img src="https://latex.codecogs.com/png.latex?1/3%20%5C%5Ctimes%201%20=%201/3"> to the total expected gain.</p>
-<p>So in this variant of the game, your total expected gain remains exactly 2/3.</p>
-</section>
-<section id="computational-proof" class="level3">
-<h3 class="anchored" data-anchor-id="computational-proof">“Computational” proof</h3>
-<p>I’m not sure this would be accepted as a rigorous proof, but when I wrote the expression for the expected gain I always ended up with <code>sum(car != 'A') / n</code>, no matter what Monty’s strategy was. Or in plain English:</p>
-<blockquote class="blockquote">
-<p>The expected gain when switching doors is the probability that the car was not behind A in the first place.</p>
-</blockquote>
-<p>This, of course, is:</p>
-<ul>
-<li>obvious</li>
-<li>independent of Monty’s strategy</li>
-<li>always equal to 2/3</li>
-<li>possibly the most succinct explanation of Monty’s paradox I’ve come across</li>
-</ul>
-<p>But it never hurts to double-check what the maths tell us.</p>
-</section>
-</section>
-<section id="mathematical-proof" class="level2">
-<h2 class="anchored" data-anchor-id="mathematical-proof">Mathematical proof</h2>
-<p>Let’s work out the probability that the car should be behind door B when Monty opens door C.</p>
-<p><img src="https://latex.codecogs.com/png.latex?%5C%5CDeclareMathOperator%7B%5C%5COpen%7D%7BOpen%7D"></p>
-<p>\begin{align*}<br>
-\Pr(B \mid \Open(C)) &amp;= \frac{\Pr(\Open(C) \mid B) \times \Pr(B)}{\Pr(\Open(C))} &amp;&amp; \text{by Bayes} \\<br>
-&amp;= \frac{1 \times \Pr(B)}{\Pr(\Open(C))} &amp;&amp; \text{because <img src="https://latex.codecogs.com/png.latex?B%20%5C%5Cimplies%20%5C%5COpen(C)">} \\<br>
-&amp;= \frac{1/3}{\Pr(\Open(C))} &amp;&amp; \text{because each door is equally probable} \\<br>
-&amp;= \frac{1}{3} \frac{1}{\Pr(\Open(C) \mid A) \times \Pr(A) + \Pr(\Open(C) \mid B) \times \Pr(B)} &amp;&amp; \text{because <img src="https://latex.codecogs.com/png.latex?A"> or <img src="https://latex.codecogs.com/png.latex?B"> must be true when <img src="https://latex.codecogs.com/png.latex?C"> is open} \\<br>
-&amp;= \frac{1}{\Pr(\Open(C) \mid A) + \Pr(\Open(C) \mid B)} &amp;&amp; \text{because <img src="https://latex.codecogs.com/png.latex?%5C%5CPr(A)%20=%20%5C%5CPr(B)%20=%201/3">}, \\<br>
-\end{align*}</p>
-<p>and similarly for&nbsp;<img src="https://latex.codecogs.com/png.latex?%5C%5CPr(C%20%5C%5Cmid%20%5C%5COpen(B))">. This result does not depend on Monty’s strategy, but the final figures do:</p>
-<p>\begin{align*}<br>
-\text{Random choice:} &amp;&amp; \Pr(B \mid \Open(C)) &amp;= 2/3 \\<br>
-&amp;&amp; \Pr(C \mid \Open(B)) &amp;= 2/3 \\<br>
-\text{Deterministic:} &amp;&amp; \Pr(B \mid \Open(C)) &amp;= 1 \\<br>
-&amp;&amp; \Pr(C \mid \Open(B)) &amp;= 1/2,<br>
-\end{align*}</p>
-<p>but the <em>expected gain</em> when switching doors (without knowing Monty’s strategy) depends on <img src="https://latex.codecogs.com/png.latex?%5C%5CPr(%5C%5COpen(B))"> and <img src="https://latex.codecogs.com/png.latex?%5C%5CPr(%5C%5COpen(C))">. When Monty’s choice is random, <img src="https://latex.codecogs.com/png.latex?%5C%5CPr(%5C%5COpen(B))%20=%20%5C%5CPr(%5C%5COpen(C))%20=%201/2">, but when his choice is deterministic, we have <img src="https://latex.codecogs.com/png.latex?%5C%5CPr(%5C%5COpen(B))%20=%202/3"> and <img src="https://latex.codecogs.com/png.latex?%5C%5CPr(%5C%5COpen(C))%20=%201/3">. Either way, you can easily check that the expected gain is 2/3.</p>
-<p>Still. What the computer program taught me was a much simpler way. All you had to do was observe that</p>
-<p><img src="https://latex.codecogs.com/png.latex?%5C%5CPr(B%20%5C%5Cmid%20%5C%5COpen(C))%20=%20%5C%5CPr(%5C%5Cneg%20A%20%5C%5Cmid%20%5C%5COpen(C))%20=%20%5C%5CPr(%5C%5Cneg%20A)%20=%202/3,"></p>
-<p>since <img src="https://latex.codecogs.com/png.latex?A"> and <img src="https://latex.codecogs.com/png.latex?%5C%5COpen(C)"> are independent in the random variant. In the deterministic case we’re not really interested in <img src="https://latex.codecogs.com/png.latex?%5C%5CPr(B%20%5C%5Cmid%20%5C%5COpen(C))"> but in the probability that the car is not behind <img src="https://latex.codecogs.com/png.latex?A">, when all we know is that some door will be open. But as the computer program tells us, these are independent probabilities, so again the probability of win is simply <img src="https://latex.codecogs.com/png.latex?%5C%5CPr(%5C%5Cneg%20A)%20=%202/3."></p>
-
-
-</section>
-
- ]]></description>
-  <category>r</category>
-  <guid>https://blog.davidlindelof.com/posts/2020/10/monty-hall-a-programmers-explanation/</guid>
-  <pubDate>Fri, 02 Oct 2020 00:00:00 GMT</pubDate>
 </item>
 </channel>
 </rss>
