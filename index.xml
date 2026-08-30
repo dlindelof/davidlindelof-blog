@@ -10,52 +10,7 @@
 <atom:link href="https://blog.davidlindelof.com/index.xml" rel="self" type="application/rss+xml"/>
 <description>A blog built with Quarto</description>
 <generator>quarto-1.10.18</generator>
-<lastBuildDate>Sat, 11 Apr 2026 00:00:00 GMT</lastBuildDate>
-<item>
-  <title>Post With Code</title>
-  <dc:creator>Harlow Malloc</dc:creator>
-  <link>https://blog.davidlindelof.com/posts/post-with-code/</link>
-  <description><![CDATA[ 
-
-
-
-
-
-
-<p>This is a post with executable code.</p>
-
-
-
- ]]></description>
-  <category>news</category>
-  <category>code</category>
-  <category>analysis</category>
-  <guid>https://blog.davidlindelof.com/posts/post-with-code/</guid>
-  <pubDate>Sat, 11 Apr 2026 00:00:00 GMT</pubDate>
-  <media:content url="https://blog.davidlindelof.com/posts/post-with-code/image.jpg" medium="image" type="image/jpeg"/>
-</item>
-<item>
-  <title>Welcome To My Blog</title>
-  <dc:creator>Tristan O&#39;Malley</dc:creator>
-  <link>https://blog.davidlindelof.com/posts/welcome/</link>
-  <description><![CDATA[ 
-
-
-
-
-
-
-<p>This is the first post in a Quarto blog. Welcome!</p>
-<p><img src="https://blog.davidlindelof.com/posts/welcome/thumbnail.jpg" class="img-fluid"></p>
-<p>Since this post doesn’t specify an explicit <code>image</code>, the first image in the post will be used in the listing page of posts.</p>
-
-
-
- ]]></description>
-  <category>news</category>
-  <guid>https://blog.davidlindelof.com/posts/welcome/</guid>
-  <pubDate>Wed, 08 Apr 2026 00:00:00 GMT</pubDate>
-</item>
+<lastBuildDate>Wed, 22 Jan 2025 00:00:00 GMT</lastBuildDate>
 <item>
   <title>How Are P-values Distributed Under The Null?</title>
   <link>https://blog.davidlindelof.com/posts/2025/01/how-are-p-values-distributed-under-the-null/</link>
@@ -6263,6 +6218,1757 @@ font-style: inherit;">set</span>(df.name)</span></code></pre></div></div>
  ]]></description>
   <guid>https://blog.davidlindelof.com/posts/2020/11/scraping-real-estate-for-fun-and-profit/</guid>
   <pubDate>Fri, 06 Nov 2020 00:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>Testing Scientific Software with Hypothesis</title>
+  <link>https://blog.davidlindelof.com/posts/2020/10/testing-scientific-software-with-hypothesis/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+
+<p>Writing unit tests for scientific software is challenging because frequently you don’t even know what the output should be. Unlike business software, which automates well-understood processes, here you cannot simply work your way through use case after use case, unit test after unit test. Your program is either correct or it isn’t, and you have no way of knowing.</p>
+<p><a href="https://dilbert.com/strip/2018-10-21"><img src="https://blog.davidlindelof.com/posts/2020/10/testing-scientific-software-with-hypothesis/images/image.png" class="img-fluid"></a></p>
+<p>If you cannot know if your program is correct, does it mean you cannot test it? No, but you’ll be using other techniques than the ones traditionally used for unit tests. In this piece we’ll look at two techniques you can use to test your software. These are:</p>
+<ul>
+<li>comparing the output with a reference (an oracle)</li>
+<li>verifying that the output satisfies certain properties.</li>
+</ul>
+<p>And we’ll illustrate these two techniques through three examples:</p>
+<ul>
+<li>the square root function</li>
+<li>the trigonometric functions</li>
+<li>a simple Pandas operation</li>
+</ul>
+<!--more-->
+<p>This piece was originally a Jupyter notebook, so you should be able to copy/paste and run each cell as we go along. First we import the usual packages.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> math</span>
+<span id="cb1-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> sys</span>
+<span id="cb1-3"></span>
+<span id="cb1-4"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> numpy <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> np</span>
+<span id="cb1-5"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> pandas <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> pd</span></code></pre></div></div>
+<section id="the-square-root" class="level3">
+<h3 class="anchored" data-anchor-id="the-square-root">The square root</h3>
+<p>The square root of <img src="https://latex.codecogs.com/png.latex?x">, noted <img src="https://latex.codecogs.com/png.latex?%5C%5Csqrt%7Bx%7D">, is the non-negative number <img src="https://latex.codecogs.com/png.latex?y"> such that <img src="https://latex.codecogs.com/png.latex?y%5E2%20=%20x">. It is the root of <img src="https://latex.codecogs.com/png.latex?y%5E2%20-%20x%20=%200">. A method to compute that root is the Newton-Raphson algorithm:</p>
+<ol type="1">
+<li><img src="https://latex.codecogs.com/png.latex?y%20%5C%5Cleftarrow%201"></li>
+<li>Repeat <img src="https://latex.codecogs.com/png.latex?y%20%5C%5Cleftarrow%20%5C%5Cleft.%5C%5Cleft(y%20+%20%5C%5Cfrac%7Bx%7D%7By%7D%5C%5Cright)%5C%5Cmiddle/2%5C%5Cright."> until convergence</li>
+</ol>
+<p>For the first version of this function we just apply the algorithm as-is:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> sqrt(x):</span>
+<span id="cb2-2">    y_new <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span></span>
+<span id="cb2-3">    y_old <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span></span>
+<span id="cb2-4">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">while</span> (y_new <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">!=</span> y_old):</span>
+<span id="cb2-5">        y_new, y_old <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> (y_new <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> x <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> y_new) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>, y_new</span>
+<span id="cb2-6">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> y_new</span>
+<span id="cb2-7"></span>
+<span id="cb2-8"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">assert</span> sqrt(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span></span>
+<span id="cb2-9"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">assert</span> sqrt(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4</span>) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span></span>
+<span id="cb2-10"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">assert</span> sqrt(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">9</span>) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span></span></code></pre></div></div>
+<p>Looks pretty reasonable; notice that right after defining my function I run a few unit tests (yes, you <em>don’t need</em> a unit testing framework to write unit tests). But how do I know this function will work for all inputs? (Hint: as it stands it has at least two bugs.)</p>
+<p>Here’s where property testing comes in handy. We know that the square root <img src="https://latex.codecogs.com/png.latex?y"> of a number <img src="https://latex.codecogs.com/png.latex?x"> must satisfy <img src="https://latex.codecogs.com/png.latex?y%5E2%20=%20x">. One could imaging drawing some numbers at random, and checking that our function satisfies that property:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> numpy.random <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> uniform</span>
+<span id="cb3-2"></span>
+<span id="cb3-3"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> _ <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">range</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">100</span>):</span>
+<span id="cb3-4">    x <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> uniform(<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">100.</span>)</span>
+<span id="cb3-5">    y <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> sqrt(x)</span>
+<span id="cb3-6">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">assert</span> np.isclose(y<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">**</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>, x)</span></code></pre></div></div>
+<p>Great. It works for 100 numbers randomly drawn between 0 and 100, surely the function is correct? Wait a second. What about edge cases?</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">assert</span> sqrt(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span></span></code></pre></div></div>
+<pre><code>---------------------------------------------------------------------------
+ZeroDivisionError                         Traceback (most recent call last)
+&lt;ipython-input-4-0b4976dfa332&gt; in &lt;module&gt;
+----&gt; 1 assert sqrt(0) == 0
+
+&lt;ipython-input-2-cc00edd81170&gt; in sqrt(x)
+      3     y_old = 0
+      4     while (y_new != y_old):
+----&gt; 5         y_new, y_old = (y_new + x / y_new) / 2, y_new
+      6     return y_new
+      7 
+
+ZeroDivisionError: float division by zero</code></pre>
+<p>Oops. How could we forget that one? Clearly randomly drawing test samples is not good enough. But there’s a better way, a way to draw random test samples in a smart way which will not overlook edge cases. I’m going to introduce a library that will automate this for us. It’s the <a href="https://hypothesis.readthedocs.io/en/latest/index.html">Hypothesis</a> library.</p>
+<p><em>Note: what follows is not necessarily deterministic. If you run this on your own, you may get different results. I’m using the <code>seed</code> decorator provided by Hypothesis to ensure my output is reproducible on my machine, but real code should <strong>not</strong> do that.</em></p>
+<p>Hypothesis lets you generate test cases automatically, provided you can express properties that the results of your function should satisfy. It’s an example of what’s known as property-based testing, which seems to have originated with the <a href="https://hackage.haskell.org/package/QuickCheck">QuickCheck</a> Haskell library.</p>
+<p>To use Hypothesis, we install the library and declare some common imports:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> hypothesis <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> given, seed</span>
+<span id="cb6-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> hypothesis <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> strategies <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> some</span></code></pre></div></div>
+<p>Now we need to write a function which accepts an input <code>x</code>, and verifies that the tested function satisfies the required properties for <code>x</code>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> test_sqrt_property(x):</span>
+<span id="cb7-2">    y <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> sqrt(x)</span>
+<span id="cb7-3">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">assert</span> y <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&gt;=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span></span>
+<span id="cb7-4">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">assert</span> np.isclose(y<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">**</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>, x)</span>
+<span id="cb7-5">    </span>
+<span id="cb7-6">test_sqrt_property(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)</span>
+<span id="cb7-7">test_sqrt_property(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>)</span>
+<span id="cb7-8">test_sqrt_property(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>)</span></code></pre></div></div>
+<p>And as expected, the assertion fails for <code>0</code> with the same error:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1">test_sqrt_property(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>)</span></code></pre></div></div>
+<pre><code>---------------------------------------------------------------------------
+ZeroDivisionError                         Traceback (most recent call last)
+&lt;ipython-input-7-1a87a96eae15&gt; in &lt;module&gt;
+----&gt; 1 test_sqrt_property(0)
+
+&lt;ipython-input-6-b7c1d0a3deac&gt; in test_sqrt_property(x)
+      1 def test_sqrt_property(x):
+----&gt; 2     y = sqrt(x)
+      3     assert y &gt;= 0
+      4     assert np.isclose(y**2, x)
+      5 
+
+&lt;ipython-input-2-cc00edd81170&gt; in sqrt(x)
+      3     y_old = 0
+      4     while (y_new != y_old):
+----&gt; 5         y_new, y_old = (y_new + x / y_new) / 2, y_new
+      6     return y_new
+      7 
+
+ZeroDivisionError: float division by zero</code></pre>
+<p>To tell Hypothesis about this test function, we decorate it with the <code>given</code> decorator (and the <code>seed</code> decorator too, but you shouldn’t do that as noted above):</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">@given</span>(some.floats())</span>
+<span id="cb10-2"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">@seed</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">42</span>)</span>
+<span id="cb10-3"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> test_sqrt_property(x):</span>
+<span id="cb10-4">    y <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> sqrt(x)</span>
+<span id="cb10-5">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">assert</span> y <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&gt;=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span></span>
+<span id="cb10-6">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">assert</span> np.isclose(y<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">**</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>, x)</span></code></pre></div></div>
+<p>Let’s see now what happens when we run <code>test_sqrt_property</code>, but <em>without arguments</em> (Hypothesis will generate the test cases for us):</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1">test_sqrt_property()</span></code></pre></div></div>
+<pre><code>---------------------------------------------------------------------------
+KeyboardInterrupt                         Traceback (most recent call last)
+&lt;ipython-input-9-d13ac4e550a3&gt; in &lt;module&gt;
+----&gt; 1 test_sqrt_property()
+
+&lt;ipython-input-8-8fe3da5479e4&gt; in test_sqrt_property()
+      1 @given(some.floats())
+----&gt; 2 @seed(42)
+      3 def test_sqrt_property(x):
+      4     y = sqrt(x)
+      5     assert y &gt;= 0
+
+    [... skipping hidden 1 frame]
+
+&lt;ipython-input-8-8fe3da5479e4&gt; in test_sqrt_property(x)
+      2 @seed(42)
+      3 def test_sqrt_property(x):
+----&gt; 4     y = sqrt(x)
+      5     assert y &gt;= 0
+      6     assert np.isclose(y ** 2, x)
+
+&lt;ipython-input-2-cc00edd81170&gt; in sqrt(x)
+      3     y_old = 0
+      4     while (y_new != y_old):
+----&gt; 5         y_new, y_old = (y_new + x / y_new) / 2, y_new
+      6     return y_new
+      7 
+
+KeyboardInterrupt: </code></pre>
+<p>Uh-ho… the call never finished and I had to interrupt it myself. Let’s crack the debugger open:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%</span>debug</span></code></pre></div></div>
+<pre><code>&gt; &lt;ipython-input-2-cc00edd81170&gt;(5)sqrt()
+      3     y_old = 0
+      4     while (y_new != y_old):
+----&gt; 5         y_new, y_old = (y_new + x / y_new) / 2, y_new
+      6     return y_new
+      7 
+
+ipdb&gt; print(x)
+-inf
+ipdb&gt; quit</code></pre>
+<p>Oh right… it chokes on negative numbers. I’m pretty sure that the algorithm won’t work on negative numbers (especially negative infinity), so now I’m confronted with a choice on what to do with negative inputs. Easiest would be to throw an exception:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> sqrt(x):</span>
+<span id="cb15-2">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> x <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&lt;</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>:</span>
+<span id="cb15-3">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">raise</span> <span class="pp" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">ValueError</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f'x should be non-negative but was </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>x<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span>)</span>
+<span id="cb15-4">    y_new <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span></span>
+<span id="cb15-5">    y_old <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span></span>
+<span id="cb15-6">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">while</span> (y_new <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">!=</span> y_old):</span>
+<span id="cb15-7">        y_new, y_old <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> (y_new <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> x <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> y_new) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>, y_new</span>
+<span id="cb15-8">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> y_new</span></code></pre></div></div>
+<p>But we also need to tell Hypothesis to restrict its numbers to non-negative floats:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">@given</span>(some.floats(min_value<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>))</span>
+<span id="cb16-2"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">@seed</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">42</span>)</span>
+<span id="cb16-3"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> test_sqrt_property(x):</span>
+<span id="cb16-4">    y <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> sqrt(x)</span>
+<span id="cb16-5">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">assert</span> y <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&gt;=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span></span>
+<span id="cb16-6">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">assert</span> np.isclose(y<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">**</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>, x)</span></code></pre></div></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1">test_sqrt_property()</span></code></pre></div></div>
+<pre><code>Falsifying example: test_sqrt_property(
+    x=0.0,
+)
+---------------------------------------------------------------------------
+ZeroDivisionError                         Traceback (most recent call last)
+&lt;ipython-input-13-d13ac4e550a3&gt; in &lt;module&gt;
+----&gt; 1 test_sqrt_property()
+
+&lt;ipython-input-12-d15cee5d7b67&gt; in test_sqrt_property()
+      1 @given(some.floats(min_value=0))
+----&gt; 2 @seed(42)
+      3 def test_sqrt_property(x):
+      4     y = sqrt(x)
+      5     assert y &gt;= 0
+
+    [... skipping hidden 1 frame]
+
+&lt;ipython-input-12-d15cee5d7b67&gt; in test_sqrt_property(x)
+      2 @seed(42)
+      3 def test_sqrt_property(x):
+----&gt; 4     y = sqrt(x)
+      5     assert y &gt;= 0
+      6     assert np.isclose(y**2, x)
+
+&lt;ipython-input-11-3f4b35a4ce01&gt; in sqrt(x)
+      5     y_old = 0
+      6     while (y_new != y_old):
+----&gt; 7         y_new, y_old = (y_new + x / y_new) / 2, y_new
+      8     return y_new
+
+ZeroDivisionError: float division by zero</code></pre>
+<p>This looks good; Hypothesis found the same bug we did. The square root of 0 is 0, which will eventually be assigned to <code>y_new</code>, causing a division by zero error on line 7 (actually a <code>0 / 0</code> error). Let’s handle that case separately:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> sqrt(x):</span>
+<span id="cb19-2">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> x <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>:</span>
+<span id="cb19-3">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span></span>
+<span id="cb19-4">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> x <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&lt;</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>:</span>
+<span id="cb19-5">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">raise</span> <span class="pp" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">ValueError</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f'x should be non-negative but was </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>x<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span>)</span>
+<span id="cb19-6">    y_new <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span></span>
+<span id="cb19-7">    y_old <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span></span>
+<span id="cb19-8">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">while</span> (y_new <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">!=</span> y_old):</span>
+<span id="cb19-9">        y_new, y_old <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> (y_new <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> x <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> y_new) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>, y_new</span>
+<span id="cb19-10">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> y_new</span></code></pre></div></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1">test_sqrt_property()</span></code></pre></div></div>
+<pre><code>---------------------------------------------------------------------------
+KeyboardInterrupt                         Traceback (most recent call last)
+&lt;ipython-input-15-d13ac4e550a3&gt; in &lt;module&gt;
+----&gt; 1 test_sqrt_property()
+
+&lt;ipython-input-12-d15cee5d7b67&gt; in test_sqrt_property()
+      1 @given(some.floats(min_value=0))
+----&gt; 2 @seed(42)
+      3 def test_sqrt_property(x):
+      4     y = sqrt(x)
+      5     assert y &gt;= 0
+
+    [... skipping hidden 1 frame]
+
+&lt;ipython-input-12-d15cee5d7b67&gt; in test_sqrt_property(x)
+      2 @seed(42)
+      3 def test_sqrt_property(x):
+----&gt; 4     y = sqrt(x)
+      5     assert y &gt;= 0
+      6     assert np.isclose(y**2, x)
+
+&lt;ipython-input-14-0a2e2f1934db&gt; in sqrt(x)
+      7     y_old = 0
+      8     while (y_new != y_old):
+----&gt; 9         y_new, y_old = (y_new + x / y_new) / 2, y_new
+     10     return y_new
+
+KeyboardInterrupt: </code></pre>
+<p>It still hangs. What was the offending input this time?</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%</span>debug</span></code></pre></div></div>
+<pre><code>&gt; &lt;ipython-input-14-0a2e2f1934db&gt;(9)sqrt()
+      6     y_new = 1
+      7     y_old = 0
+      8     while (y_new != y_old):
+----&gt; 9         y_new, y_old = (y_new + x / y_new) / 2, y_new
+     10     return y_new
+
+ipdb&gt; print(x)
+inf
+ipdb&gt; quit</code></pre>
+<p>Ok fine. Let’s throw an exception whenever the input is non-finite then:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> sqrt(x):</span>
+<span id="cb24-2">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> x <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>:</span>
+<span id="cb24-3">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span></span>
+<span id="cb24-4">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> x <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&lt;</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>:</span>
+<span id="cb24-5">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">raise</span> <span class="pp" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">ValueError</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f'x should be non-negative but was </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>x<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span>)</span>
+<span id="cb24-6">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">not</span> math.isfinite(x):</span>
+<span id="cb24-7">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">raise</span> <span class="pp" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">ValueError</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f'x should be finite but was </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>x<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span>)</span>
+<span id="cb24-8">    y_new <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span></span>
+<span id="cb24-9">    y_old <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span></span>
+<span id="cb24-10">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">while</span> (y_new <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">!=</span> y_old):</span>
+<span id="cb24-11">        y_new, y_old <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> (y_new <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> x <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> y_new) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>, y_new</span>
+<span id="cb24-12">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> y_new</span></code></pre></div></div>
+<p>We also need to tell Hypothesis to exclude infinities:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">@given</span>(some.floats(min_value<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, allow_infinity<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">False</span>))</span>
+<span id="cb25-2"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">@seed</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">42</span>)</span>
+<span id="cb25-3"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> test_sqrt_property(x):</span>
+<span id="cb25-4">    y <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> sqrt(x)</span>
+<span id="cb25-5">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">assert</span> y <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&gt;=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span></span>
+<span id="cb25-6">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">assert</span> np.isclose(y<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">**</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>, x)</span></code></pre></div></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1">test_sqrt_property()</span></code></pre></div></div>
+<pre><code>Falsifying example: test_sqrt_property(
+    x=1.7976931348623157e+308,
+)
+---------------------------------------------------------------------------
+OverflowError                             Traceback (most recent call last)
+&lt;ipython-input-19-d13ac4e550a3&gt; in &lt;module&gt;
+----&gt; 1 test_sqrt_property()
+
+&lt;ipython-input-18-b58fc7c3fdf1&gt; in test_sqrt_property()
+      1 @given(some.floats(min_value=0, allow_infinity=False))
+----&gt; 2 @seed(42)
+      3 def test_sqrt_property(x):
+      4     y = sqrt(x)
+      5     assert y &gt;= 0
+
+    [... skipping hidden 1 frame]
+
+&lt;ipython-input-18-b58fc7c3fdf1&gt; in test_sqrt_property(x)
+      4     y = sqrt(x)
+      5     assert y &gt;= 0
+----&gt; 6     assert np.isclose(y**2, x)
+
+OverflowError: (34, 'Result too large')</code></pre>
+<p>What’s this now? Hypothesis was trying the largest representable float; its square root, when squared, overflowed. I’m not sure what’s the right solution here. It looks like the algorithm works, but we cannot verify it. This is highly embarrassing; I confess I have no better solution than to exclude the largest representable float from the test.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">@given</span>(some.floats(min_value<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, max_value<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>sys.float_info.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">max</span>, exclude_max<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>, allow_infinity<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">False</span>))</span>
+<span id="cb28-2"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">@seed</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">42</span>)</span>
+<span id="cb28-3"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> test_sqrt_property(x):</span>
+<span id="cb28-4">    y <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> sqrt(x)</span>
+<span id="cb28-5">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">assert</span> y <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&gt;=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span></span>
+<span id="cb28-6">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">assert</span> np.isclose(y<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">**</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>, x)</span></code></pre></div></div>
+<p>I’m a little bit nervous about this because the Hypothesis documentation implies that passing a lower bound will exclude <code>nan</code> from being passed to the function. I’ll cross that bridge when I come to it. For now let’s run the tests:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1">test_sqrt_property()</span></code></pre></div></div>
+<p>No output? Well after all this noise it’s almost an anti-climax to be able to run this test without complaints. Looks like our function passes the property-based testing now.</p>
+<p>What about the other kind of test, which I called the oracle test? Can we compare the output of the function with a reference implementation? In this case we can simply compare it with NumPy’s <code>sqrt()</code> routine, but keep in mind that things won’t always be that easy. Let’s write another test function, decorated to work with Hypothesis (note that here we don’t exclude <code>inf</code>):</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">@given</span>(some.floats(min_value<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, max_value<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>sys.float_info.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">max</span>, exclude_max<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>))</span>
+<span id="cb30-2"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">@seed</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">23</span>)</span>
+<span id="cb30-3"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> test_sqrt_oracle(x):    </span>
+<span id="cb30-4">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">assert</span> np.isclose(sqrt(x), np.sqrt(x))</span></code></pre></div></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb31" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1">test_sqrt_oracle()</span></code></pre></div></div>
+<p>The tests pass, but now I sense your discomfort. How do we even know how much testing is being done here? Hypothesis has a rich set of settings, including <code>verbosity</code> which controls how much output is printed. Let’s turn it on:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb32" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> hypothesis <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> settings, Verbosity</span>
+<span id="cb32-2"></span>
+<span id="cb32-3"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">@given</span>(some.floats(min_value<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, max_value<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>sys.float_info.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">max</span>, allow_infinity<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">False</span>, exclude_max<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>))</span>
+<span id="cb32-4"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">@settings</span>(verbosity<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>Verbosity.verbose)</span>
+<span id="cb32-5"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">@seed</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">42</span>)</span>
+<span id="cb32-6"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> test_sqrt_property(x):</span>
+<span id="cb32-7">    y <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> sqrt(x)</span>
+<span id="cb32-8">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">assert</span> y <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&gt;=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span></span>
+<span id="cb32-9">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">assert</span> np.isclose(y<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">**</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>, x)</span></code></pre></div></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1">test_sqrt_property()</span></code></pre></div></div>
+<pre><code>Trying example: test_sqrt_property(
+    x=0.0,
+)
+Trying example: test_sqrt_property(
+    x=2.0014004551302755e+307,
+)
+&lt;... 98 other examples ...&gt;</code></pre>
+<p>As we can see, Hypothesis has tried 100 examples including <code>0.0</code> and extremely large numbers, close to the maximum representable float (in fact it was flirting dangerously close to the maximum with <code>1.7023370361275787e+308</code>). I have known many awesome testers in my life, but none who would be that patient or sadistic. I think that’s as much testing as we can do and we can probably call it a day.</p>
+<blockquote class="blockquote">
+<p>Ah, the elusive square root,</p>
+<p>It should be a cinch to compute.</p>
+<p>But the best we can do</p>
+<p>Is use powers of two</p>
+<p>And iterate the method of Newt!</p>
+</blockquote>
+</section>
+<section id="the-sine-and-cosine-functions" class="level3">
+<h3 class="anchored" data-anchor-id="the-sine-and-cosine-functions">The sine and cosine functions</h3>
+<p>Let’s do another example, this time with the sine and cosine trigonometric functions. This time we’ll begin by comparing the output with NumPy’s reference implementation.</p>
+<p>It’s probably not the best algorithm, but the sine and cosine functions for small arguments can be easily computed from their series expansions:</p>
+<p>\begin{aligned}<br>
+\sin(x) &amp;= x - \frac{x^3}{3!} + \frac{x^5}{5!} - … \\<br>
+&amp;= \sum_{n=0}<sup>{}\frac{(-1)</sup>n x^{2n+1}}{(2n+1)!} \\<br>
+\cos(x) &amp;= 1 - \frac{x^2}{2!} + \frac{x^4}{4!} - … \\<br>
+&amp;= \sum_{n=0}<sup>{}\frac{(-1)</sup>n x^{2n}}{(2n)!}<br>
+\end{aligned}</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb35" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> sine(x):</span>
+<span id="cb35-2">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> sine_terms(x):</span>
+<span id="cb35-3">        term <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> x</span>
+<span id="cb35-4">        n <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span></span>
+<span id="cb35-5">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">while</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>:</span>
+<span id="cb35-6">            <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">yield</span> term</span>
+<span id="cb35-7">            n <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span></span>
+<span id="cb35-8">            term <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span>term <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> x <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">**</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> (n <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> (n <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>))</span>
+<span id="cb35-9">    y_new <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span></span>
+<span id="cb35-10">    y_old <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span></span>
+<span id="cb35-11">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> term <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> sine_terms(x):</span>
+<span id="cb35-12">        y_new, y_old <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> y_new <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> term, y_new</span>
+<span id="cb35-13">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> y_new <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> y_old:</span>
+<span id="cb35-14">            <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> y_new</span>
+<span id="cb35-15"></span>
+<span id="cb35-16"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">assert</span> np.isclose(sine(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>), <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>)</span>
+<span id="cb35-17"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">assert</span> np.isclose(sine(math.pi), <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>)</span></code></pre></div></div>
+<p>This passes a few manual unit tests. Let’s throw Hypothesis at it as well, restricting the arguments to remain less than <img src="https://latex.codecogs.com/png.latex?%5C%5Cpi"> in absolute value (as those series expansions are extremely ill-behaved for large numbers):</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb36" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">@given</span>(some.floats(min_value<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=-</span>math.pi, max_value<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>math.pi))</span>
+<span id="cb36-2"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> test_sine_oracle(x):</span>
+<span id="cb36-3">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">assert</span> np.isclose(sine(x), np.sin(x))</span></code></pre></div></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb37" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1">test_sine_oracle()</span></code></pre></div></div>
+<p>That was almost too easy. Let’s do the same thing for cosine:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb38" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> cosine(x):</span>
+<span id="cb38-2">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> cosine_terms(x):</span>
+<span id="cb38-3">        term <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span></span>
+<span id="cb38-4">        n <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span></span>
+<span id="cb38-5">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">while</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>:</span>
+<span id="cb38-6">            <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">yield</span> term</span>
+<span id="cb38-7">            n <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span></span>
+<span id="cb38-8">            term <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span>term <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> x <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">**</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> (n <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> (n <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>))</span>
+<span id="cb38-9">    y_new <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span></span>
+<span id="cb38-10">    y_old <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span></span>
+<span id="cb38-11">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> term <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> cosine_terms(x):</span>
+<span id="cb38-12">        y_new, y_old <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> y_new <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> term, y_new</span>
+<span id="cb38-13">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> y_new <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> y_old:</span>
+<span id="cb38-14">            <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> y_new</span>
+<span id="cb38-15">        </span>
+<span id="cb38-16"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">assert</span> np.isclose(cosine(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>), <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)</span>
+<span id="cb38-17"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">assert</span> np.isclose(cosine(math.pi), <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)</span></code></pre></div></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb39" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">@given</span>(some.floats(min_value<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=-</span>math.pi, max_value<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>math.pi))</span>
+<span id="cb39-2"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> test_cosine_oracle(x):</span>
+<span id="cb39-3">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">assert</span> np.isclose(cosine(x), np.cos(x))</span></code></pre></div></div>
+<pre><code>test_cosine_oracle()</code></pre>
+<p>Good. Now we’d like to come up with properties against which we can test our implementation. The most obvious one is that these functions must satisfy <img src="https://latex.codecogs.com/png.latex?%5C%5Ccos%5E2(x)%20+%20%5C%5Csin%5E2(x)%20=%201">:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb41" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">@given</span>(some.floats(min_value<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=-</span>math.pi, max_value<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>math.pi))</span>
+<span id="cb41-2"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> test_sum_squares(x):</span>
+<span id="cb41-3">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">assert</span> np.isclose(sine(x) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> sine(x) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> cosine(x) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> cosine(x), <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)</span></code></pre></div></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb42" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1">test_sum_squares()</span></code></pre></div></div>
+<p>That’s… actually the only property I can think of that’s easy to express in code. There’s another one I’d like to mention, which I <em>think</em> I’ve seen implemented in <code>glibc</code>’s math library but cannot find anymore. It is based on the observation that two functions <img src="https://latex.codecogs.com/png.latex?f(x)"> and <img src="https://latex.codecogs.com/png.latex?g(x)"> that satisfy the differential equations</p>
+<p>\begin{aligned}<br>
+f’(x) &amp;= g(x) \\<br>
+g’(x) &amp;= -f(x) \\<br>
+\end{aligned}</p>
+<p>must, up to a multiplicative constant, be the sine and cosine functions. To compute the derivative of <img src="https://latex.codecogs.com/png.latex?f(x)"> I’m going to take it easy and approximate it with <img src="https://latex.codecogs.com/png.latex?%5C%5Bf(x%20+%20%5C%5CDelta%20x)%20-%20f(x%20-%20%5C%5CDelta%20x)%5C%5D/2%5C%5CDelta%20x"> with a small-ish <img src="https://latex.codecogs.com/png.latex?%5C%5CDelta%20x">. So that would give us something like:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb43" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">@given</span>(some.floats(min_value<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=-</span>math.pi, max_value<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>math.pi))</span>
+<span id="cb43-2"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> test_trigonometry_differential(x):</span>
+<span id="cb43-3">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> fprime(f, x):</span>
+<span id="cb43-4">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> (f(x <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1e-6</span>) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> f(x <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1e-6</span>)) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2e-6</span></span>
+<span id="cb43-5">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">assert</span> np.isclose(fprime(sine, x), cosine(x))</span>
+<span id="cb43-6">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">assert</span> np.isclose(fprime(cosine, x), <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span>sine(x))</span></code></pre></div></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb44" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb44-1">test_trigonometry_differential()</span></code></pre></div></div>
+<p>To be honest, I didn’t think this would work.</p>
+</section>
+<section id="testing-functions-on-pandas-dataframes" class="level3">
+<h3 class="anchored" data-anchor-id="testing-functions-on-pandas-dataframes">Testing functions on Pandas DataFrames</h3>
+<p>In this final section I want to show how you can test functions that operate on Pandas <code>DataFrame</code>s. Hypothesis has a neat extension designed for testing the Pandas + NumPy stack; basically, we’re going to generate random <code>DataFrame</code>s that satisfy certain conditions, and test the output of our function when applied to those <code>DataFrame</code>s. We begin by importing the right modules:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb45" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> hypothesis.extra.pandas <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> data_frames, column</span>
+<span id="cb45-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> pandas <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> Series</span></code></pre></div></div>
+<p>Let’s see if we can write a function that, given two Pandas <code>Series</code> of equal length, computes their element-wise average. A simple implementation looks like this:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb46" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb46-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> avg(x: Series, y: Series) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-&gt;</span> Series:</span>
+<span id="cb46-2">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> (x <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> y) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span></span></code></pre></div></div>
+<p>Congratulations, you just wrote a bug. To see why, let’s write a test function powered up to work with Hypothesis. We need to generate two <code>Series</code> of the same length. I’m pretty sure it’s possible to do so in Hypothesis, but I find it easier to just generate a two-column <code>DataFrame</code>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb47" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb47-1"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">@given</span>(df<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>data_frames([</span>
+<span id="cb47-2">    column(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'a'</span>, dtype<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>np.float64),</span>
+<span id="cb47-3">    column(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'b'</span>, dtype<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>np.float64)</span>
+<span id="cb47-4">]))</span>
+<span id="cb47-5"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">@seed</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">42</span>)</span>
+<span id="cb47-6"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> test_avg(df):</span>
+<span id="cb47-7">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">assert</span> np.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">all</span>(np.isclose(np.mean(df, axis<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>), avg(df[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'a'</span>], df[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'b'</span>])))</span></code></pre></div></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb48" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb48-1">test_avg()</span></code></pre></div></div>
+<pre><code>Falsifying example: test_avg(
+    df=     a   b
+    0  0.0 NaN,
+)
+---------------------------------------------------------------------------
+AssertionError                            Traceback (most recent call last)
+&lt;ipython-input-39-0f483bdaa75d&gt; in &lt;module&gt;
+----&gt; 1 test_avg()
+
+&lt;ipython-input-38-d7addbe29af3&gt; in test_avg()
+      1 @given(df=data_frames([
+----&gt; 2     column('a', dtype=np.float64),
+      3     column('b', dtype=np.float64)
+      4 ]))
+      5 @seed(42)
+
+    [... skipping hidden 1 frame]
+
+&lt;ipython-input-38-d7addbe29af3&gt; in test_avg(df)
+      5 @seed(42)
+      6 def test_avg(df):
+----&gt; 7     assert np.all(np.isclose(np.mean(df, axis=1), avg(df['a'], df['b'])))
+
+AssertionError: </code></pre>
+<p>Ok, again I get bitten by forgetting that floats can be <code>nan</code>. Let’s cop out of this one and assume the input must be finite. It means we cannot use the <code>dtype</code> argument but the less elegant <code>elements</code>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb50" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb50-1"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">@given</span>(df<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>data_frames([</span>
+<span id="cb50-2">    column(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'a'</span>, elements<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>some.floats(allow_nan<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">False</span>, allow_infinity<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">False</span>)),</span>
+<span id="cb50-3">    column(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'b'</span>, elements<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>some.floats(allow_nan<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">False</span>, allow_infinity<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">False</span>))</span>
+<span id="cb50-4">]))</span>
+<span id="cb50-5"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">@seed</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">42</span>)</span>
+<span id="cb50-6"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> test_avg(df):</span>
+<span id="cb50-7">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">assert</span> np.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">all</span>(np.isclose(np.mean(df, axis<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>), avg(df[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'a'</span>], df[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'b'</span>])))</span></code></pre></div></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb51" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb51-1">test_avg()</span></code></pre></div></div>
+<pre><code>/opt/anaconda3/envs/testing/lib/python3.7/site-packages/numpy/core/_methods.py:38: RuntimeWarning: overflow encountered in reduce
+  return umr_sum(a, axis, dtype, out, keepdims, initial, where)</code></pre>
+<p>I <em>hate</em> this. The test function returned… but there was a warning? Let’s force Python to treat warnings as errors, and re-run the test:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb53" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb53-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> warnings</span>
+<span id="cb53-2"></span>
+<span id="cb53-3">warnings.resetwarnings()</span>
+<span id="cb53-4">warnings.simplefilter(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'error'</span>)</span>
+<span id="cb53-5">test_avg()</span></code></pre></div></div>
+<pre><code>Falsifying example: test_avg(
+    df=               a              b
+    0  6.286897e+293  1.797693e+308,
+)
+---------------------------------------------------------------------------
+RuntimeWarning                            Traceback (most recent call last)
+&lt;ipython-input-42-6ade4ec3315d&gt; in &lt;module&gt;
+      3 warnings.resetwarnings()
+      4 warnings.simplefilter('error')
+----&gt; 5 test_avg()
+
+&lt;... skipping several frames ...&gt;
+
+/opt/anaconda3/envs/testing/lib/python3.7/site-packages/numpy/core/_methods.py in _sum(a, axis, dtype, out, keepdims, initial, where)
+     36 def _sum(a, axis=None, dtype=None, out=None, keepdims=False,
+     37          initial=_NoValue, where=True):
+---&gt; 38     return umr_sum(a, axis, dtype, out, keepdims, initial, where)
+     39 
+     40 def _prod(a, axis=None, dtype=None, out=None, keepdims=False,
+
+RuntimeWarning: overflow encountered in reduce</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb55" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb55-1"><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%</span>debug</span></code></pre></div></div>
+<pre><code>&gt; /opt/anaconda3/envs/testing/lib/python3.7/site-packages/numpy/core/_methods.py(38)_sum()
+     36 def _sum(a, axis=None, dtype=None, out=None, keepdims=False,
+     37          initial=_NoValue, where=True):
+---&gt; 38     return umr_sum(a, axis, dtype, out, keepdims, initial, where)
+     39 
+     40 def _prod(a, axis=None, dtype=None, out=None, keepdims=False,
+
+ipdb&gt; print(a)
+[[6.28689698e+293 1.79769313e+308]]
+ipdb&gt; quit</code></pre>
+<p>The error was… in NumPy? Let’s see. What happens when we ask NumPy to compute the mean of two large numbers, close to but still less than the largest representable float?</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb57" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb57-1">np.mean(np.array([<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1e308</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1e308</span>]))</span></code></pre></div></div>
+<pre><code>---------------------------------------------------------------------------
+RuntimeWarning                            Traceback (most recent call last)
+&lt;ipython-input-44-a457465f6e81&gt; in &lt;module&gt;
+----&gt; 1 np.mean(np.array([1e308, 1e308]))
+
+&lt;__array_function__ internals&gt; in mean(*args, **kwargs)
+
+/opt/anaconda3/envs/testing/lib/python3.7/site-packages/numpy/core/fromnumeric.py in mean(a, axis, dtype, out, keepdims)
+   3333 
+   3334     return _methods._mean(a, axis=axis, dtype=dtype,
+-&gt; 3335                           out=out, **kwargs)
+   3336 
+   3337 
+
+/opt/anaconda3/envs/testing/lib/python3.7/site-packages/numpy/core/_methods.py in _mean(a, axis, dtype, out, keepdims)
+    149             is_float16_result = True
+    150 
+--&gt; 151     ret = umr_sum(arr, axis, dtype, out, keepdims)
+    152     if isinstance(ret, mu.ndarray):
+    153         ret = um.true_divide(
+
+RuntimeWarning: overflow encountered in reduce
+</code></pre>
+<p>Ooops. NumPy’s <code>mean()</code> will apparently take the sum of the elements before dividing by their number—which can overflow. So now we understand where that <code>RuntimeWarning</code> came from—but why did the test pass then? Turns out that our own function <em>also</em> overflows.</p>
+<p>Well, we have coded ourselves into a corner here. NumPy’s <code>mean()</code> cannot be used as an oracle, because it can overflow. You <em>can</em> tell NumPy to keep intermediate results in <code>np.longdouble</code>, which maps to your compiler’s <code>long double</code>, but there’s no guarantee that this will be larger that <code>double</code>.</p>
+<p>Obviously we cannot use oracle-based testing for this one; instead we’d have to come up with some property to test against. For example, we could test that the average is equidistant from <code>a</code> and <code>b</code>. But I’ve spent many nights, trying to make this work, without success. Hypothesis was <em>always</em> able to find a test case that fails. Programming with floating-point numbers sucks.</p>
+<p>I’m going to stop this example here; the point was to demonstrate how to test functions that operate on Pandas <code>Series</code> and <code>DataFrame</code>s, not to find a correct function to calculate the average of two floating-point numbers, which is <a href="https://hal.inria.fr/hal-01174892/document">devilishly difficult to do anyway</a>. I’ll just admit I suck at this.</p>
+</section>
+<section id="final-word" class="level2">
+<h2 class="anchored" data-anchor-id="final-word">Final word</h2>
+<p>In this piece we’ve used the Hypothesis library to test scientific functions, either by comparing the output to a reference implementation (an oracle) or by testing that the output satisfies known properties.</p>
+<p>Along the way, we’ve learned that:</p>
+<ul>
+<li>the domain of any function (the range of valid input) must always be given careful thought</li>
+<li>floating-point numbers include infinities and <code>nan</code></li>
+<li>even simple operations (like taking the mean of two numbers) can be uncannily hard to specify correctly</li>
+</ul>
+<p>We’ve also seen how difficult it can be to write (and test) a function that works with any valid input. Your application may guarantee that the inputs won’t ever exceed certain boundaries and it’s perfectly fine to limit testing to those values, as we did with the trigonometric functions—as long as you remain aware of the limitations of your test.</p>
+
+
+</section>
+
+ ]]></description>
+  <category>python</category>
+  <guid>https://blog.davidlindelof.com/posts/2020/10/testing-scientific-software-with-hypothesis/</guid>
+  <pubDate>Wed, 28 Oct 2020 00:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>Monty Hall: a programmer’s explanation</title>
+  <link>https://blog.davidlindelof.com/posts/2020/10/monty-hall-a-programmers-explanation/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+
+<p>I take it we’re all familiar with the infamous <a href="https://en.wikipedia.org/wiki/Monty_Hall_problem">Monty Hall problem</a>:</p>
+<blockquote class="blockquote">
+<p>Suppose you’re on a game show, and you’re given the choice of three doors: Behind one door is a car; behind the others, goats. You pick a door, say A, and the host, who knows what’s behind the doors, opens another door, say C, which has a goat. He then says to you, “Do you want to pick door B?” Is it to your advantage to switch your choice?</p>
+</blockquote>
+<p>The correct strategy consists in accepting the offer to switch doors. The expected gain when doing so is 2/3, vs 1/3 when choosing not to change doors (there are only two doors left closed, so one of them must have the car; hence the expected gains sum to 1).</p>
+<figure class="figure">
+<p><img src="https://blog.davidlindelof.com/posts/2020/10/monty-hall-a-programmers-explanation/images/monty_hall.png" class="img-fluid figure-img"></p>
+<figcaption>
+<p><a href="https://xkcd.com/1282/">https://xkcd.com/1282/</a></p>
+</figcaption>
+</figure>
+<p>The mathematical proof is straightforward but most people (including me) have a hard time understanding intuitively what’s going on. There are plenty of explanations available online, but I’ve recently simulated the problem and come across one that I think is simpler and more elegant than anything I’ve seen so far. And I didn’t make it up; the simulation code did. Here’s how.</p>
+<section id="classic-monty" class="level2">
+<h2 class="anchored" data-anchor-id="classic-monty">Classic Monty</h2>
+<p>Let’s simulate 10,000 rounds of the game. The <code>car</code> vector will hold the door which has the car behind it:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1">n <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10000</span></span>
+<span id="cb1-2">car <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sample</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'A'</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'B'</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'C'</span>), <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">size =</span> n, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">replace =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span>)</span></code></pre></div></div>
+<p>Quick check that the door appears randomly assigned:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">table</span>(car)</span>
+<span id="cb2-2"><span class="do" style="color: #5E5E5E;
+background-color: null;
+font-style: italic;">## car</span></span>
+<span id="cb2-3"><span class="do" style="color: #5E5E5E;
+background-color: null;
+font-style: italic;">##    A    B    C </span></span>
+<span id="cb2-4"><span class="do" style="color: #5E5E5E;
+background-color: null;
+font-style: italic;">## 3329 3310 3361</span></span></code></pre></div></div>
+<p>Let’s now simulate the door being opened by Monty. Without loss of generality, let’s assume you choose door A. Then if the car is behind door A, Monty will open door B or C at random; else he will open the door that has a goat.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1">door <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ifelse</span>(</span>
+<span id="cb3-2">  car <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'A'</span>,</span>
+<span id="cb3-3">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sample</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'B'</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'C'</span>), <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">size =</span> n, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">replace =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span>), <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># chosen at random </span></span>
+<span id="cb3-4">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ifelse</span>(car <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'B'</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'C'</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'B'</span>))  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># otherwise whichever door has a goat</span></span></code></pre></div></div>
+<p>Now the gain, when declining to switch, is given by how many cases have the car behind door A:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sum</span>(car <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'A'</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> n</span>
+<span id="cb4-2"><span class="do" style="color: #5E5E5E;
+background-color: null;
+font-style: italic;">## [1] 0.3329</span></span></code></pre></div></div>
+<p>As expected, it is about 1/3.</p>
+<p>The gain, when switching doors, is given by how many times the unopened door has the car:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1">unopened <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ifelse</span>(door <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'B'</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'C'</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'B'</span>)</span>
+<span id="cb5-2"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sum</span>(car <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> unopened) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> n</span>
+<span id="cb5-3"><span class="do" style="color: #5E5E5E;
+background-color: null;
+font-style: italic;">## [1] 0.6671</span></span></code></pre></div></div>
+<p>But the car is either behind the unopened door or behind A; you win if the car is not behind A. So the last expression is equivalent to</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sum</span>(car <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">!=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'A'</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> n</span>
+<span id="cb6-2"><span class="do" style="color: #5E5E5E;
+background-color: null;
+font-style: italic;">## [1] 0.6671</span></span></code></pre></div></div>
+<p>And this gives exactly the same result. The probability of winning the car when declining to switch is the probability that the car is behind door A. The probability of winning when switching is <em>just the probability that the car is not behind door A</em>, i.e., 2/3. And that’s the simplest, most elegant explanation of the paradox I’ve ever found.</p>
+<p>But there’s more. Notice that in our final expression, we had no need to know which door was opened. And this has interesting consequences for a variation of the game which I’ll call the <em>deterministic Monty Hall</em>.</p>
+</section>
+<section id="deterministic-monty" class="level2">
+<h2 class="anchored" data-anchor-id="deterministic-monty">Deterministic Monty</h2>
+<p>In the classic version of the game, Monty will select a door at random between B and C if the car happens to be behind A, the door chosen by the player. Let’s now suppose instead that when the car is behind A, Monty <em>always</em> chooses to open door B. Will that information change our strategy?</p>
+<p>On one hand, we would feel that when Monty opens door B, the car will more likely be behind door A, and perhaps we should instead choose to stay. Well, let’s simulate this.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1">door_deterministic <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ifelse</span>(</span>
+<span id="cb7-2">  car <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'A'</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'B'</span>, <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># not chosen at random anymore</span></span>
+<span id="cb7-3">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ifelse</span>(car <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'B'</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'C'</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'B'</span>))</span></code></pre></div></div>
+<p>The expression for the expected gains are very similar. If choosing to stay, the expected gain remains</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sum</span>(car <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'A'</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> n</span>
+<span id="cb8-2"><span class="do" style="color: #5E5E5E;
+background-color: null;
+font-style: italic;">## [1] 0.3329</span></span></code></pre></div></div>
+<p>While when choosing to switch, the gain becomes</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1">unopened_deterministic <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ifelse</span>(door_deterministic <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'B'</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'C'</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'B'</span>)</span>
+<span id="cb9-2"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sum</span>(car <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> unopened_deterministic) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> n</span>
+<span id="cb9-3"><span class="do" style="color: #5E5E5E;
+background-color: null;
+font-style: italic;">## [1] 0.6671</span></span></code></pre></div></div>
+<p>But this last expression is <em>again</em> simply equal to</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sum</span>(car <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">!=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'A'</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> n</span>
+<span id="cb10-2"><span class="do" style="color: #5E5E5E;
+background-color: null;
+font-style: italic;">## [1] 0.6671</span></span></code></pre></div></div>
+<p>because no matter which strategy Monty used, the car still has to be behind A or the unopened door.</p>
+<p>Now this was completely counterintuitive to me: surely, knowing Monty’s strategy should give you an edge? But let’s consider separately the two possibilities:</p>
+<section id="monty-opens-b" class="level3">
+<h3 class="anchored" data-anchor-id="monty-opens-b">Monty opens B</h3>
+<p>Unlike the preceding scenario, this happens in <em>all</em> scenarios where the car is behind A or C (2/3 of the cases). And among these scenarios, in exactly half the cases the car is behind A. So you know that the car is equally likely to be behind A or C, and switching doors will neither help nor hurt you. So this scenario contributes <img src="https://latex.codecogs.com/png.latex?2/3%20%5C%5Ctimes%201/2%20=%201/3"> to the total expected gain.</p>
+</section>
+<section id="monty-opens-c" class="level3">
+<h3 class="anchored" data-anchor-id="monty-opens-c">Monty opens C</h3>
+<p>This can only happen when the car is behind B, so you certainly benefit from switching doors. But this happens only 1/3 of the time, and this scenario contributes <img src="https://latex.codecogs.com/png.latex?1/3%20%5C%5Ctimes%201%20=%201/3"> to the total expected gain.</p>
+<p>So in this variant of the game, your total expected gain remains exactly 2/3.</p>
+</section>
+<section id="computational-proof" class="level3">
+<h3 class="anchored" data-anchor-id="computational-proof">“Computational” proof</h3>
+<p>I’m not sure this would be accepted as a rigorous proof, but when I wrote the expression for the expected gain I always ended up with <code>sum(car != 'A') / n</code>, no matter what Monty’s strategy was. Or in plain English:</p>
+<blockquote class="blockquote">
+<p>The expected gain when switching doors is the probability that the car was not behind A in the first place.</p>
+</blockquote>
+<p>This, of course, is:</p>
+<ul>
+<li>obvious</li>
+<li>independent of Monty’s strategy</li>
+<li>always equal to 2/3</li>
+<li>possibly the most succinct explanation of Monty’s paradox I’ve come across</li>
+</ul>
+<p>But it never hurts to double-check what the maths tell us.</p>
+</section>
+</section>
+<section id="mathematical-proof" class="level2">
+<h2 class="anchored" data-anchor-id="mathematical-proof">Mathematical proof</h2>
+<p>Let’s work out the probability that the car should be behind door B when Monty opens door C.</p>
+<p><img src="https://latex.codecogs.com/png.latex?%5C%5CDeclareMathOperator%7B%5C%5COpen%7D%7BOpen%7D"></p>
+<p>\begin{align*}<br>
+\Pr(B \mid \Open(C)) &amp;= \frac{\Pr(\Open(C) \mid B) \times \Pr(B)}{\Pr(\Open(C))} &amp;&amp; \text{by Bayes} \\<br>
+&amp;= \frac{1 \times \Pr(B)}{\Pr(\Open(C))} &amp;&amp; \text{because <img src="https://latex.codecogs.com/png.latex?B%20%5C%5Cimplies%20%5C%5COpen(C)">} \\<br>
+&amp;= \frac{1/3}{\Pr(\Open(C))} &amp;&amp; \text{because each door is equally probable} \\<br>
+&amp;= \frac{1}{3} \frac{1}{\Pr(\Open(C) \mid A) \times \Pr(A) + \Pr(\Open(C) \mid B) \times \Pr(B)} &amp;&amp; \text{because <img src="https://latex.codecogs.com/png.latex?A"> or <img src="https://latex.codecogs.com/png.latex?B"> must be true when <img src="https://latex.codecogs.com/png.latex?C"> is open} \\<br>
+&amp;= \frac{1}{\Pr(\Open(C) \mid A) + \Pr(\Open(C) \mid B)} &amp;&amp; \text{because <img src="https://latex.codecogs.com/png.latex?%5C%5CPr(A)%20=%20%5C%5CPr(B)%20=%201/3">}, \\<br>
+\end{align*}</p>
+<p>and similarly for&nbsp;<img src="https://latex.codecogs.com/png.latex?%5C%5CPr(C%20%5C%5Cmid%20%5C%5COpen(B))">. This result does not depend on Monty’s strategy, but the final figures do:</p>
+<p>\begin{align*}<br>
+\text{Random choice:} &amp;&amp; \Pr(B \mid \Open(C)) &amp;= 2/3 \\<br>
+&amp;&amp; \Pr(C \mid \Open(B)) &amp;= 2/3 \\<br>
+\text{Deterministic:} &amp;&amp; \Pr(B \mid \Open(C)) &amp;= 1 \\<br>
+&amp;&amp; \Pr(C \mid \Open(B)) &amp;= 1/2,<br>
+\end{align*}</p>
+<p>but the <em>expected gain</em> when switching doors (without knowing Monty’s strategy) depends on <img src="https://latex.codecogs.com/png.latex?%5C%5CPr(%5C%5COpen(B))"> and <img src="https://latex.codecogs.com/png.latex?%5C%5CPr(%5C%5COpen(C))">. When Monty’s choice is random, <img src="https://latex.codecogs.com/png.latex?%5C%5CPr(%5C%5COpen(B))%20=%20%5C%5CPr(%5C%5COpen(C))%20=%201/2">, but when his choice is deterministic, we have <img src="https://latex.codecogs.com/png.latex?%5C%5CPr(%5C%5COpen(B))%20=%202/3"> and <img src="https://latex.codecogs.com/png.latex?%5C%5CPr(%5C%5COpen(C))%20=%201/3">. Either way, you can easily check that the expected gain is 2/3.</p>
+<p>Still. What the computer program taught me was a much simpler way. All you had to do was observe that</p>
+<p><img src="https://latex.codecogs.com/png.latex?%5C%5CPr(B%20%5C%5Cmid%20%5C%5COpen(C))%20=%20%5C%5CPr(%5C%5Cneg%20A%20%5C%5Cmid%20%5C%5COpen(C))%20=%20%5C%5CPr(%5C%5Cneg%20A)%20=%202/3,"></p>
+<p>since <img src="https://latex.codecogs.com/png.latex?A"> and <img src="https://latex.codecogs.com/png.latex?%5C%5COpen(C)"> are independent in the random variant. In the deterministic case we’re not really interested in <img src="https://latex.codecogs.com/png.latex?%5C%5CPr(B%20%5C%5Cmid%20%5C%5COpen(C))"> but in the probability that the car is not behind <img src="https://latex.codecogs.com/png.latex?A">, when all we know is that some door will be open. But as the computer program tells us, these are independent probabilities, so again the probability of win is simply <img src="https://latex.codecogs.com/png.latex?%5C%5CPr(%5C%5Cneg%20A)%20=%202/3."></p>
+
+
+</section>
+
+ ]]></description>
+  <category>r</category>
+  <guid>https://blog.davidlindelof.com/posts/2020/10/monty-hall-a-programmers-explanation/</guid>
+  <pubDate>Fri, 02 Oct 2020 00:00:00 GMT</pubDate>
 </item>
 </channel>
 </rss>
