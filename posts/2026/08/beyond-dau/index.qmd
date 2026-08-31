@@ -1,6 +1,5 @@
 ---
 title: "Beyond DAU: How to Measure User Retention with Survival Analysis"
-author: "dlindelof"
 date: "2026-08-23"
 categories:
   - r
