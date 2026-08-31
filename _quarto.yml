@@ -5,6 +5,7 @@ project:
 
 website:
   description: "Notes on statistics, data science, software engineering, and scientific computing."
+  favicon: favicon.svg
   site-url: https://blog.davidlindelof.com
   plausible-analytics:
     path: _plausible_snippet.html
