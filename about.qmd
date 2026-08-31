@@ -12,7 +12,7 @@ about:
       href: https://twitter.com/dlindelof
     - icon: linkedin
       text: LinkedIn
-      href: https://www.linkedin.com/in/dlindelof/
+      href: https://www.linkedin.com/in/lindelof/
 
 ---
 
@@ -31,4 +31,4 @@ methodology and implementation. If you think I might be useful for a project or
 workshop, feel free to get in touch.
 
 The easiest way to reach me is through
-[LinkedIn](https://www.linkedin.com/in/dlindelof/).
+[LinkedIn](https://www.linkedin.com/in/lindelof/).
