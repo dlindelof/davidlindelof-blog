@@ -1,6 +1,11 @@
 ---
 title: "Beyond DAU: How to Measure User Retention with Survival Analysis"
 date: "2026-08-23"
+description: "Use survival analysis to measure whether a product feature creates durable engagement beyond a short-lived DAU spike."
+image: preview.png
+image-alt: "Timelines comparing the engagement of a habitual user and a user who bounced"
+image-width: "1344"
+image-height: "960"
 categories:
   - r
 format: html

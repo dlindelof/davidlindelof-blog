@@ -7,6 +7,8 @@ website:
   description: "Notes on statistics, data science, software engineering, and scientific computing."
   favicon: favicon.svg
   site-url: https://blog.davidlindelof.com
+  open-graph: true
+  twitter-card: true
   plausible-analytics:
     path: _plausible_snippet.html
   title: "David's blog"
