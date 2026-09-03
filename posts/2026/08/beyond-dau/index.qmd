@@ -6,6 +6,8 @@ image: preview.png
 image-alt: "Timelines comparing the engagement of a habitual user and a user who bounced"
 image-width: "1344"
 image-height: "960"
+open-graph: true
+twitter-card: true
 categories:
   - r
 format: html
