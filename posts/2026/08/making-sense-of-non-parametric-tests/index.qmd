@@ -11,20 +11,22 @@ execute:
 
 When I was studying physics we had our required share of lab work, which was
 also our introduction to experimental statistics. It was there that I heard
-for the first time about hypothesis testing, in particular about the t-test.
-And since I never formally studied statistics, this is what I always
-assumed to be one of the most fundamental tests there was. How wrong I was.
+for the first time about [hypothesis testing](https://en.wikipedia.org/wiki/Statistical_hypothesis_test),
+in particular about [the t-test](https://en.wikipedia.org/wiki/Student%27s_t-test).
+And since I never formally studied statistics, this is what I always assumed
+to be one of the most fundamental tests there was. How wrong I was.
 
 The problem with the t-test, which is often overlooked, lies in the assumptions
-it relies on---particularly the normality assumption. Violations of this
-assumption, we're told, can introduce bias. This makes it sound as if the
-error is minor at worst; in fact it can lead to completely wrong conclusions.
+it relies on---particularly the [normality assumption](https://en.wikipedia.org/wiki/Normal_distribution).
+Violations of this assumption, we're told, can introduce bias. This makes it
+sound as if the error is minor at worst; in fact it can lead to completely
+wrong conclusions.
 
 Imagine we have an experiment with 300 pairs of matched subjects, where one
 member of each pair, chosen at random, gets some treatment. For each pair $i$
 we measure $d_i = r_{Ti} - r_{Ci}$, the difference in responses between the
-treated unit and the control unit. Let's assume now that $d_i$ isn't
-normally distributed but instead follows a shifted lognormal distribution:
+treated unit and the control unit. Let's assume now that $d_i$ isn't normally
+distributed but instead follows a shifted [lognormal distribution](https://en.wikipedia.org/wiki/Log-normal_distribution):
 
 ```{r}
 set.seed(20260826)
@@ -105,36 +107,40 @@ As you'd expect from a lognormal distribution, there's a heavy tail and the
 mean is substantially larger than the median. In fact, they are of opposite
 signs!
 
-What is a point estimate anyway? It's the value of an estimator. What do we want
-from an estimator? Whatever you want but people usually want it to be unbiased.
-Statistics 101 textbooks define a (usually) unbiased estimator as one that
-maximizes the likelihood. The likelihood of what? Of the model that you *assume*
-describes the distribution of the data. An equivalent definition is that it's an
-unbiased estimator of the parameter you're trying to estimate. What parameter?
-The parameter of the model that you *assume* describes the distribution of the
-data. See where I'm going with this?
+What is a [point estimate](https://en.wikipedia.org/wiki/Point_estimation)
+anyway? It's the value of an estimator. What do we want from an estimator?
+Whatever you want but people usually want it to be
+[unbiased](https://en.wikipedia.org/wiki/Bias_of_an_estimator). Statistics 101
+textbooks define a (usually) unbiased estimator as one that maximizes the
+[likelihood](https://en.wikipedia.org/wiki/Likelihood_function). The likelihood
+of what? Of the model that you *assume* describes the distribution of the data.
+An equivalent definition is that it's an unbiased estimator of the parameter
+you're trying to estimate. What parameter? The parameter of the model that you
+*assume* describes the distribution of the data. See where I'm going with this?
 
 In the plot above we show three reference lines:
 
 - the median: gives you the minimum effect size for half the population
 - the mean: gives you the average effect size
-- the Hodges–Lehmann estimator
+- the [Hodges–Lehmann estimator](https://en.wikipedia.org/wiki/Hodges%E2%80%93Lehmann_estimator)
 
 *The WHAT estimator?*
 
 Yeah, I know, this is not something you come across in introductory textbooks.
 Or job interviews for that matter. I learned about it from a textbook about
 observational studies, like, three weeks ago. Think of it as the appropriate
-point estimator when you're using the non-parametric signed-rank test instead
-of the t-test. We don't need to discuss how it's defined; we just need to know
-that it is returned by the `wilcox.test()` function when setting
+point estimator when you're using the non-parametric
+[signed-rank test](https://en.wikipedia.org/wiki/Wilcoxon_signed-rank_test)
+instead of the t-test. We don't need to discuss how it's defined; we just need
+to know that it is returned by the `wilcox.test()` function when setting
 `conf.int = TRUE` as the `estimate` value of the returned list.
 
 The HL estimator is, strictly speaking, only useful when the distribution is
 symmetric. Like the mean or the median it is a location estimator. It is
-robust against outliers (unlike the mean) but more reliable than the median.
-Use it for "serious" decisions like launch decisions, but stick to the median
-in stakeholder presentations.
+[robust](https://en.wikipedia.org/wiki/Robust_statistics) against outliers
+(unlike the mean) but more reliable than the median. Use it for "serious"
+decisions like launch decisions, but stick to the median in stakeholder
+presentations.
 
 It bears repeating: which estimator to use depends on the application.
 You want to use the mean if you worry about the average impact of your
@@ -142,8 +148,10 @@ treatment; you want to use the median or the HL estimator if you worry about
 the impact on the middle customer experience. This is a product decision, not
 a data science one.
 
-On a final note, for these estimators we can bootstrap the matched-pair
-differences to estimate their confidence intervals:
+On a final note, for these estimators we can
+[bootstrap](https://en.wikipedia.org/wiki/Bootstrapping_%28statistics%29) the
+matched-pair differences to estimate their
+[confidence intervals](https://en.wikipedia.org/wiki/Confidence_interval):
 
 ```{r}
 estimate_location <- function(x) {
@@ -247,9 +255,10 @@ ggplot(
   )
 ```
 
-Taken together, these results underscore why the estimand must follow the
-business question. The mean, median, and HL estimator all tell a completely
-different story because they describe different aspects of the same data, and
-can therefore support different decisions. Choosing the relevant quantity
-requires business judgment; estimating it correctly requires statistical
-judgment. Good data science needs both.
+Taken together, these results underscore why the
+[estimand](https://en.wikipedia.org/wiki/Estimand) must follow the business
+question. The mean, median, and HL estimator all tell a completely different
+story because they describe different aspects of the same data, and can
+therefore support different decisions. Choosing the relevant quantity requires
+business judgment; estimating it correctly requires statistical judgment. Good
+data science needs both.
