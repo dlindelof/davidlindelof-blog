@@ -5,11 +5,11 @@ date: 2015-11-30
 
 When I take a picture with my vertically-held iPhone, here is what happens when I insert it as-is in this blog:
 
-_The original example of the wrongly rotated photograph is no longer available._
+![iPhone photograph displayed with the wrong rotation](images/review_queue_org-1568x1176.jpeg)
 
 But the picture shows up correctly when I open it in any OSX application, such as Preview. The issue is that when you take a picture with your iPhone, a meta-data tag gets written to the file telling OSX how to rotate the picture when it is displayed. You can see the tag by using the inspector in Preview:
 
-_The original screenshot of the image metadata is no longer available._
+![Image orientation metadata shown in Preview](images/Screen-Shot-2015-11-27-at-05.56.50.png)
 
 The offender here is that `Orientation` tag, which seems to be used only by OSX applications. The best way to fix this is to remove the tag, rotate the picture correctly with Preview, and save it again.
 

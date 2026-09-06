@@ -19,6 +19,6 @@ So I scouted for open-source monitoring software. There's a great [comparison](h
 
 Good thing that I did. As you can see on the graph below, over a period of just 10 days the available disk space had shrunk by almost 2 Gb. Now this sort of thing happens almost always somewhere under /var, and indeed, it was caused by MySQL's habit of logging every single data-altering statement in so-called bin files under /var/log/mysql.
 
-*The original disk-space graph is no longer available.*
+![Disk-space monitoring graph showing MySQL log growth](images/misterhouse-mysql.png)
 
 After commenting out the relevant lines in /etc/mysql/my.cnf the problem went away, but I had to restart the Zabbix server (without loss of data of course). And I'm sure the reader will notice the irony of MySQL being the cause of this decrease of disk space, when MySQL was installed together with Zabbix in order to monitor the system for such problems. Oh well.

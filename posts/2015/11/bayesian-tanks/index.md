@@ -63,7 +63,7 @@ library(lattice)
 histogram(~ errors | approach, errors)
 ```
 
-_The original histogram of the estimation errors is no longer available._
+![Histogram of the taxicab-number estimation errors](images/taxicabs_errors.png)
 
 Both error distributions are skewed towards negative values, meaning that both approaches tend to underestimate $N$. However, the bayesian errors have a tighter distribution around 0 than the frequentist ones.
 

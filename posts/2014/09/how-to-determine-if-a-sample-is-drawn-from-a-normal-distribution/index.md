@@ -27,7 +27,7 @@ The command to produce a normal Q-Q plot is included in R by default:
 
 Note that I also call `qqline()` in order to draw a line through the 25% and 75% quantiles. This makes it easier to spot significant departures from normality. Here is the result:
 
-_The original Q-Q plot is no longer available._
+![Normal Q-Q plot of the sample](images/qqplot.png)
 
 No nomination for best linear fit ever, but nothing either to suggest non-normality.
 

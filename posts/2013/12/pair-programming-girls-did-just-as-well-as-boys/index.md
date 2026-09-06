@@ -9,7 +9,7 @@ Most students will pair with a fellow student of the same sex. In the spring 201
 
 Here I show the boxplots of the grades assigned to the 52 pairs, depending on whether it was two females, mixed sex, or two males. The median grade for females is 5.5 out of 6, while the median grade for males is 5 out of 6.
 
-_The original final-grades boxplot is no longer available._
+![Final grades by gender and pairing condition](images/grades.png)
 
 The Welch two sample t-test (used to determine whether two samples are drawn from populations with the same mean) yields a p-value of 0.32. The 95% confidence interval for the difference in means between all-females and all-males is between -0.27 and 0.80. In other words, there is no statistically significant difference between the grades obtained by two-female pairs of students and two-male ones.
 

@@ -78,7 +78,7 @@ Suppose each event takes 6 seconds to serve, and build a structure holding x, th
 
 If you now plot the temp structure here is what you would get:
 
-_The original example plot is no longer available._
+![Example event rate-of-arrival plot](images/example.png)
 
 With all this in place, we have now everything we need to go ahead. The little script above can go into its own function or it can be defined as xyplot's panel argument:
 

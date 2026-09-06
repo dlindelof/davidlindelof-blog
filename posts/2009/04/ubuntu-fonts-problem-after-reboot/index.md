@@ -7,7 +7,9 @@ tags:
   - "x-org-server"
 ---
 
-My screen fonts under [Ubuntu](http://www.ubuntu.com/ "Ubuntu") are occasionally completely screwed up. They show up in blue with overstrikes. The original screenshot is no longer available.
+My screen fonts under [Ubuntu](http://www.ubuntu.com/ "Ubuntu") are occasionally completely screwed up. They show up in blue with overstrikes:
+
+![Ubuntu screen fonts shown in blue with overstrikes](images/ubtuntu-font.png)
 
 I think this happens when I reboot my machine without a second monitor being attached to it, which it usually has. I suppose [X.org](http://www.x.org/ "X.Org Server") gets confused when it cannot find a monitor that used to be there.
 

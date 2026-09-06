@@ -5,9 +5,11 @@ date: 2012-04-26
 
 The [ZyXEL NBG4115](http://www.steg-electronics.ch/fr/article/zyxel-nbg4115-184952.aspx?doprint=yes) is a small, cheap 3G router that can be used to build a wireless network where there is no access point available. You plug one of those 3G dongles into it, enter the PIN number, and you have a local access point in the middle of nowhere. At [Neurobat](http://neurobat.net) we use these devices whenever we require internet access to a test site that cannot have internet access otherwise.
 
-_The original photographs of the router and test site are no longer available._
+![ZyXEL NBG4115 Wireless N-lite 3G Router](images/ZY_NBG4115_2524_F72.jpg)
 
 One problem we ran into very early on, however, is that the 3G connection provided by Swisscom tends to be, to put it charitably, flaky. Indeed, we have never had a single connection remain alive for more than a week. We have spoken with their tech support, upgraded the firmware on the 3G dongles, all to no avail. As a final solution we decided to write scripts on the local netbooks that would regularly (say, once every three hours) reset the connection through the router's administrative web interface. Only problem was that none of the "easy" screen-scraping tools out there (`wget`, Python's `urllib`, etc) was Javascript-capable---which is something the web interface would detect, and refuse any client that was not Javascript-enabled.
+
+![3G router at a test site](images/IMG_6575-1568x1045.jpg)
 
 In the end we decided to install a [Selenium](http://seleniumhq.org/) server on each netbook, and wrote a Python script that would talk to the Selenium server and reset the router. If this can help anyone, here is the (simple) Python script to reset a ZyXEL 3G router through Selenium, assuming a Selenium server has been started and is listening on port 4444:
 

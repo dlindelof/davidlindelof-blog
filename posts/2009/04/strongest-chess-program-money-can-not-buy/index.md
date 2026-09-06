@@ -37,4 +37,4 @@ For reference, here is my complete .craftyrc file:
 
 You're now all ready to start [XBoard](http://www.tim-mann.org/xboard.html "XBoard"), and enjoy many fine chess games indeed. On the screenshot below you'll see both crafty.bin processes share close to 1.6Gb RAM and how both cores jumped up to almost 100% usage. And just for fun, notice also how the CPU's temperature climbed up to 64 celsius from an intial 44 celsius (it would later climb beyond 70 celsius). Don't you just love it when a computer is used to its full potential instead of running screensavers?
 
-*The original system-monitor screenshot is no longer available.*
+![System monitor while Crafty analyzes a chess position](images/crafty_pushed.png)

@@ -3,7 +3,7 @@ title: "Great moments in the history of CO2 mitigation"
 date: 2013-06-17
 ---
 
-_The original illustration is no longer available._
+![Great moments in the history of CO2 mitigation](images/co2_fail1.png)
 
 Sources:
 

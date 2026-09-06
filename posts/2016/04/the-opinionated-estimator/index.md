@@ -7,7 +7,7 @@ categories:
 
 You have been lied to. By me.
 
-_The original introductory illustration is no longer available._
+![Introductory illustration](images/killian.jpg)
 
 I taught once a programming class and introduced my students to the notion of an _unbiased estimator_ of the variance of a population. The problem can be stated as follows: given a set of observations $(x_1, x_2, \ldots, x_n)$, what can you say about the variance of the population from which this sample is drawn?
 
@@ -68,7 +68,7 @@ histogram(~ estimate | estimator, estimators,
           })
 ```
 
-_The original estimator-comparison histogram is no longer available._
+![Histogram comparing the two variance estimators](images/unnamed-chunk-5-1.png)
 
 It's a bit hard to tell visually which one is “better”. But let's compute the average squared error for each estimator:
 

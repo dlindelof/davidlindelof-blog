@@ -41,10 +41,10 @@ contourplot(
 
 And here is the resulting plot:
 
-_The original Predicted Mean Vote contour plot is no longer available._
+![Predicted Mean Vote contour plot](images/pmv.png)
 
 As you can see, this is pretty similar to that sort of plots one finds in standard textbooks on the subject, such as Claude-Alain Roulet's _Santé et qualité de l'environnement intérieur dans les bâtiments_:
 
-_The original textbook contour plot is no longer available._
+![Predicted Mean Vote contour plot from a textbook](images/photo.jpg)
 
 Please give the `homeR` package a try, and give us your feedback. There's only the `pmv` function in there at the time of writing but we plan to extend the package in the weeks to come.
