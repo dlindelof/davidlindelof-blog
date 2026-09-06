@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.10.18">
+<meta name="generator" content="quarto-1.9.38">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -13,13 +13,10 @@
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
 */
+code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
-div.columns{display: flex; gap: 1.5em;}
-div.column{flex: auto;}
-@media screen {
-div.columns{gap: min(4vw, 1.5em);}
-div.column{overflow-x: auto;}
-}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
@@ -44,14 +41,14 @@ ul.task-list li input[type="checkbox"] {
 <script src="../../../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting-dark-b85bc7c33db8c58e0ec93c3465666fed.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting-dark-0a6b7249c26820e032cb0bd839ff02b1.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../../../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../../../site_libs/bootstrap/bootstrap-65ab6f6afcc98c2005f3bec1c5e98b7d.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../../../../site_libs/bootstrap/bootstrap-dark-a515e054079012129989d5397ee3c9c1.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="../../../../site_libs/bootstrap/bootstrap-65ab6f6afcc98c2005f3bec1c5e98b7d.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="../../../../site_libs/bootstrap/bootstrap-bbd078c381d723ded0e31fb48194a9cc.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../../../site_libs/bootstrap/bootstrap-dark-60fb5363ddb6713553223898e32b8bfc.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../../../site_libs/bootstrap/bootstrap-bbd078c381d723ded0e31fb48194a9cc.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -347,22 +344,11 @@ ul.task-list li input[type="checkbox"] {
 
 
 <p>We met again on November 3 to discuss recent events in the field of building simulation and automation. This time we were joined by <a href="http://www.adilrasheed.com/blog/index.php">Adil Rasheed,</a> a PhD student at LESO-PB working on the so-called “meso scale modelling of urban heat island effect.” David Daum and Antoine Guillemin were the other participants, besides yours truly.</p>
+<p><em>The original Flickr photos of the meeting are no longer available.</em></p>
 <p>Antoine had brought a prototype <a href="http://adhoco.com/products/central-unit/adhoco.h1/">aHeart</a> central unit, the “brains” behind Adhoco’s home automation solution. He described it to the other participants, most of which had never seen it before.</p>
 <p>He told us also about some of the newer features, such as the possibility for installers to specify their own custom rules through the web interface. Although difficult to implement, this was actually something that the market demanded specifically and that Adhoco had to offer.</p>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><a href="http://www.flickr.com/photos/13583850@N00/3015671568/" title="20081103_2412 by david.lindelof, on Flickr"><img src="images/3015671568_b7a6beb805.jpg" class="img-fluid figure-img"></a></p>
-<figcaption>20081103_2412</figcaption>
-</figure>
-</div>
 <p>I had previously mentioned on this blog Marc Fleury’s <a href="http://www.openremote.org">OpenRemote</a> project and asked the attendees if they had heard about it, but nobody had. Antoine knew about a certain Marc Fleury, working for a swiss company called <a href="http://www.ergo3.ch/">Ergo3</a>, makers of a home gateway device, but I’m pretty sure it’s not the same person.</p>
 <p>David gave us his update on his project and explained a bit more how the <a href="http://www.equa.se/eng.se.html">IDA</a> simulation engine worked. What I found particularly compelling was the way that IDA would adapt its simulation timesteps depending on the needs. We discussed the possibilities to use IDA for simulating the performance of Java-based controllers such as Adhoco’s, but we are not sure whether IDA can call Java code.</p>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><a href="http://www.flickr.com/photos/13583850@N00/3015671656/" title="20081103_2413 by david.lindelof, on Flickr"><img src="images/3015671656_a59b728aeb.jpg" class="img-fluid figure-img"></a></p>
-<figcaption>20081103_2413</figcaption>
-</figure>
-</div>
 <p>Speaking of processes talking to each others, we briefly reviewed the canonical four ways that two processes can talk:</p>
 <ol type="1">
 <li>Through the exchange of files, whether on the same filesystem or through FTP;</li>
@@ -371,12 +357,6 @@ ul.task-list li input[type="checkbox"] {
 <li>Through a messaging solution, such as JMS.</li>
 </ol>
 <p>But this review still didn’t help us understand how C code could call foreign code, such as Java or Python. The reverse is relatively straightforward, see eg <a href="http://stackoverflow.com/questions/83299/whats-the-easiest-way-to-use-c-source-code-in-a-java-application#83364">this answer on StackOverflow.</a></p>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><a href="http://www.flickr.com/photos/13583850@N00/3014835805/" title="20081103_2414 by david.lindelof, on Flickr"><img src="images/3014835805_07ddfd1be3.jpg" class="img-fluid figure-img"></a></p>
-<figcaption>20081103_2414</figcaption>
-</figure>
-</div>
 <p>Thanks to everyone who participated, and see you around next time.</p>
 
 

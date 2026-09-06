@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.10.18">
+<meta name="generator" content="quarto-1.9.38">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -13,13 +13,10 @@
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
 */
+code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
-div.columns{display: flex; gap: 1.5em;}
-div.column{flex: auto;}
-@media screen {
-div.columns{gap: min(4vw, 1.5em);}
-div.column{overflow-x: auto;}
-}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
@@ -44,14 +41,14 @@ ul.task-list li input[type="checkbox"] {
 <script src="../../../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting-dark-b85bc7c33db8c58e0ec93c3465666fed.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting-dark-0a6b7249c26820e032cb0bd839ff02b1.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../../../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../../../site_libs/bootstrap/bootstrap-65ab6f6afcc98c2005f3bec1c5e98b7d.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../../../../site_libs/bootstrap/bootstrap-dark-a515e054079012129989d5397ee3c9c1.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="../../../../site_libs/bootstrap/bootstrap-65ab6f6afcc98c2005f3bec1c5e98b7d.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="../../../../site_libs/bootstrap/bootstrap-bbd078c381d723ded0e31fb48194a9cc.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../../../site_libs/bootstrap/bootstrap-dark-60fb5363ddb6713553223898e32b8bfc.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../../../site_libs/bootstrap/bootstrap-bbd078c381d723ded0e31fb48194a9cc.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -342,7 +339,10 @@ ul.task-list li input[type="checkbox"] {
 
 
 
-<p>The <a href="http://www.steg-electronics.ch/fr/article/zyxel-nbg4115-184952.aspx?doprint=yes">ZyXEL NBG4115</a> is a small, cheap 3G router that can be used to build a wireless network where there is no access point available. You plug one of those 3G dongles into it, enter the PIN number, and you have a local access point in the middle of nowhere. At <a href="http://neurobat.net">Neurobat</a> we use these devices whenever we require internet access to a test site that cannot have internet access otherwise. [caption id=“attachment_604” align=“alignnone” width=“287” caption=“ZyXEL NBG4115 Wireless N-lite 3G Router”][<img src="images/ZY_NBG4115_2524_F72-287x300.jpg" title="ZyXEL NBG4115 Wireless N-lite 3G Router" class="img-fluid">]<a href="http://computersandbuildings.com/wp-content/uploads/2012/04/ZY_NBG4115_2524_F72.jpg">3</a>[/caption] One problem we ran into very early on, however, is that the 3G connection provided by Swisscom tends to be, to put it charitably, flaky. Indeed, we have never had a single connection remain alive for more than a week. We have spoken with their tech support, upgraded the firmware on the 3G dongles, all to no avail. As a final solution we decided to write scripts on the local netbooks that would regularly (say, once every three hours) reset the connection through the router’s administrative web interface. Only problem was that none of the “easy” screen-scraping tools out there (<code>wget</code>, Python’s <code>urllib</code>, etc) was Javascript-capable—|which is something the web interface would detect, and refuse any client that was not Javascript-enabled. [caption id=“attachment_605” align=“alignnone” width=“300” caption=“3G Router on a test site”][<img src="images/IMG_6575-300x200.jpg" title="3G Router on a test site" class="img-fluid">]<a href="http://computersandbuildings.com/wp-content/uploads/2012/04/IMG_6575.jpg">4</a>[/caption] In the end we decided to install a <a href="http://seleniumhq.org/">Selenium</a> server on each netbook, and wrote a Python script that would talk to the Selenium server and reset the router. If this can help anyone, here is the (simple) Python script to reset a ZyXEL 3G router through Selenium, assuming a Selenium server has been started and is listening on port 4444:</p>
+<p>The <a href="http://www.steg-electronics.ch/fr/article/zyxel-nbg4115-184952.aspx?doprint=yes">ZyXEL NBG4115</a> is a small, cheap 3G router that can be used to build a wireless network where there is no access point available. You plug one of those 3G dongles into it, enter the PIN number, and you have a local access point in the middle of nowhere. At <a href="http://neurobat.net">Neurobat</a> we use these devices whenever we require internet access to a test site that cannot have internet access otherwise.</p>
+<p><em>The original photographs of the router and test site are no longer available.</em></p>
+<p>One problem we ran into very early on, however, is that the 3G connection provided by Swisscom tends to be, to put it charitably, flaky. Indeed, we have never had a single connection remain alive for more than a week. We have spoken with their tech support, upgraded the firmware on the 3G dongles, all to no avail. As a final solution we decided to write scripts on the local netbooks that would regularly (say, once every three hours) reset the connection through the router’s administrative web interface. Only problem was that none of the “easy” screen-scraping tools out there (<code>wget</code>, Python’s <code>urllib</code>, etc) was Javascript-capable—which is something the web interface would detect, and refuse any client that was not Javascript-enabled.</p>
+<p>In the end we decided to install a <a href="http://seleniumhq.org/">Selenium</a> server on each netbook, and wrote a Python script that would talk to the Selenium server and reset the router. If this can help anyone, here is the (simple) Python script to reset a ZyXEL 3G router through Selenium, assuming a Selenium server has been started and is listening on port 4444:</p>
 <pre><code>#!/usr/bin/env python 
 from selenium import webdriver 
 browser = webdriver.Remote("http://localhost:4444/wd/hub", webdriver.DesiredCapabilities.HTMLUNIT) 

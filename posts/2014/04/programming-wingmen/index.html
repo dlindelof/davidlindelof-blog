@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.10.18">
+<meta name="generator" content="quarto-1.9.38">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -13,13 +13,10 @@
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
 */
+code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
-div.columns{display: flex; gap: 1.5em;}
-div.column{flex: auto;}
-@media screen {
-div.columns{gap: min(4vw, 1.5em);}
-div.column{overflow-x: auto;}
-}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
@@ -44,14 +41,14 @@ ul.task-list li input[type="checkbox"] {
 <script src="../../../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting-dark-b85bc7c33db8c58e0ec93c3465666fed.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting-dark-0a6b7249c26820e032cb0bd839ff02b1.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../../../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../../../site_libs/bootstrap/bootstrap-65ab6f6afcc98c2005f3bec1c5e98b7d.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../../../../site_libs/bootstrap/bootstrap-dark-a515e054079012129989d5397ee3c9c1.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="../../../../site_libs/bootstrap/bootstrap-65ab6f6afcc98c2005f3bec1c5e98b7d.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="../../../../site_libs/bootstrap/bootstrap-bbd078c381d723ded0e31fb48194a9cc.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../../../site_libs/bootstrap/bootstrap-dark-60fb5363ddb6713553223898e32b8bfc.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../../../site_libs/bootstrap/bootstrap-bbd078c381d723ded0e31fb48194a9cc.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -346,12 +343,7 @@ ul.task-list li input[type="checkbox"] {
 <p><a href="http://c2.com/cgi/wiki?PairRotationFrequency">Conventional wisdom</a> holds that pairs should be rotated frequently, i.e.&nbsp;several times per day. In our experience, this has been hard to sustain. Instead, we’ve experimented with having two team members bond together and take collective ownership of a feature (or bug, or research item). They stick together until that feature is done. That can last anywhere between a few hours and several days.</p>
 <p>The Pair Programming community use the metaphor of two drivers alternating being in the driver’s seat. Implicit in this metaphor is the idea that you stay with your fellow driver only for part of the whole road; several different programming pairs will end up working on the same feature.</p>
 <p>What we are proposing instead, is that the same pair sticks together until the feature is complete. If the Pair Programming community uses a land-based metaphor, I’m going to use an aerial one. I’ll liken this to a pair of wingmen flying a missions, sticking together until the mission is done.</p>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><a href="http://computersandbuildings.com/wp-content/uploads/2014/04/wingman-demotivational.jpg"><img src="images/wingman-demotivational-550x352.jpg" class="img-fluid figure-img"></a></p>
-<figcaption>wingman-demotivational</figcaption>
-</figure>
-</div>
+<p><em>The original wingman illustration is no longer available.</em></p>
 <p>I’ve been pairing for almost two weeks now with our test engineer. We write the R scripts that automatically analyze, and generate a report on, this winter’s test data. Speaking for myself, I’m now convinced that this practice carries the same benefits as traditional pair programming, but brings several extra benefits:</p>
 <p>First, since we are both responsible for the quality of this work, I feel <strong>far more accountable</strong> to my fellow team member. If I screw up, it’s our collective work that suffers. Conversely, I have a <strong>much stronger incentive</strong> for watching out over what he’s doing while he’s flying. We are 100% responsible for the quality of the work; we cannot later claim that some other pair came and introduced errors.</p>
 <p>Secondly, it shortens the daily standup since it’s now <strong>the wings that presents what was done, what will be done, etc</strong>. In fact, it’s been the first time in years that we kept our daily standups within the allocated time.</p>
@@ -359,12 +351,7 @@ ul.task-list li input[type="checkbox"] {
 <p>Fourthly, it <strong>reduces the guilt associated with pairing with someone instead of working on one’s “own” story</strong>. I think one of the main reasons why people don’t pair more often is the fear of not completing what they perceive as their “own” tasks. Indeed, perhaps it is time to revise the daily standup mantra. Forcing people to chant “Yesterday <em>I</em> did this, today <em>I</em>’ll do that, etc” emphasizes their individual accomplishments.</p>
 <p>A big issue with traditional Scrum is that by the end of the daily standup, everyone is so energized for the day ahead that they simply <strong>can’t be bothered to pair with someone else</strong>. In fact, once everyone has spoken their piece, we often found it useful to re-discuss who will be doing what for the day <strong>and with whom</strong>. This is obviously a waste of time, that can be eliminated by this wingmen system.</p>
 <p>How did we get started? By a simple change. So simple, in fact, that it borders on the trivial, and you can try it today. Assuming you use a whiteboard to track your work in progress, <strong>figure out a way to indicate that a story is now owned by two people instead of one.</strong> For us, we used to have parallel swimlanes across the whiteboard, one lane per team member. What we did was as simple as merge them together by pairs.</p>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><a href="http://computersandbuildings.com/wp-content/uploads/2014/04/storying.jpg"><img src="images/storying.jpg" class="img-fluid figure-img"></a></p>
-<figcaption>storying</figcaption>
-</figure>
-</div>
+<p><em>The original whiteboard photograph is no longer available.</em></p>
 <p>If you have any position of authority in your team, I dare you to try this experiment for just one week, and for just one pair of team members. You’ll thank me for it.</p>
 
 

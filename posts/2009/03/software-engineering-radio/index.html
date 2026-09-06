@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.10.18">
+<meta name="generator" content="quarto-1.9.38">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -13,13 +13,10 @@
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
 */
+code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
-div.columns{display: flex; gap: 1.5em;}
-div.column{flex: auto;}
-@media screen {
-div.columns{gap: min(4vw, 1.5em);}
-div.column{overflow-x: auto;}
-}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
@@ -44,14 +41,14 @@ ul.task-list li input[type="checkbox"] {
 <script src="../../../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting-dark-b85bc7c33db8c58e0ec93c3465666fed.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting-dark-0a6b7249c26820e032cb0bd839ff02b1.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../../../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../../../site_libs/bootstrap/bootstrap-65ab6f6afcc98c2005f3bec1c5e98b7d.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../../../../site_libs/bootstrap/bootstrap-dark-a515e054079012129989d5397ee3c9c1.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="../../../../site_libs/bootstrap/bootstrap-65ab6f6afcc98c2005f3bec1c5e98b7d.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="../../../../site_libs/bootstrap/bootstrap-bbd078c381d723ded0e31fb48194a9cc.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../../../site_libs/bootstrap/bootstrap-dark-60fb5363ddb6713553223898e32b8bfc.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../../../site_libs/bootstrap/bootstrap-bbd078c381d723ded0e31fb48194a9cc.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -350,16 +347,14 @@ ul.task-list li input[type="checkbox"] {
 <p>When I discovered this podcast, about one year ago, I quickly downloaded just the episodes that appeared to be the most relevant to my work. But I found that almost all episodes had something in there for me. For example, recently I listened to the episode on <a href="http://en.wikipedia.org/wiki/Real-time_computing" title="Real-time computing">real-time systems</a>, a field I do not work in anymore. Well, at one point the interviewee discussed how jobs were scheduled in certain real-time systems, trying to optimize the total value or utility of the work done by choosing which tasks to perform and which to let slip past their deadlines. And that got me thinking about the <a href="http://en.wikipedia.org/wiki/Scrum_%28development%29" title="Scrum (development)">Scrum</a> planning process, when the Scrumaster selects, for the upcoming sprint, items from the product backlog in decreasing order of importance until the total estimated time fills up the scrum duration.</p>
 <p>Now imagine for a minute that we could get the product owner to assign utility values to each product backlog item. Then instead of selecting product backlog items in decreasing order of importance, we could apply the same kind of decision process and optimize the utility created by each sprint.</p>
 <p>(Later that day I went to the library to research this topic but all I found was an exercise from the classic <a href="http://www.amazon.com/gp/product/0072970545?ie=UTF8&amp;tag=compandsmarbu-20&amp;linkCode=as2&amp;camp=1789&amp;creative=390957&amp;creativeASIN=0072970545">Introduction to Algorithms</a> in which the reader is asked to optimize such a job schedule. The chapter in question was the one about <a href="http://en.wikipedia.org/wiki/Dynamic_programming" title="Dynamic programming">Dynamic Programming</a>, in case anyone is interested.)</p>
-<p><a href="http://www.amazon.com/gp/product/0072970545?ie=UTF8&amp;tag=compandsmarbu-20&amp;linkCode=as2&amp;camp=1789&amp;creative=390957&amp;creativeASIN=0072970545"><img src="images/Clrs.jpg" class="img-fluid"></a></p>
-<p>Anyway, back to SE-Radio. I’ve found the episodes’ quality range from good to very good, covering a broad range of topics. Perhaps they could be slightly improved with a little bit more structure, and also if the interviewer would stop regularly interrupting the guests with their own opinions. Sound quality has been an issue in the early days (ONE episode in particular was literally painful to listen to—I won’t say which one) but now it’s much, much better.</p>
-<p>These days I listen to at least one episode a day, my goal being to listen to all of them. I can really recommend it.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="http://reblog.zemanta.com/zemified/b9ea6b5e-96d7-41e7-b867-eb278bc83347/" title="Zemified by Zemanta"><img src="images/reblog_e.png" class="img-fluid figure-img"></a></p>
-<figcaption>Reblog this post [with Zemanta]</figcaption>
+<p><a href="http://www.amazon.com/gp/product/0072970545"><img src="images/introduction-to-algorithms.jpg" class="img-fluid figure-img"></a></p>
+<figcaption>Cover of Introduction to Algorithms</figcaption>
 </figure>
 </div>
-<script type="text/javascript" src="http://static.zemanta.com/readside/loader.js" defer="defer"></script>
+<p>Anyway, back to SE-Radio. I’ve found the episodes’ quality range from good to very good, covering a broad range of topics. Perhaps they could be slightly improved with a little bit more structure, and also if the interviewer would stop regularly interrupting the guests with their own opinions. Sound quality has been an issue in the early days (ONE episode in particular was literally painful to listen to—I won’t say which one) but now it’s much, much better.</p>
+<p>These days I listen to at least one episode a day, my goal being to listen to all of them. I can really recommend it.</p>
 
 
 

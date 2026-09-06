@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.10.18">
+<meta name="generator" content="quarto-1.9.38">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -13,13 +13,10 @@
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
 */
+code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
-div.columns{display: flex; gap: 1.5em;}
-div.column{flex: auto;}
-@media screen {
-div.columns{gap: min(4vw, 1.5em);}
-div.column{overflow-x: auto;}
-}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
@@ -44,14 +41,14 @@ ul.task-list li input[type="checkbox"] {
 <script src="../../../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting-dark-b85bc7c33db8c58e0ec93c3465666fed.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting-dark-0a6b7249c26820e032cb0bd839ff02b1.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../../../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../../../site_libs/bootstrap/bootstrap-65ab6f6afcc98c2005f3bec1c5e98b7d.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../../../../site_libs/bootstrap/bootstrap-dark-a515e054079012129989d5397ee3c9c1.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="../../../../site_libs/bootstrap/bootstrap-65ab6f6afcc98c2005f3bec1c5e98b7d.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="../../../../site_libs/bootstrap/bootstrap-bbd078c381d723ded0e31fb48194a9cc.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../../../site_libs/bootstrap/bootstrap-dark-60fb5363ddb6713553223898e32b8bfc.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../../../site_libs/bootstrap/bootstrap-bbd078c381d723ded0e31fb48194a9cc.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -359,22 +356,12 @@ ul.task-list li input[type="checkbox"] {
 
 
 <p>Ubiquitous home automation will never become a reality unless cheap embedded PCs are available to be the “brains” of the home. Some time ago I came across a company called <a href="http://www.soekris.com/">Soekris Engineering</a> who make relatively cheap embedded PCs, like the one shown below.</p>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="http://www.visnet.ch/smartbuildings/wp-content/uploads/2008/05/net4801_bc_front_big.jpg" class="img-fluid figure-img"></p>
-<figcaption>net4801</figcaption>
-</figure>
-</div>
+<p><em>The original photograph of the Soekris net4801 is no longer available.</em></p>
 <p>This little guy packs a 20Gb CompactFlash harddisk, 128 Mb RAM, and a 266 MHz Intel processor. Of course I managed to hose mine’s operating system and had to reinstall it from scratch. Here are the steps I followed to install Debian from my laptop (running Ubuntu 7.10), connected to the Soekris with a null-modem cable.</p>
 <section id="minicom-setup" class="level3">
 <h3 class="anchored" data-anchor-id="minicom-setup">Minicom setup</h3>
 <p>Install the minicom package on the host system, you’re going to need it to communicate with the Soekris box during the installation. Here is what my minicom configuration looks like:</p>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="http://www.visnet.ch/smartbuildings/wp-content/uploads/2008/05/minicom-config.png" class="img-fluid figure-img"></p>
-<figcaption>Minicom default configuration</figcaption>
-</figure>
-</div>
+<p><em>The original Minicom configuration screenshot is no longer available.</em></p>
 <p>I also suggest you run the following before starting minicom:</p>
 <p><code>export LANG=C</code></p>
 <p>If you don’t you might run into strange error reports from minicom.</p>
@@ -405,20 +392,10 @@ ul.task-list li input[type="checkbox"] {
 <p>I called my system misterhouse@visnet.ch, since I intend to use it to run the open-source <a href="http://misterhouse.sourceforge.net/">MisterHouse</a> home automation program.</p>
 <p>You will at some point be asked how you want to partition the 20 Gb disk. If you leave the default settings, you run the risk of not being able to boot because of an “Error 18” from GRUB. See <a href="http://lists.soekris.com/pipermail/soekris-tech/2007-November/013378.html">here</a> for an explanation. That’s why you should make the first partition a small (about 100 Mb) bootable partition mounted at /boot. The rest of the disk can be split between a 400 Mb swap space and all the rest.</p>
 <p>Your setup should look something like this:</p>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="http://www.visnet.ch/smartbuildings/wp-content/uploads/2008/05/debian-installer-partitions.png" class="img-fluid figure-img"></p>
-<figcaption>Debian installer partitions setup</figcaption>
-</figure>
-</div>
+<p><em>The original partitioning screenshot is no longer available.</em></p>
 <p>When prompted, say yes to install GRUB on the master boot record.</p>
 <p>You will also be asked what types of software to install. For a standalone, headless mini-server like this, I configured it like this:</p>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="http://www.visnet.ch/smartbuildings/wp-content/uploads/2008/05/debian-installer-server.png" class="img-fluid figure-img"></p>
-<figcaption>Debian software types</figcaption>
-</figure>
-</div>
+<p><em>The original software-selection screenshot is no longer available.</em></p>
 </section>
 <section id="conclusion" class="level3">
 <h3 class="anchored" data-anchor-id="conclusion">Conclusion</h3>

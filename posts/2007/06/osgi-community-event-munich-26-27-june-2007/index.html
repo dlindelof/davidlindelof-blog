@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.10.18">
+<meta name="generator" content="quarto-1.9.38">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -13,13 +13,10 @@
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
 */
+code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
-div.columns{display: flex; gap: 1.5em;}
-div.column{flex: auto;}
-@media screen {
-div.columns{gap: min(4vw, 1.5em);}
-div.column{overflow-x: auto;}
-}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
@@ -44,14 +41,14 @@ ul.task-list li input[type="checkbox"] {
 <script src="../../../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting-dark-b85bc7c33db8c58e0ec93c3465666fed.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting-dark-0a6b7249c26820e032cb0bd839ff02b1.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../../../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../../../site_libs/bootstrap/bootstrap-65ab6f6afcc98c2005f3bec1c5e98b7d.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../../../../site_libs/bootstrap/bootstrap-dark-a515e054079012129989d5397ee3c9c1.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="../../../../site_libs/bootstrap/bootstrap-65ab6f6afcc98c2005f3bec1c5e98b7d.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="../../../../site_libs/bootstrap/bootstrap-bbd078c381d723ded0e31fb48194a9cc.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../../../site_libs/bootstrap/bootstrap-dark-60fb5363ddb6713553223898e32b8bfc.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../../../site_libs/bootstrap/bootstrap-bbd078c381d723ded0e31fb48194a9cc.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -357,16 +354,11 @@ ul.task-list li input[type="checkbox"] {
 
 
 
-<p>I have already mentioned <a href="http://www.visnet.ch/smartbuildings/review-decompiling-java/">elsewhere</a> that the <a href="http://en.wikipedia.org/wiki/Osgi">OSGi</a> technology is likely to play an important part in the computerization of current and future buildings. It is a very attractive programming model for building management systems, especially with respect to its software lifecycle model (stopping, updating and restarting) that does not require a reboot of the whole system—nor indeed of your own application.</p>
+<p>I have already mentioned <a href="../../../../posts/2006/03/review-decompiling-java/">elsewhere</a> that the <a href="http://en.wikipedia.org/wiki/Osgi">OSGi</a> technology is likely to play an important part in the computerization of current and future buildings. It is a very attractive programming model for building management systems, especially with respect to its software lifecycle model (stopping, updating and restarting) that does not require a reboot of the whole system—nor indeed of your own application.</p>
 <p>In a nutshell, OSGi is an extension to the Java programming language whereby a framework program (just called the “framework”) runs continuously, in which small applications packaged as “bundles” (which are nothing else but jarfiles with some extra description information in their manifest) are installed, registered, started, stopped, updated and uninstalled. Each bundle can register “services” in the framework, i.e.&nbsp;objects available for use to other bundles. In a carefully designed OSGi program, when a bundle is uninstalled all bundles forget everything about it, and in particular its classes are eventually unloaded—something that never ever happens in classic Java (or any other language that I know of). For this reason, OSGi has more than once been referred to as “ClassLoaders on steroids”.</p>
 <p>This being my weblog on building automation, I report here what I found to be relevant for that field in the <a href="http://www2.osgi.org/Conference/2007CommunityEvent">OSGi Community Event</a> held in Munich, Germany, June 26-27 2007.</p>
 <p>(Full disclaimer: my trip was financed by <a href="http://www.adhoco.com">Adhoco AG</a>, with whom I work, but I promise will be as unbiased as I can.)</p>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="images/648174077_5adbbf5e58_m.jpg" class="img-fluid figure-img"></p>
-<figcaption>OSGi Community Event</figcaption>
-</figure>
-</div>
+<p><em>The original Flickr photos from the event are no longer available.</em></p>
 <section id="osgi-and-home-automation" class="level3">
 <h3 class="anchored" data-anchor-id="osgi-and-home-automation">OSGi and home automation</h3>
 <p>There wasn’t actually that much of a specific focus on building automation per se—only Miguel García Longaró, from Telefónica Ivestigación y Desarrollo in Spain, and Marquart Franz from Siemens showed us products for the home automation. I found Miguel’s product to be particularly intriguing, as he claimed it could indifferently talk to devices on different kinds of underlying hardware (he listed EIB/KNX, Hometronic, Busing, Dinitel and X10). This is exactly what we offer with Adhoco’s product too.</p>
@@ -376,12 +368,6 @@ ul.task-list li input[type="checkbox"] {
 <p>I suppose this is an approach we could try with home automation as well, but what he is doing sounds awfully similar to the Device Access service specified in the official OSGi specs. When I asked him about this, he replied that device manufacturers prefer to distribute EDDLs for intellectual property reasons, which was (apparently) why he couldn’t use this service.</p>
 <p>I must however confess being thoroughly confused by this service specification at the moment. I spent three hours on the train trying to understand it (once more) but gave up. I’ve started a thread about this on the Apache Felix (an open-source OSGi implementation) <a href="http://www.mail-archive.com/users@felix.apache.org/">mailing-list</a>.</p>
 <p>I’ve often wondered whether it is better to have one central service responsible for dealing out references to the devices to client bundles, or if each device should be represented by a service. (This dilemma is faced by anyone architecting a distributed computing environment, such as network of automatic teller machines—do you have each ATM communicate with on object that represents the bank, or with thousands of smaller objects that each represent an account?) Richard Hall, author of the Apache Felix OSGi implementation, suggested that the latter model is better, as it allows client bundles to react to the “disapperance” of devices.</p>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="images/648174807_0a14c9cfaf_m.jpg" class="img-fluid figure-img"></p>
-<figcaption>OSGi technical discussions</figcaption>
-</figure>
-</div>
 </section>
 <section id="osgi-technical-discussions" class="level3">
 <h3 class="anchored" data-anchor-id="osgi-technical-discussions">OSGi technical discussions</h3>
@@ -443,12 +429,6 @@ foo.bar.*
 <p><strong>Thread Safety</strong></p>
 <p>Like many other of these best practices, this one holds for any Java application and is not restricted to OSGi. This is a complex subject, with some members of the meeting nominating Brian Goetz et al’s book <em>Java Concurrency in Practice</em> as a required reading for any serious Java developer.</p>
 <p>I am by no means a concurrency expert, but a common cause of deadlocks is when you make foreign method calls inside a synchronized block. Do not, ever, do this. You have no idea what that method you are calling might be doing—in particular, it might well try to acquire your own lock, resulting in a deadlock and a frozen application.</p>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="images/648206061_4770680940_m.jpg" class="img-fluid figure-img"></p>
-<figcaption>OSGi evangelist in action</figcaption>
-</figure>
-</div>
 </section>
 <section id="miscellaneous" class="level3">
 <h3 class="anchored" data-anchor-id="miscellaneous">Miscellaneous</h3>
@@ -457,12 +437,6 @@ foo.bar.*
 <p>In my line of work I have found the OBR idea very useful, and a great tool for setting up a remote management system. Such a repository can hold different versions of the same bundle, making lifecycle management easy. What makes the developer’s life even easier is the availability of the <a href="http://www2.osgi.org/Repository/BIndex">Bindex</a> tool from Peter Kriens to generate the repository’s description XML file.</p>
 <p>Stuart McCulloch talked about other tools for bundle developers. It was from him that I heard for the first time about the <a href="http://www.aqute.biz/Code/Bnd">Bnd</a> tool to help create OSGi bundles. Like probably many others, I’m still relying on good old Ant scripts to do that, so any tool that might make it easier is welcome indeed.</p>
 <p>Remote management was often mentioned during the event. Kai Hackbarth, from ProSyst AG, gave a talk on the challenge of managing the lifecycles of potentially millions of OSGi devices in the field, not all of which can be assumed to be connected to the internet at all times. He presented the <a href="http://www.prosyst.com/products/back_end_mgmt.html">mPRM</a> software product that his company makes, a product that helps automate this daunting task.</p>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="images/648174457_383db4bbc8_m.jpg" class="img-fluid figure-img"></p>
-<figcaption>OSGi discussions</figcaption>
-</figure>
-</div>
 </section>
 <section id="overall-impression" class="level3">
 <h3 class="anchored" data-anchor-id="overall-impression">Overall impression</h3>

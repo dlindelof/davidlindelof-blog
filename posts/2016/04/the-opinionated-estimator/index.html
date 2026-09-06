@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.10.18">
+<meta name="generator" content="quarto-1.9.38">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -13,13 +13,10 @@
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
 */
+code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
-div.columns{display: flex; gap: 1.5em;}
-div.column{flex: auto;}
-@media screen {
-div.columns{gap: min(4vw, 1.5em);}
-div.column{overflow-x: auto;}
-}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
@@ -44,14 +41,14 @@ ul.task-list li input[type="checkbox"] {
 <script src="../../../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting-dark-b85bc7c33db8c58e0ec93c3465666fed.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting-dark-0a6b7249c26820e032cb0bd839ff02b1.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../../../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../../../site_libs/bootstrap/bootstrap-65ab6f6afcc98c2005f3bec1c5e98b7d.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../../../../site_libs/bootstrap/bootstrap-dark-a515e054079012129989d5397ee3c9c1.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="../../../../site_libs/bootstrap/bootstrap-65ab6f6afcc98c2005f3bec1c5e98b7d.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="../../../../site_libs/bootstrap/bootstrap-bbd078c381d723ded0e31fb48194a9cc.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../../../site_libs/bootstrap/bootstrap-dark-60fb5363ddb6713553223898e32b8bfc.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../../../site_libs/bootstrap/bootstrap-bbd078c381d723ded0e31fb48194a9cc.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -87,7 +84,7 @@ ul.task-list li input[type="checkbox"] {
 </script>
 
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <script type="text/javascript">
 const typesetMath = (el) => {
@@ -375,12 +372,7 @@ window.Quarto = {
 
 
 <p>You have been lied to. By me.</p>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><a href="http://computersandbuildings.com/wp-content/uploads/2016/03/killian.jpg"><img src="images/killian-300x168.jpg" class="img-fluid figure-img"></a></p>
-<figcaption>Killian is lying to you</figcaption>
-</figure>
-</div>
+<p><em>The original introductory illustration is no longer available.</em></p>
 <p>I taught once a programming class and introduced my students to the notion of an <em>unbiased estimator</em> of the variance of a population. The problem can be stated as follows: given a set of observations <span class="math inline">\((x\_1, x\_2, ..., x\_n)\)</span>, what can you say about the variance of the population from which this sample is drawn?</p>
 <p>Classical textbooks, <a href="http://mathworld.wolfram.com/SampleVariance.html">MathWorld</a>, the <a href="https://www.khanacademy.org/math/probability/descriptive-statistics/variance-std-deviation/v/sample-variance">Khan Academy</a>, and <a href="https://en.wikipedia.org/wiki/Variance#Population_variance_and_sample_variance">Wikipedia</a> all give you the formula for the so-called <em>unbiased estimator</em> of the population variance:</p>
 <p><span class="math display">\[\\hat{s}^2 = \\frac{1}{n-1}\\sum\_{i=1}^n (x\_i - \\bar{x})^2\]</span></p>
@@ -410,12 +402,7 @@ histogram(~ estimate | estimator, estimators,
             panel.histogram(...)
             panel.abline(v = 25, col = "red", lwd = 5)
           })</code></pre>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><a href="http://computersandbuildings.com/wp-content/uploads/2016/03/unnamed-chunk-5-1.png"><img src="images/unnamed-chunk-5-1.png" class="img-fluid figure-img"></a></p>
-<figcaption>Unbiased vs Opinionated</figcaption>
-</figure>
-</div>
+<p><em>The original estimator-comparison histogram is no longer available.</em></p>
 <p>It’s a bit hard to tell visually which one is ``better’’. But let’s compute the average squared error for each estimator:</p>
 <pre><code>aggregate(estimate ~ estimator, estimators, function(x) mean((x - 25)^2))
 

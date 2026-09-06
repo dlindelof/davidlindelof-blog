@@ -9,7 +9,7 @@
 <link>https://blog.davidlindelof.com/#category=r</link>
 <atom:link href="https://blog.davidlindelof.com/index-r.xml" rel="self" type="application/rss+xml"/>
 <description>Notes on statistics, data science, software engineering, and scientific computing.</description>
-<generator>quarto-1.10.18</generator>
+<generator>quarto-1.9.38</generator>
 <lastBuildDate>Sun, 23 Aug 2026 00:00:00 GMT</lastBuildDate>
 <item>
   <title>Beyond DAU: How to Measure User Retention with Survival Analysis</title>
@@ -852,7 +852,7 @@ font-style: inherit;">mean</span>(y)</span></code></pre></div></div>
 <blockquote class="blockquote">
 <p>Because <img src="https://latex.codecogs.com/png.latex?X"> and <img src="https://latex.codecogs.com/png.latex?Y"> are jointly bivariate normal in the limit, <img src="https://latex.codecogs.com/png.latex?M">, as the ratio of the two averages, is also normally distributed.</p>
 </blockquote>
-<p>That’s only partially true. According to <a href="Wikipedia">https://en.wikipedia.org/wiki/Ratio_distribution</a>, the ratio of two uncorrelated noncentral normal variables <img src="https://latex.codecogs.com/png.latex?X%20=%20N(%5C%5Cmu%5C_X,%20%5C%5Csigma%5C_X%5E2)"> and <img src="https://latex.codecogs.com/png.latex?Y%20=%20N(%5C%5Cmu%5C_Y,%20%5C%5Csigma%5C_Y%5E2)"> has mean <img src="https://latex.codecogs.com/png.latex?%5C%5Cmu%5C_X%20/%20%5C%5Cmu%5C_Y"> and variance approximately <img src="https://latex.codecogs.com/png.latex?%5C%5Cfrac%7B%5C%5Cmu%5C_X%5E2%7D%7B%5C%5Cmu%5C_Y%5E2%7D%5C%5Cleft(%20%5C%5Cfrac%7B%5C%5Csigma%5C_X%5E2%7D%7B%5C%5Cmu%5C_X%5E2%7D%20+%20%5C%5Cfrac%7B%5C%5Csigma%5C_Y%5E2%7D%7B%5C%5Cmu%5C_Y%5E2%7D%20%5C%5Cright)">. The article implies that this is true when <img src="https://latex.codecogs.com/png.latex?Y"> is unlikely to assume negative values, say <img src="https://latex.codecogs.com/png.latex?%5C%5Cmu%5C_Y%20%3E%203%20%5C%5Csigma%5C_Y">.</p>
+<p>That’s only partially true. According to <a href="https://en.wikipedia.org/wiki/Ratio_distribution">Wikipedia</a>, the ratio of two uncorrelated noncentral normal variables <img src="https://latex.codecogs.com/png.latex?X%20=%20N(%5C%5Cmu%5C_X,%20%5C%5Csigma%5C_X%5E2)"> and <img src="https://latex.codecogs.com/png.latex?Y%20=%20N(%5C%5Cmu%5C_Y,%20%5C%5Csigma%5C_Y%5E2)"> has mean <img src="https://latex.codecogs.com/png.latex?%5C%5Cmu%5C_X%20/%20%5C%5Cmu%5C_Y"> and variance approximately <img src="https://latex.codecogs.com/png.latex?%5C%5Cfrac%7B%5C%5Cmu%5C_X%5E2%7D%7B%5C%5Cmu%5C_Y%5E2%7D%5C%5Cleft(%20%5C%5Cfrac%7B%5C%5Csigma%5C_X%5E2%7D%7B%5C%5Cmu%5C_X%5E2%7D%20+%20%5C%5Cfrac%7B%5C%5Csigma%5C_Y%5E2%7D%7B%5C%5Cmu%5C_Y%5E2%7D%20%5C%5Cright)">. The article implies that this is true when <img src="https://latex.codecogs.com/png.latex?Y"> is unlikely to assume negative values, say <img src="https://latex.codecogs.com/png.latex?%5C%5Cmu%5C_Y%20%3E%203%20%5C%5Csigma%5C_Y">.</p>
 <p>As always, the best way to believe something is to see it yourself. Let’s generate some uncorrelated normal variables far from 0 and their ratio:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1">ux <span class="ot" style="color: #003B4F;
 background-color: null;
@@ -4343,12 +4343,7 @@ font-style: inherit;">1433</span></span>
 
 
 <p>You have been lied to. By me.</p>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><a href="http://computersandbuildings.com/wp-content/uploads/2016/03/killian.jpg"><img src="https://blog.davidlindelof.com/posts/2016/04/the-opinionated-estimator/images/killian-300x168.jpg" class="img-fluid figure-img"></a></p>
-<figcaption>Killian is lying to you</figcaption>
-</figure>
-</div>
+<p><em>The original introductory illustration is no longer available.</em></p>
 <p>I taught once a programming class and introduced my students to the notion of an <em>unbiased estimator</em> of the variance of a population. The problem can be stated as follows: given a set of observations <img src="https://latex.codecogs.com/png.latex?(x%5C_1,%20x%5C_2,%20...,%20x%5C_n)">, what can you say about the variance of the population from which this sample is drawn?</p>
 <p>Classical textbooks, <a href="http://mathworld.wolfram.com/SampleVariance.html">MathWorld</a>, the <a href="https://www.khanacademy.org/math/probability/descriptive-statistics/variance-std-deviation/v/sample-variance">Khan Academy</a>, and <a href="https://en.wikipedia.org/wiki/Variance#Population_variance_and_sample_variance">Wikipedia</a> all give you the formula for the so-called <em>unbiased estimator</em> of the population variance:</p>
 <p><img src="https://latex.codecogs.com/png.latex?%5C%5Chat%7Bs%7D%5E2%20=%20%5C%5Cfrac%7B1%7D%7Bn-1%7D%5C%5Csum%5C_%7Bi=1%7D%5En%20(x%5C_i%20-%20%5C%5Cbar%7Bx%7D)%5E2"></p>
@@ -4378,12 +4373,7 @@ histogram(~ estimate | estimator, estimators,
             panel.histogram(...)
             panel.abline(v = 25, col = "red", lwd = 5)
           })</code></pre>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><a href="http://computersandbuildings.com/wp-content/uploads/2016/03/unnamed-chunk-5-1.png"><img src="https://blog.davidlindelof.com/posts/2016/04/the-opinionated-estimator/images/unnamed-chunk-5-1.png" class="img-fluid figure-img"></a></p>
-<figcaption>Unbiased vs Opinionated</figcaption>
-</figure>
-</div>
+<p><em>The original estimator-comparison histogram is no longer available.</em></p>
 <p>It’s a bit hard to tell visually which one is ``better’’. But let’s compute the average squared error for each estimator:</p>
 <pre><code>aggregate(estimate ~ estimator, estimators, function(x) mean((x - 25)^2))
 
@@ -4455,12 +4445,7 @@ Evil Good
 <pre><code>library(car)
 Boxplot(Reign ~ Deeds,
         kings)</code></pre>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><a href="http://computersandbuildings.com/wp-content/uploads/2016/01/kings.png"><img src="https://blog.davidlindelof.com/posts/2016/01/biblical-kings-and-boxplots/images/kings.png" class="img-fluid figure-img"></a></p>
-<figcaption>Duration of biblical reign, depending whether the Bible judges the king to have been a just or an evil one</figcaption>
-</figure>
-</div>
+<p><em>The original boxplot of reign durations is no longer available.</em></p>
 <p>This plot confirms our impression: “evil” kings tend to have shorter reigns that “good” kings, with the obvious exception of Manasseh, the same one of whom it was said</p>
 <blockquote class="blockquote">
 <p>I’ve arranged for four kinds of punishment: death in battle, the corpses dropped off by killer dogs, the rest picked clean by vultures, the bones gnawed by hyenas. They’ll be a sight to see, a sight to shock the whole world—and all because of Manasseh son of Hezekiah and all he did in Jerusalem. (Jer 15:3-4)</p>
@@ -4484,7 +4469,12 @@ Boxplot(Reign ~ Deeds,
 
 
 
-<p><a href="http://www.amazon.com/gp/product/1466586966/ref=as_li_tl?ie=UTF8&amp;camp=1789&amp;creative=390957&amp;creativeASIN=1466586966&amp;linkCode=as2&amp;tag=compandsmarbu-20&amp;linkId=XEO5P4SMVCTE76WD"><img src="https://blog.davidlindelof.com/posts/2015/12/book-review-advanced-r/images/q.png" class="img-fluid"></a><img src="https://blog.davidlindelof.com/posts/2015/12/book-review-advanced-r/images/ir.png" class="img-fluid"></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="http://www.amazon.com/gp/product/1466586966"><img src="https://blog.davidlindelof.com/posts/2015/12/book-review-advanced-r/images/advanced-r.jpg" class="img-fluid figure-img"></a></p>
+<figcaption>Cover of Advanced R</figcaption>
+</figure>
+</div>
 <p>I would like to call this the best second book on R, except that I wouldn’t know what the first one would be. I learned R from classes and tutorials about 10 years ago, used it on my PhD and four articles, and use it today on a daily basis at work; yet only now, after reading this book, do I feel like I could possibly be called an R programmer rather than just a user.</p>
 <p>The book deals with a variety of topics that are seldom discussed in the R tutorials you are likely to find freely available. Some are perhaps unnecessary in a book like this (Ch. 5 Style Guide), some could easily deserve an entire book (Ch. 7 OO field guide), but the chapters on Functions, Environments, the three chapters in Part II (Functional Programming) and the chapter on Non-standard evaluation are easily reasons enough to buy this book.</p>
 <p>How many time indeed have you spent hours, frustrated, trying to write a function that would act as a wrapper around, say, lattice plotting functions that use non-standard evaluation? Or try to call <code>subset()</code> from another function, only to see cryptic error messages? Now, for the first time, the solution is not only clear to me; I feel like I could also explain to a colleague why things work the way they do.</p>
@@ -4542,12 +4532,7 @@ errors$approach: BAYES
 <p>The bayesian approach yields close to half the square error of the frequentist approach. The errors can also be plotted:</p>
 <pre><code>library(lattice)
 histogram(~ errors | approach, errors)</code></pre>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><a href="http://computersandbuildings.com/wp-content/uploads/2015/11/taxicabs_errors.png"><img src="https://blog.davidlindelof.com/posts/2015/11/bayesian-tanks/images/taxicabs_errors-550x422.png" class="img-fluid figure-img"></a></p>
-<figcaption>Taxicabs errors</figcaption>
-</figure>
-</div>
+<p><em>The original histogram of the estimation errors is no longer available.</em></p>
 <p>Both error distributions are skewed towards negative values, meaning that both approaches tend to underestimate <img src="https://latex.codecogs.com/png.latex?N">. However, the bayesian errors have a tighter distribution around 0 than the frequentist ones.</p>
 <p>The bottom line is that, given exactly the same information, the bayesian approach yields estimates whose squared error is about 60% that of the frequentist approach. For this particular problem, there is no question that the bayesian approach is the correct one.</p>
 

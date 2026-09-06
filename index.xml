@@ -9,7 +9,7 @@
 <link>https://blog.davidlindelof.com/</link>
 <atom:link href="https://blog.davidlindelof.com/index.xml" rel="self" type="application/rss+xml"/>
 <description>Notes on statistics, data science, software engineering, and scientific computing.</description>
-<generator>quarto-1.10.18</generator>
+<generator>quarto-1.9.38</generator>
 <lastBuildDate>Sun, 23 Aug 2026 00:00:00 GMT</lastBuildDate>
 <item>
   <title>Beyond DAU: How to Measure User Retention with Survival Analysis</title>
@@ -875,7 +875,7 @@ font-style: inherit;">mean</span>(y)</span></code></pre></div></div>
 <p><a href="https://en.wikipedia.org/wiki/Touch_typing">Touch typing</a> is the ability to type without looking at the keyboard, relying instead on muscle memory to find the positions of the keys. Ever wondered what those small raised indentations on the F and J key are for? They’re for repositioning your index fingers when you touch type.</p>
 <p>What’s that got to do with vi? Well vi is designed with touch typists in mind. Navigating through a document is done with the H (left), J (up), K (down), and L (right) keys. Similarly, the most common editing operations are done through keys on the home row (D for delete, F for find, S for substitute etc).</p>
 <p>I have invested in a <a href="https://www.daskeyboard.com/">Das Keyboard</a> with blank keys and work most of the time without looking at the keys. Am I any good at it? I’m not sure. But I’m definitely a faster typer than when I began to learn touch typing, and can transcribe a passage from a book or an article without looking either at the screen or the keyboard. And boy do I love vi now (more on that below).<br>
-<img src="https://blog.davidlindelof.com/posts/2024/07/things-i-wish-they-taught-in-school/images/Pasted-image-20230712083814-6-300x300.png" class="img-fluid"><img src="https://blog.davidlindelof.com/posts/2024/07/things-i-wish-they-taught-in-school/images/9e41bf8f44ad61b2c0e9b1d3459954b9.png" class="img-fluid"></p>
+<img src="https://blog.davidlindelof.com/posts/2024/07/things-i-wish-they-taught-in-school/images/Pasted-image-20230712083814-6-300x300.png" class="img-fluid" alt="A keyboard with blank keycaps"></p>
 </section>
 <section id="note-taking" class="level2">
 <h2 class="anchored" data-anchor-id="note-taking">Note-taking</h2>
@@ -1067,7 +1067,7 @@ font-style: inherit;">&gt;</span> -p 7000</span></code></pre></div></div>
 <blockquote class="blockquote">
 <p>Because <img src="https://latex.codecogs.com/png.latex?X"> and <img src="https://latex.codecogs.com/png.latex?Y"> are jointly bivariate normal in the limit, <img src="https://latex.codecogs.com/png.latex?M">, as the ratio of the two averages, is also normally distributed.</p>
 </blockquote>
-<p>That’s only partially true. According to <a href="Wikipedia">https://en.wikipedia.org/wiki/Ratio_distribution</a>, the ratio of two uncorrelated noncentral normal variables <img src="https://latex.codecogs.com/png.latex?X%20=%20N(%5C%5Cmu%5C_X,%20%5C%5Csigma%5C_X%5E2)"> and <img src="https://latex.codecogs.com/png.latex?Y%20=%20N(%5C%5Cmu%5C_Y,%20%5C%5Csigma%5C_Y%5E2)"> has mean <img src="https://latex.codecogs.com/png.latex?%5C%5Cmu%5C_X%20/%20%5C%5Cmu%5C_Y"> and variance approximately <img src="https://latex.codecogs.com/png.latex?%5C%5Cfrac%7B%5C%5Cmu%5C_X%5E2%7D%7B%5C%5Cmu%5C_Y%5E2%7D%5C%5Cleft(%20%5C%5Cfrac%7B%5C%5Csigma%5C_X%5E2%7D%7B%5C%5Cmu%5C_X%5E2%7D%20+%20%5C%5Cfrac%7B%5C%5Csigma%5C_Y%5E2%7D%7B%5C%5Cmu%5C_Y%5E2%7D%20%5C%5Cright)">. The article implies that this is true when <img src="https://latex.codecogs.com/png.latex?Y"> is unlikely to assume negative values, say <img src="https://latex.codecogs.com/png.latex?%5C%5Cmu%5C_Y%20%3E%203%20%5C%5Csigma%5C_Y">.</p>
+<p>That’s only partially true. According to <a href="https://en.wikipedia.org/wiki/Ratio_distribution">Wikipedia</a>, the ratio of two uncorrelated noncentral normal variables <img src="https://latex.codecogs.com/png.latex?X%20=%20N(%5C%5Cmu%5C_X,%20%5C%5Csigma%5C_X%5E2)"> and <img src="https://latex.codecogs.com/png.latex?Y%20=%20N(%5C%5Cmu%5C_Y,%20%5C%5Csigma%5C_Y%5E2)"> has mean <img src="https://latex.codecogs.com/png.latex?%5C%5Cmu%5C_X%20/%20%5C%5Cmu%5C_Y"> and variance approximately <img src="https://latex.codecogs.com/png.latex?%5C%5Cfrac%7B%5C%5Cmu%5C_X%5E2%7D%7B%5C%5Cmu%5C_Y%5E2%7D%5C%5Cleft(%20%5C%5Cfrac%7B%5C%5Csigma%5C_X%5E2%7D%7B%5C%5Cmu%5C_X%5E2%7D%20+%20%5C%5Cfrac%7B%5C%5Csigma%5C_Y%5E2%7D%7B%5C%5Cmu%5C_Y%5E2%7D%20%5C%5Cright)">. The article implies that this is true when <img src="https://latex.codecogs.com/png.latex?Y"> is unlikely to assume negative values, say <img src="https://latex.codecogs.com/png.latex?%5C%5Cmu%5C_Y%20%3E%203%20%5C%5Csigma%5C_Y">.</p>
 <p>As always, the best way to believe something is to see it yourself. Let’s generate some uncorrelated normal variables far from 0 and their ratio:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1">ux <span class="ot" style="color: #003B4F;
 background-color: null;
