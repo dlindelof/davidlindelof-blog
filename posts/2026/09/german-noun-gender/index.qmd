@@ -1,0 +1,624 @@
+---
+title: "How many rules does it take to guess a German noun's gender?"
+date: 2026-09-04
+categories:
+  - r
+  - machine learning
+  - german
+execute:
+  warning: false
+  message: false
+---
+
+German noun gender is a nice case where the most accurate model is not necessarily
+the most useful one. The object I want at the end of this analysis is a single
+decision tree small enough for a learner to remember.
+
+That gives the exercise two objectives:
+
+1. predict the right article for nouns one is likely to encounter in practice;
+2. use as few intelligible rules as possible.
+
+The output will therefore be a Pareto frontier of predictive accuracy against tree
+size, followed by one deliberately small tree. A flexible model reported by
+[Fedden et al.](https://openresearch.surrey.ac.uk/esploro/outputs/journalArticle/Typology-meets-statistical-modeling-The-German/991154296202346)
+reached about 96% accuracy with much richer phonological, semantic, derivational,
+and inflectional information. I will use that number as a research-grade reference,
+not as a theoretical upper bound or a directly comparable score.
+
+```{r}
+#| label: setup
+
+library(dplyr)
+library(ggplot2)
+library(knitr)
+library(purrr)
+library(readr)
+library(rpart)
+library(scales)
+library(stringr)
+library(tibble)
+library(tidyr)
+
+theme_set(theme_minimal(base_size = 13))
+```
+
+## Download the dictionary and subtitle frequencies
+
+The labels come from the
+[german-nouns](https://github.com/gambolputty/german-nouns) export of German
+Wiktionary. Its CSV contains roughly 100,000 entries, including gender and
+inflected forms, and is published under CC BY-SA 4.0.
+
+The usage weights come from Matthias Buchmeier's
+[German subtitle frequency list](https://en.wiktionary.org/wiki/User:Matthias_Buchmeier#German_frequency_list).
+It was made from 25,399,099 words of movie and television subtitles and preserves
+letter case. The list is split into pages of 5,000 entries; the first ten pages are
+enough for this experiment.
+
+The following chunk downloads about 21 MB in total and caches it in this post's
+`data` directory. That directory is ignored by Git.
+
+```{r}
+#| label: download-data
+
+data_dir <- "data"
+dir.create(data_dir, showWarnings = FALSE)
+
+noun_url <- paste0(
+  "https://raw.githubusercontent.com/gambolputty/german-nouns/",
+  "main/german_nouns/nouns.csv"
+)
+noun_path <- file.path(data_dir, "nouns.csv")
+
+if (!file.exists(noun_path)) {
+  download.file(noun_url, noun_path, mode = "wb", quiet = TRUE)
+}
+
+starts <- seq(1, 45001, by = 5000)
+ends <- starts + 4999
+page_names <- sprintf("German_frequency_list-%d-%d", starts, ends)
+subtitle_urls <- sprintf(
+  paste0(
+    "https://en.wiktionary.org/w/index.php?title=",
+    "User:Matthias_Buchmeier/%s&action=raw"
+  ),
+  page_names
+)
+subtitle_paths <- file.path(data_dir, paste0(page_names, ".txt"))
+
+walk2(subtitle_urls, subtitle_paths, function(url, path) {
+  if (!file.exists(path)) {
+    download.file(URLencode(url), path, mode = "wb", quiet = TRUE)
+  }
+})
+```
+
+For a fresh R installation, these are the required packages:
+
+```r
+install.packages(c(
+  "dplyr", "ggplot2", "knitr", "purrr", "readr", "rpart",
+  "scales", "stringr", "tibble", "tidyr"
+))
+```
+
+## Build a frequency-weighted noun dictionary
+
+The dictionary includes affixes, proper names, phrases, and nouns with more than
+one possible gender. I keep ordinary one-word nouns whose Wiktionary record has
+exactly one gender.
+
+```{r}
+#| label: clean-dictionary
+
+gender_columns <- c("genus", paste("genus", 1:4))
+
+nouns <- read_csv(
+  noun_path,
+  col_types = cols(.default = col_character()),
+  show_col_types = FALSE
+) |>
+  filter(
+    pos == "Substantiv",
+    str_detect(lemma, "^[A-ZÄÖÜ][[:alpha:]]+$")
+  ) |>
+  select(lemma, all_of(gender_columns)) |>
+  pivot_longer(
+    cols = all_of(gender_columns),
+    names_to = NULL,
+    values_to = "gender"
+  ) |>
+  filter(gender %in% c("m", "f", "n")) |>
+  distinct(lemma, gender) |>
+  add_count(lemma, name = "number_of_genders") |>
+  filter(number_of_genders == 1) |>
+  transmute(
+    lemma,
+    gender = factor(
+      recode(gender, m = "der", f = "die", n = "das"),
+      levels = c("der", "die", "das")
+    )
+  )
+```
+
+The subtitle list has no part-of-speech tags. Capitalization gets us most of the
+way to identifying nouns, but a sentence-initial *Ich* is still capitalized. A
+conservative safeguard is to keep a candidate only when its capitalized count is
+at least five times its lowercase count (or the lowercase spelling is absent).
+That retains *Frau* and *Mädchen*, whose lowercase occurrences are mostly noise,
+while rejecting *Ich*, *Du*, and *Ist*. It also loses genuinely ambiguous nouns
+such as *Leben*, but avoids assigning millions of pronoun and verb tokens to rare
+metalinguistic nouns.
+
+```{r}
+#| label: clean-frequencies
+
+read_frequency_page <- function(path) {
+  lines <- read_lines(path, progress = FALSE)
+  opening_brackets <- str_locate(lines, fixed("[["))[, 1]
+
+  tibble(
+    frequency = parse_number(lines),
+    word = str_sub(lines, opening_brackets + 2L, -3L)
+  ) |>
+    filter(
+      !is.na(frequency),
+      str_detect(word, "^[A-Za-zÄÖÜäöüß]+$")
+    )
+}
+
+subtitle_frequency <- map_dfr(subtitle_paths, read_frequency_page)
+
+lowercase_frequency <- subtitle_frequency |>
+  filter(word == str_to_lower(word, locale = "de")) |>
+  transmute(
+    lowercase_spelling = word,
+    lowercase_frequency = frequency
+  )
+
+noun_frequency <- subtitle_frequency |>
+  filter(str_detect(word, "^[A-ZÄÖÜ]")) |>
+  mutate(lowercase_spelling = str_to_lower(word, locale = "de")) |>
+  left_join(lowercase_frequency, by = "lowercase_spelling") |>
+  filter(
+    is.na(lowercase_frequency) |
+      frequency >= 5 * lowercase_frequency
+  ) |>
+  transmute(lemma = word, frequency)
+
+noun_data <- nouns |>
+  inner_join(noun_frequency, by = "lemma") |>
+  arrange(desc(frequency))
+
+tibble(
+  measure = c("noun lemmas", "matched subtitle tokens"),
+  value = c(nrow(noun_data), sum(noun_data$frequency))
+) |>
+  kable(format.args = list(big.mark = ","))
+```
+
+There are two sensible scores. **Type accuracy** gives every dictionary entry one
+vote. **Usage-weighted accuracy** gives a noun with frequency (f_i) exactly
+(f_i) votes:
+
+\[
+  \operatorname{accuracy}_{\mathrm{usage}}
+  = \frac{\sum_i f_i\,\mathbb{1}(\hat y_i = y_i)}{\sum_i f_i}.
+\]
+
+The second is the primary score because it better reflects how often a learner
+would actually need the rule. I will still report both so that a handful of very
+frequent words cannot silently define success.
+
+## Turn spelling into learnable questions
+
+The spelling features are not arbitrary character fragments. They are a short,
+predeclared set of endings that a learner could plausibly recognize. The tree is
+free to ignore most of them.
+
+```{r}
+#| label: spelling-features
+
+suffixes <- c(
+  e = "e", chen = "chen", lein = "lein", ung = "ung",
+  heit = "heit", keit = "keit", schaft = "schaft", ei = "ei",
+  ie = "ie", ik = "ik", ion = "ion", taet = "tät",
+  enz = "enz", anz = "anz", ur = "ur", `in` = "in", age = "age",
+  er = "er", en = "en", el = "el", ich = "ich", ig = "ig",
+  ling = "ling", ismus = "ismus", or = "or", us = "us",
+  ment = "ment", um = "um", ma = "ma", o = "o"
+)
+
+make_suffix_features <- function(words) {
+  features <- lapply(suffixes, function(suffix) {
+    str_ends(str_to_lower(words, locale = "de"), fixed(suffix))
+  })
+
+  as_tibble(setNames(features, paste0("ends_", names(suffixes))))
+}
+```
+
+## Add a small semantic layer
+
+German also has semantic regularities. Weekdays, months, and the canonical seasons
+are masculine, for example. The
+[IDS grammar](https://grammis.ids-mannheim.de/systematische-grammatik/2275)
+also discusses regularities for people, directions, colours, and other classes,
+while stressing their exceptions and limited coverage.
+
+The dictionary has no ontology, so I annotate a few small, auditable sets by hand.
+These flags describe meaning, not the answer. That distinction matters for words
+such as *Mädchen*: it denotes a female person, yet the diminutive ending makes the
+noun neuter.
+
+```{r}
+#| label: semantic-features
+
+weekdays <- c(
+  "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag",
+  "Samstag", "Sonnabend", "Sonntag"
+)
+months <- c(
+  "Januar", "Februar", "März", "April", "Mai", "Juni", "Juli",
+  "August", "September", "Oktober", "November", "Dezember"
+)
+seasons <- c("Frühling", "Sommer", "Herbst", "Winter")
+directions <- c("Norden", "Süden", "Osten", "Westen")
+colours <- c(
+  "Rot", "Blau", "Grün", "Gelb", "Schwarz", "Weiß", "Braun",
+  "Grau", "Rosa", "Violett"
+)
+female_people <- c(
+  "Frau", "Mutter", "Tochter", "Schwester", "Tante", "Oma",
+  "Großmutter", "Ehefrau", "Freundin", "Königin", "Prinzessin",
+  "Dame", "Braut", "Witwe", "Nonne", "Hebamme", "Mädchen",
+  "Fräulein"
+)
+male_people <- c(
+  "Mann", "Herr", "Vater", "Sohn", "Bruder", "Onkel", "Opa",
+  "Großvater", "Ehemann", "Freund", "König", "Prinz", "Kaiser",
+  "Bräutigam", "Witwer", "Mönch", "Junge", "Männchen"
+)
+
+semantic_sets <- list(
+  calendar = c(weekdays, months, seasons),
+  direction = directions,
+  colour = colours,
+  female = female_people,
+  male = male_people
+)
+
+model_data <- noun_data |>
+  bind_cols(make_suffix_features(noun_data$lemma)) |>
+  mutate(
+    meaning_calendar = lemma %in% semantic_sets$calendar,
+    meaning_direction = lemma %in% semantic_sets$direction,
+    meaning_colour = lemma %in% semantic_sets$colour,
+    meaning_female = lemma %in% semantic_sets$female,
+    meaning_male = lemma %in% semantic_sets$male
+  )
+
+feature_names <- c(
+  paste0("ends_", names(suffixes)),
+  "meaning_calendar", "meaning_direction", "meaning_colour",
+  "meaning_female", "meaning_male"
+)
+
+semantic_summary <- imap_dfr(semantic_sets, function(words, semantic_class) {
+  rows <- filter(model_data, lemma %in% words)
+  article_counts <- count(rows, gender, wt = frequency, name = "weight")
+
+  tibble(
+    semantic_class,
+    nouns = nrow(rows),
+    subtitle_tokens = sum(rows$frequency),
+    majority_article = as.character(
+      article_counts$gender[which.max(article_counts$weight)]
+    ),
+    weighted_purity = max(article_counts$weight) / sum(article_counts$weight)
+  )
+})
+
+semantic_summary |>
+  mutate(weighted_purity = percent(weighted_purity, accuracy = 0.1)) |>
+  kable(
+    col.names = c(
+      "Semantic class", "Nouns", "Subtitle tokens", "Majority article",
+      "Weighted purity"
+    ),
+    format.args = list(big.mark = ",")
+  )
+```
+
+This semantic annotation is intentionally small. An obvious extension would be to
+replace the hand-built lists with a reproducible ontology, while keeping the
+learner-facing feature names at this level of abstraction.
+
+## Start with one rule
+
+The opening classifier is the folk rule proposed at the start: if a noun ends in
+*-e*, predict *die*; otherwise predict *der*.
+
+```{r}
+#| label: baseline
+
+weighted_accuracy <- function(truth, estimate, weight) {
+  sum(weight * (truth == estimate)) / sum(weight)
+}
+
+baseline_prediction <- factor(
+  if_else(model_data$ends_e, "die", "der"),
+  levels = levels(model_data$gender)
+)
+
+baseline_scores <- tibble(
+  model = "ends in -e → die; otherwise → der",
+  type_accuracy = mean(baseline_prediction == model_data$gender),
+  usage_weighted_accuracy = weighted_accuracy(
+    model_data$gender,
+    baseline_prediction,
+    model_data$frequency
+  )
+)
+
+baseline_scores |>
+  mutate(across(ends_with("accuracy"), function(x) percent(x, accuracy = 0.1))) |>
+  kable()
+```
+
+## Cross-validate trees of increasing size
+
+To prevent the displayed result from being an in-sample score, I assign each lemma
+to one of ten folds. Every candidate tree is trained on nine folds and predicts the
+tenth. The raw subtitle count is used as its case weight during training as well as
+in the primary evaluation metric.
+
+Tree size is measured in terminal leaves. I allow at most eight leaves for the
+eventual learner's tree, but fit budgets up to sixteen to show what extra complexity
+would buy.
+
+```{r}
+#| label: cross-validation
+
+set.seed(20260904)
+model_data <- model_data |>
+  group_by(gender) |>
+  mutate(fold = sample(rep(1:10, length.out = n()))) |>
+  ungroup()
+
+tree_formula <- reformulate(feature_names, response = "gender")
+
+grow_tree <- function(data) {
+  rpart(
+    tree_formula,
+    data = data,
+    weights = frequency,
+    method = "class",
+    parms = list(split = "information"),
+    control = rpart.control(
+      cp = 0,
+      minsplit = 30,
+      minbucket = 10,
+      maxdepth = 8,
+      maxcompete = 0,
+      maxsurrogate = 0,
+      usesurrogate = 0,
+      xval = 0
+    )
+  )
+}
+
+prune_to_budget <- function(tree, maximum_leaves) {
+  path <- as_tibble(tree$cptable)
+  selected <- path |>
+    filter(nsplit <= maximum_leaves - 1L) |>
+    slice_max(nsplit, n = 1, with_ties = FALSE)
+
+  prune(tree, cp = selected$CP)
+}
+
+leaf_budgets <- 2:16
+
+cv_predictions <- map_dfr(1:10, function(held_out_fold) {
+  training <- filter(model_data, fold != held_out_fold)
+  testing <- filter(model_data, fold == held_out_fold)
+  full_tree <- grow_tree(training)
+
+  map_dfr(leaf_budgets, function(budget) {
+    candidate <- prune_to_budget(full_tree, budget)
+    prediction <- predict(candidate, testing, type = "class")
+
+    transmute(
+      testing,
+      fold = held_out_fold,
+      leaf_budget = budget,
+      actual_leaves = sum(candidate$frame$var == "<leaf>"),
+      lemma,
+      frequency,
+      truth = gender,
+      prediction
+    )
+  })
+})
+
+cv_summary <- cv_predictions |>
+  group_by(leaf_budget) |>
+  summarise(
+    actual_leaves = median(actual_leaves),
+    type_accuracy = mean(truth == prediction),
+    usage_weighted_accuracy = weighted_accuracy(
+      truth,
+      prediction,
+      frequency
+    ),
+    .groups = "drop"
+  ) |>
+  arrange(leaf_budget) |>
+  mutate(
+    previous_best = lag(cummax(usage_weighted_accuracy), default = -Inf),
+    on_frontier = usage_weighted_accuracy > previous_best
+  )
+```
+
+## Plot the accuracy--complexity frontier
+
+A point is on the frontier when no smaller tree budget achieved equal or better
+usage-weighted accuracy. The horizontal 96% line is deliberately aspirational: it
+comes from a different study, feature set, and evaluation protocol.
+
+```{r}
+#| label: pareto-frontier
+#| fig-cap: "Out-of-fold accuracy versus the maximum number of terminal leaves. Coloured points form the empirical Pareto frontier."
+#| fig-width: 8
+#| fig-height: 5
+
+ggplot(cv_summary, aes(leaf_budget, usage_weighted_accuracy)) +
+  geom_hline(
+    yintercept = baseline_scores$usage_weighted_accuracy,
+    colour = "grey55",
+    linetype = "dotted"
+  ) +
+  geom_hline(yintercept = 0.96, colour = "grey45", linetype = "dashed") +
+  geom_line(colour = "grey75") +
+  geom_point(colour = "grey65", size = 2.5) +
+  geom_line(
+    data = filter(cv_summary, on_frontier),
+    colour = "#0072B2",
+    linewidth = 1
+  ) +
+  geom_point(
+    data = filter(cv_summary, on_frontier),
+    colour = "#0072B2",
+    size = 3
+  ) +
+  scale_x_continuous(breaks = leaf_budgets) +
+  scale_y_continuous(labels = label_percent(accuracy = 0.1)) +
+  labs(
+    x = "Maximum number of leaves",
+    y = "Usage-weighted accuracy",
+    caption = "Dotted: one-rule baseline. Dashed: 96% rich-model reference."
+  )
+```
+
+The two evaluation measures need not prefer the same tree. This table keeps that
+trade-off visible.
+
+```{r}
+#| label: accuracy-table
+
+cv_summary |>
+  select(leaf_budget, actual_leaves, type_accuracy, usage_weighted_accuracy) |>
+  mutate(across(ends_with("accuracy"), function(x) percent(x, accuracy = 0.1))) |>
+  kable(
+    col.names = c(
+      "Leaf budget", "Median leaves", "Type accuracy",
+      "Usage-weighted accuracy"
+    )
+  )
+```
+
+## Choose and draw one learnable tree
+
+I define “learnable” before looking at the answer: no more than eight leaves and
+no exact-word questions. Among
+those candidates I choose the smallest tree within 0.25 percentage points of the
+best usage-weighted score. The tolerance prevents a barely measurable gain from
+doubling the number of rules.
+
+```{r}
+#| label: choose-tree
+
+learnable_candidates <- cv_summary |>
+  filter(leaf_budget <= 8)
+
+best_learnable_accuracy <- max(
+  learnable_candidates$usage_weighted_accuracy
+)
+
+chosen_budget <- learnable_candidates |>
+  filter(
+    usage_weighted_accuracy >= best_learnable_accuracy - 0.0025,
+    on_frontier
+  ) |>
+  slice_min(leaf_budget, n = 1, with_ties = FALSE) |>
+  pull(leaf_budget)
+
+final_tree <- grow_tree(model_data) |>
+  prune_to_budget(chosen_budget)
+
+chosen_scores <- cv_summary |>
+  filter(leaf_budget == chosen_budget) |>
+  select(leaf_budget, actual_leaves, type_accuracy, usage_weighted_accuracy)
+
+chosen_scores |>
+  mutate(across(ends_with("accuracy"), function(x) percent(x, accuracy = 0.1))) |>
+  kable()
+```
+
+```{r}
+#| label: final-tree
+#| fig-cap: "The final frequency-weighted decision tree. Each internal label is a yes/no question and each leaf is an article prediction."
+#| fig-width: 10
+#| fig-height: 6
+
+plot(
+  final_tree,
+  uniform = TRUE,
+  branch = 0.5,
+  compress = FALSE,
+  margin = 0.08
+)
+text(final_tree, use.n = FALSE, all = FALSE, pretty = 0, cex = 0.9)
+```
+
+Feature names translate directly into questions: `ends_chen` means “does the word
+end in *-chen*?”, and `meaning_calendar` means “is it a weekday, month, or
+canonical season?” The resulting tree is the object to critique as a learner: are
+its rules memorable, and is the accuracy gain worth each additional branch?
+
+The calendar feature is present in the dataset but does not appear in this small
+tree. That is informative rather than a bug: all of the annotated calendar names
+are masculine, and the default prediction on their spelling branch is already
+*der*. A true linguistic generalization need not buy predictive accuracy. The
+male- and female-person features do enter the fitted tree because they protect or
+correct exceptions that suffixes alone would mishandle.
+
+## Inspect the costly mistakes
+
+Accuracy hides which errors matter. The following table uses out-of-fold
+predictions and sorts mistakes by subtitle frequency, so it is also a practical
+study list for exceptions to memorize.
+
+```{r}
+#| label: errors
+
+cv_predictions |>
+  filter(leaf_budget == chosen_budget, truth != prediction) |>
+  arrange(desc(frequency)) |>
+  select(lemma, truth, prediction, frequency) |>
+  slice_head(n = 20) |>
+  kable(
+    col.names = c("Noun", "Correct article", "Predicted", "Frequency"),
+    format.args = list(big.mark = ",")
+  )
+```
+
+## What this experiment does not establish
+
+This is a model of dictionary lemmas, not noun tokens in context. The conservative
+capitalization filter removes many ambiguous words, and exact lemma counts miss
+plural and declined forms. Subtitle dialogue is closer to everyday speech than a
+dictionary's uniform type distribution, but translated dialogue is not identical
+to spontaneous German conversation.
+
+The split is also random by lemma. A stricter follow-up would group morphologically
+related nouns or shared compound heads in the same fold, preventing near-duplicate
+formations from appearing in both training and test data. Other useful sensitivity
+checks would replace raw frequency by `log1p(frequency)`, remove the most common
+nouns a learner probably knows already, and expand the semantic annotations with a
+real ontology.
+
+Most importantly, 96% is a benchmark for a much richer statistical model. The
+point of this post is to measure how much accuracy can be retained after imposing
+a severe human-memory budget.
