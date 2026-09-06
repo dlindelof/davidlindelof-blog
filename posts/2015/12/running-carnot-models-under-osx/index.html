@@ -342,7 +342,12 @@ ul.task-list li input[type="checkbox"] {
 <p>CARNOT (<strong>C</strong>onventional <strong>A</strong>nd <strong>R</strong>enewable e<strong>N</strong>ergy systems <strong>O</strong>ptimization <strong>T</strong>oolbox) is a set of MATLAB &amp; Simulink models for simulating buildings and building systems, e.g.&nbsp;boilers, heat distributors etc. It’s been developed by a collaboration involving several companies and universities and is generally well-regarded. It’s one of several MATLAB toolboxes dedicated to the problem of simulating building physics; other toolboxes with a similar goal include the <a href="http://www.ibpt.org/">International Building Physics Toolbox</a> and <a href="http://www.simbad-cstb.fr/">SIMBAD</a>.</p>
 <p>CARNOT is in the process of being moved to a new hosting provider. In the meantime, I’ve recently obtained a copy of this toolbox and here is my experience in getting it to run under OSX.</p>
 <p>CARNOT is distributed as a zip file, <code>carnot_60_2013b_public_22oct2015.zip</code>. I decompress it and find what looks like a Simulink top-level model called <code>carnot.slx</code>, and several sub-folders. Very encouragingly, I see there’s an installation guide:</p>
-<p><em>The original screenshot of the CARNOT root folder is no longer available.</em></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/Screen-Shot-2015-12-02-at-18.32.32.png" class="img-fluid figure-img"></p>
+<figcaption>Contents of the CARNOT root folder</figcaption>
+</figure>
+</div>
 <p>I move the decompressed folder to the folder where I keep all my in-progress projects, and create a symbolic link to it named more simply <code>carnot</code>.</p>
 <p>The installation guide is very well written, and the main steps consist in:</p>
 <ol type="1">
@@ -365,7 +370,12 @@ ul.task-list li input[type="checkbox"] {
 <p>The problem with option 1 was that I didn’t know at this point whether there were going to be other files with the same problem. I certainly didn’t want to enter that kind of endless loop of fixing file after file that depended on the Windows API. Since the build process had stoppped on encountering the first error, I had no way of knowing if there was going to be many other problems.</p>
 <p>So that’s why felt more appropriate to find where in the call <code>mex</code> was being called, and wrap that call in a <code>try/catch</code> block, yielding a warning if any file failed to be compiled. Re-running <code>MakeMEX</code> now compiled all the files correctly except the single <code>dir2_mex.c</code>, which I hoped would not be needed to run any of the simulations I was planning.</p>
 <p>Once this was done, I could finally type <code>carnot</code> at the command line and the toolbox would open:</p>
-<p><em>The original screenshot of the running toolbox is no longer available.</em></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/Screen-Shot-2015-12-04-at-03.56.40.png" class="img-fluid figure-img"></p>
+<figcaption>CARNOT toolbox running under OS X</figcaption>
+</figure>
+</div>
 <p>I was immediately drawn to the box that says <code>double click to open examples</code> and that yielded another set of errors, again related to file paths. After fixing those I could open an example model, the <code>example_House_SFH45</code>, click run, and saw the simulation running. I was all set and done.</p>
 <p>A couple of days after writing the first draft of this article, I learned from one of the main developers that they plan to setup a proper SVN repository for the code, and that the whole toolbox was going to released under a BSD licence instead of the current LGPL. Until this is done, I’ve pushed my fixes to a <a href="https://github.com/neurobat/carnot">pubic repository on GitHub</a>, to which I have contributed some extra small fixes. But keep in mind that this is in no way the official repository for CARNOT; that will be announced shortly.</p>
 

@@ -4343,7 +4343,12 @@ font-style: inherit;">1433</span></span>
 
 
 <p>You have been lied to. By me.</p>
-<p><em>The original introductory illustration is no longer available.</em></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://blog.davidlindelof.com/posts/2016/04/the-opinionated-estimator/images/killian.jpg" class="img-fluid figure-img"></p>
+<figcaption>Introductory illustration</figcaption>
+</figure>
+</div>
 <p>I taught once a programming class and introduced my students to the notion of an <em>unbiased estimator</em> of the variance of a population. The problem can be stated as follows: given a set of observations <img src="https://latex.codecogs.com/png.latex?(x_1,%20x_2,%20%5Cldots,%20x_n)">, what can you say about the variance of the population from which this sample is drawn?</p>
 <p>Classical textbooks, <a href="http://mathworld.wolfram.com/SampleVariance.html">MathWorld</a>, the <a href="https://www.khanacademy.org/math/probability/descriptive-statistics/variance-std-deviation/v/sample-variance">Khan Academy</a>, and <a href="https://en.wikipedia.org/wiki/Variance#Population_variance_and_sample_variance">Wikipedia</a> all give you the formula for the so-called <em>unbiased estimator</em> of the population variance:</p>
 <p><img src="https://latex.codecogs.com/png.latex?%5Chat%7Bs%7D%5E2%20=%20%5Cfrac%7B1%7D%7Bn-1%7D%5Csum_%7Bi=1%7D%5En%20(x_i%20-%20%5Cbar%7Bx%7D)%5E2"></p>
@@ -4473,7 +4478,12 @@ font-style: inherit;">lwd =</span> <span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">5</span>)</span>
 <span id="cb4-8">          })</span></code></pre></div></div>
-<p><em>The original estimator-comparison histogram is no longer available.</em></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://blog.davidlindelof.com/posts/2016/04/the-opinionated-estimator/images/unnamed-chunk-5-1.png" class="img-fluid figure-img"></p>
+<figcaption>Histogram comparing the two variance estimators</figcaption>
+</figure>
+</div>
 <p>It’s a bit hard to tell visually which one is “better”. But let’s compute the average squared error for each estimator:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><span class="fu" style="color: #4758AB;
 background-color: null;
@@ -4568,7 +4578,12 @@ Evil Good
 <pre><code>library(car)
 Boxplot(Reign ~ Deeds,
         kings)</code></pre>
-<p><em>The original boxplot of reign durations is no longer available.</em></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://blog.davidlindelof.com/posts/2016/01/biblical-kings-and-boxplots/images/kings.png" class="img-fluid figure-img"></p>
+<figcaption>Boxplot of the reign durations of good and evil biblical kings</figcaption>
+</figure>
+</div>
 <p>This plot confirms our impression: “evil” kings tend to have shorter reigns that “good” kings, with the obvious exception of Manasseh, the same one of whom it was said</p>
 <blockquote class="blockquote">
 <p>I’ve arranged for four kinds of punishment: death in battle, the corpses dropped off by killer dogs, the rest picked clean by vultures, the bones gnawed by hyenas. They’ll be a sight to see, a sight to shock the whole world—and all because of Manasseh son of Hezekiah and all he did in Jerusalem. (Jer 15:3-4)</p>
@@ -4655,7 +4670,12 @@ errors$approach: BAYES
 <p>The bayesian approach yields close to half the square error of the frequentist approach. The errors can also be plotted:</p>
 <pre><code>library(lattice)
 histogram(~ errors | approach, errors)</code></pre>
-<p><em>The original histogram of the estimation errors is no longer available.</em></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://blog.davidlindelof.com/posts/2015/11/bayesian-tanks/images/taxicabs_errors.png" class="img-fluid figure-img"></p>
+<figcaption>Histogram of the taxicab-number estimation errors</figcaption>
+</figure>
+</div>
 <p>Both error distributions are skewed towards negative values, meaning that both approaches tend to underestimate <img src="https://latex.codecogs.com/png.latex?N">. However, the bayesian errors have a tighter distribution around 0 than the frequentist ones.</p>
 <p>The bottom line is that, given exactly the same information, the bayesian approach yields estimates whose squared error is about 60% that of the frequentist approach. For this particular problem, there is no question that the bayesian approach is the correct one.</p>
 

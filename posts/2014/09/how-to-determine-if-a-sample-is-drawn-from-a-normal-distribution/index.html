@@ -351,7 +351,12 @@ ul.task-list li input[type="checkbox"] {
 &gt; qqline(x, col=2)
 </code></pre>
 <p>Note that I also call <code>qqline()</code> in order to draw a line through the 25% and 75% quantiles. This makes it easier to spot significant departures from normality. Here is the result:</p>
-<p><em>The original Q-Q plot is no longer available.</em></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/qqplot.png" class="img-fluid figure-img"></p>
+<figcaption>Normal Q-Q plot of the sample</figcaption>
+</figure>
+</div>
 <p>No nomination for best linear fit ever, but nothing either to suggest non-normality.</p>
 <p>Now for the statistical test. There are actually <a href="http://en.wikipedia.org/wiki/Normality_test">a lot of statistical tests for non-normality</a> out there, but according to Wikipedia the <a href="http://en.wikipedia.org/wiki/Shapiro%E2%80%93Wilk_test">Shapiro-Wilk test</a> has the highest <a href="http://en.wikipedia.org/wiki/Statistical_power">power</a>, i.e.&nbsp;the highest probability of detecting non-normality on non-normally-distributed data. (I hope I’m getting this right or my statistician friends will tan my hide.)</p>
 <p>This test is built-in to R with the <code>shapiro.test()</code> function:</p>

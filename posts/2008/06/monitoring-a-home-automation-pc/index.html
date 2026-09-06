@@ -347,7 +347,12 @@ ul.task-list li input[type="checkbox"] {
 <p>I have described <a href="../../../../posts/2008/05/debian-installation-on-a-soekris-embedded-pc/">elsewhere</a> the steps to install Debian on an embedded PC. I’m still working on this project and intend to soon install the open-source Misterhouse software on it. But first I wanted to get a feel for how the machine’s resources (mainly disk and memory) evolve over time.</p>
 <p>So I scouted for open-source monitoring software. There’s a great <a href="http://en.wikipedia.org/wiki/Network_monitoring_comparison">comparison</a> on Wikipedia of different monitoring software (some proprietary), but my feeling was that it essentially boiled down to <a href="http://www.cacti.net/">Cacti</a> and <a href="http://www.zabbix.com/">Zabbix</a>, both of which are variations on the PHP+MySQL+Agent theme. I knew Cacti from a previous project so I installed Zabbix on my Soekris box.</p>
 <p>Good thing that I did. As you can see on the graph below, over a period of just 10 days the available disk space had shrunk by almost 2 Gb. Now this sort of thing happens almost always somewhere under /var, and indeed, it was caused by MySQL’s habit of logging every single data-altering statement in so-called bin files under /var/log/mysql.</p>
-<p><em>The original disk-space graph is no longer available.</em></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/misterhouse-mysql.png" class="img-fluid figure-img"></p>
+<figcaption>Disk-space monitoring graph showing MySQL log growth</figcaption>
+</figure>
+</div>
 <p>After commenting out the relevant lines in /etc/mysql/my.cnf the problem went away, but I had to restart the Zabbix server (without loss of data of course). And I’m sure the reader will notice the irony of MySQL being the cause of this decrease of disk space, when MySQL was installed together with Zabbix in order to monitor the system for such problems. Oh well.</p>
 
 

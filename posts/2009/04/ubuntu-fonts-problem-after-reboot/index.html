@@ -339,7 +339,13 @@ ul.task-list li input[type="checkbox"] {
 
 
 
-<p>My screen fonts under <a href="http://www.ubuntu.com/" title="Ubuntu">Ubuntu</a> are occasionally completely screwed up. They show up in blue with overstrikes. The original screenshot is no longer available.</p>
+<p>My screen fonts under <a href="http://www.ubuntu.com/" title="Ubuntu">Ubuntu</a> are occasionally completely screwed up. They show up in blue with overstrikes:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/ubtuntu-font.png" class="img-fluid figure-img"></p>
+<figcaption>Ubuntu screen fonts shown in blue with overstrikes</figcaption>
+</figure>
+</div>
 <p>I think this happens when I reboot my machine without a second monitor being attached to it, which it usually has. I suppose <a href="http://www.x.org/" title="X.Org Server">X.org</a> gets confused when it cannot find a monitor that used to be there.</p>
 <p>To solve this problem you must reconfigure X.org. Just enter the following and log out and in again to your X session:</p>
 <p><code>sudo dpkg-reconfigure xorg</code></p>

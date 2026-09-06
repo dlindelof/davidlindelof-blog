@@ -455,7 +455,12 @@ window.Quarto = {
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> temp<span class="sc">$</span>x <span class="ot">&lt;-</span> temp<span class="sc">$</span>x[reorder]</span>
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> temp<span class="sc">$</span>y <span class="ot">&lt;-</span> <span class="fu">cumsum</span>(temp<span class="sc">$</span>y[reorder])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>If you now plot the temp structure here is what you would get:</p>
-<p><em>The original example plot is no longer available.</em></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/example.png" class="img-fluid figure-img"></p>
+<figcaption>Example event rate-of-arrival plot</figcaption>
+</figure>
+</div>
 <p>With all this in place, we have now everything we need to go ahead. The little script above can go into its own function or it can be defined as xyplot’s panel argument:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>kLatency <span class="ot">&lt;-</span> <span class="dv">4</span> <span class="co"># seconds</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>

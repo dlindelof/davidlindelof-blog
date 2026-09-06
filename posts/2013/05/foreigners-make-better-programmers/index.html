@@ -343,7 +343,12 @@ ul.task-list li input[type="checkbox"] {
 <p>Out of about 100 applications, 34 were given this test. I have collected the data from these programming tests to see whether any personal factors correlated with the applicant’s performance. The results suggest that the candidate’s country of origin has the biggest influence on the final score.</p>
 <p>Out of these 34 candidates, 10 were from France, 5 from Switzerland, and the others from other countries. 6 came from outside of Europe.</p>
 <p>Here I show the boxplots for the normalized test scores, where I plotted separately the swiss and the french candidates, and lumped everybody else in a third category. The boxplots are sorted by increasing median.</p>
-<p><em>The original programming-scores boxplot is no longer available.</em></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/Rplot001.png" class="img-fluid figure-img"></p>
+<figcaption>Programming test scores by candidate origin</figcaption>
+</figure>
+</div>
 <p>There is a clear trend suggesting that the further away a candidate comes from, the higher their test scores. However, I must stress that with such low statistics the difference is <em>not</em> statistically significant. An analysis of variance test on the test scores against a simple 2-valued factor (swiss vs non-swiss) gives an F-value for one degree of freedom of 2.076, i.e.&nbsp;a p-value of 0.163. Similarly, a Wilcoxon rank sum test gives a p-value of 0.1698.</p>
 <p>Nevertheless, the trend seems to be there, and there is some anecdotal evidence to support it. I can think of at least three hypotheses to explain it:</p>
 <ol type="1">

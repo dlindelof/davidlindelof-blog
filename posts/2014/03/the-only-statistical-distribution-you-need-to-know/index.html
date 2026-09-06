@@ -445,9 +445,19 @@ window.Quarto = {
 <span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>low.interval <span class="ot">&lt;-</span> sd.sample <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="dv">1</span><span class="sc">:</span>N) <span class="sc">*</span> <span class="fu">qt</span>(<span class="fl">0.025</span>, <span class="dv">1</span><span class="sc">:</span>N <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">+</span> mean.sample</span>
 <span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>upper.interval <span class="ot">&lt;-</span> sd.sample <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="dv">1</span><span class="sc">:</span>N) <span class="sc">*</span> <span class="fu">qt</span>(<span class="fl">0.975</span>, <span class="dv">1</span><span class="sc">:</span>N <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">+</span> mean.sample</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>And here is the result:</p>
-<p><em>The original sample-mean and confidence-interval chart is no longer available.</em></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/confidence_interval.png" class="img-fluid figure-img"></p>
+<figcaption>Sample means and their confidence intervals</figcaption>
+</figure>
+</div>
 <p>It’s obvious that for small sample sizes, the confidence interval quickly becomes smaller than the parent standard deviation. We can see this by plotting the log of the confidence interval over time:</p>
-<p><em>The original logarithmic confidence-interval chart is no longer available.</em></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/log_confidence_interval.png" class="img-fluid figure-img"></p>
+<figcaption>Logarithm of the confidence interval by sample size</figcaption>
+</figure>
+</div>
 <p>The confidence interval becomes smaller than the population standard deviation (20) after only 15 samples. However, even for extremely small sample sizes (less than, say, 5) the confidence interval is roughly 40 cm. The true mean can therefore be estimated within <span class="math inline">\(\pm 20\)</span>, or with about 11% error, after only 5 samples. And that is thanks to the t-distribution.</p>
 
 

@@ -405,7 +405,12 @@ errors$approach: BAYES
 <p>The bayesian approach yields close to half the square error of the frequentist approach. The errors can also be plotted:</p>
 <pre><code>library(lattice)
 histogram(~ errors | approach, errors)</code></pre>
-<p><em>The original histogram of the estimation errors is no longer available.</em></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/taxicabs_errors.png" class="img-fluid figure-img"></p>
+<figcaption>Histogram of the taxicab-number estimation errors</figcaption>
+</figure>
+</div>
 <p>Both error distributions are skewed towards negative values, meaning that both approaches tend to underestimate <span class="math inline">\(N\)</span>. However, the bayesian errors have a tighter distribution around 0 than the frequentist ones.</p>
 <p>The bottom line is that, given exactly the same information, the bayesian approach yields estimates whose squared error is about 60% that of the frequentist approach. For this particular problem, there is no question that the bayesian approach is the correct one.</p>
 
