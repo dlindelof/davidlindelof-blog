@@ -19,13 +19,9 @@ Say you end up with N schemata on the input and M on the output side, and suppos
 
 The classical solution to this combinatorial explosion is the [Canonical Data Model](http://enterpriseintegrationpatterns.com/CanonicalDataModel.html) messaging pattern. We have defined a common data format for our middleware application, and we transform all incoming messages to this common format before transforming them into the proper outgoing format.
 
-<iframe src="http://rcm-de.amazon.de/e/cm?t=compandsmarbu-21&amp;o=3&amp;p=8&amp;l=as1&amp;asins=0321200683&amp;md=1M6ABJKN5YT3337HVA02&amp;fc1=000000&amp;IS2=1&amp;lt1=_blank&amp;m=amazon&amp;lc1=0000FF&amp;bc1=FFFFFF&amp;bg1=FFFFFF&amp;f=ifr" style="width: 120px; height: 240px;" marginwidth="0" marginheight="0" frameborder="0" scrolling="no"></iframe>
-
 With this solution, whenever a schema changes or is added we only need revise ONE XSL file. Pretty neat and innovative solution, right? I thought so too. Until I listened to [this interview](http://www.se-radio.net/podcast/2007-07/episode-61-internals-gcc) about the GCC internals.
 
 The [GCC](http://en.wikipedia.org/wiki/GNU_Compiler_Collection) can compile C, C++, Fortran, Ada, Java (and probably lots more languages) to an amazing number of platforms. How can it do this and avoid the combinatorial explosion when a language changes, or the definition of one platform changes?
-
-<iframe src="http://rcm-de.amazon.de/e/cm?t=compandsmarbu-21&amp;o=3&amp;p=8&amp;l=as1&amp;asins=0954161793&amp;md=1M6ABJKN5YT3337HVA02&amp;fc1=000000&amp;IS2=1&amp;lt1=_blank&amp;m=amazon&amp;lc1=0000FF&amp;bc1=FFFFFF&amp;bg1=FFFFFF&amp;f=ifr" style="width: 120px; height: 240px;" marginwidth="0" marginheight="0" frameborder="0" scrolling="no"></iframe>
 
 Simple. It uses a canonical data format. More specifically, GCC's frontend compiles the source code into an intermediate language-neutral and platform-neutral representation called [GIMPLE](http://en.wikipedia.org/wiki/GIMPLE). This representation is then translated by GCC's backend into platform-specific code. If a language is modified, only the frontend must be revised. If a platform changes, only the backend must be revised.
 

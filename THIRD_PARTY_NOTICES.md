@@ -11,8 +11,10 @@ It is licensed under the
 ## Book cover thumbnails
 
 The following book cover thumbnails were retrieved from the
-[Open Library Covers API](https://openlibrary.org/dev/docs/api/covers). Cover
-art remains the property of its respective copyright holder.
+[Open Library Covers API](https://openlibrary.org/dev/docs/api/covers), except
+for *Presentation Zen*, which came from
+[Google Books](https://books.google.com/books?id=4VRsCspB080C). Cover art
+remains the property of its respective copyright holder.
 
 - *Presentation Zen* (ISBN 9780321525659)
 - *Learning GNU Emacs* (ISBN 9780596006488)

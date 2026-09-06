@@ -43,7 +43,7 @@ Now experience had shown that only two events could cause the firmware to crash 
 
 At this point I went through the implementation of that algorithm very carefully, keeping an eye on anything that could be an infinite loop or a failed assertion. When I was done, I was fairly confident (i.e. could almost prove) that it would always terminate. But I also came across a section of code whose gist was the following:
 
-```
+```c
 float child[24]; // assume child[] is filled here with some floating-point values
 float sum = 0;
 float avg;
@@ -69,7 +69,7 @@ But we're dealing with floating-point variables here, where common-sense mathema
 
 In fact, it's easy to find such a set of numbers if they are all the same. One respondent gave a list of floating-point values that, when averaged, turned out to all be greater than their average. For example:
 
-```
+```cpp
 #include <iostream>
 #include <cassert>
 

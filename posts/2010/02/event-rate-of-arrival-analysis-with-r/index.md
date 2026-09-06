@@ -7,7 +7,7 @@ categories:
 
 Here is a very common problem: suppose you're give a series of event timestamps. The events can be anything---website logins, persons entering a building, anything that recurs regularly in time but whose rate of arrival is not known in advance. Here is, for example, such a file which I had to analyze:
 
-```
+```text
 05.02.2010 09:00:18
 05.02.2010 09:00:18
 05.02.2010 09:00:21
@@ -29,21 +29,52 @@ In the morning of the second day, I realized I had been solving the wrong proble
 
 Or again, if you're designing a building or a space to which people are supposed to come, be served somehow, and then leave, you really don't need to know how many people will come per hour; you need to know how many people will be in the building at the same time.
 
-There is something called Little's Law which states this a bit more formally. Assuming the system can serve the requests (or people, or jobs) without any pileup, then _N_\=_t_× Λ, where _N_ is the number of requests being served concurrently, _t_ is the time spent on each request, and Λ is the request rate. Now it should be obvious that if you know _t_, the data will give you _N_ from which you can derive Λ (if you want).
+There is something called Little's Law which states this a bit more formally. Assuming the system can serve the requests (or people, or jobs) without any pileup, then $N = t \times \Lambda$, where $N$ is the number of requests being served concurrently, $t$ is the time spent on each request, and $\Lambda$ is the request rate. Now it should be obvious that if you know $t$, the data will give you $N$ from which you can derive $\Lambda$ (if you want).
 
 Here's how I did it in R. Suppose the data comes in a zipped data.zip file, with timestamps formatted as above. Then:
 
-library(lattice) # always, always, always use this library # Get raw data as a vector of DateTime objects data <- as.POSIXct(scan(unzip("data.zip"), what=character(0), sep="\\n"), format="%d.%m.%Y %T") # Turn it into a dataframe which will be easier to use data.lt <- as.POSIXlt(data) data.df <- data.frame(time=data, sec=jitter(data.lt$sec, amount=.5), min=data.lt$min, hour=data.lt$hour) data.df$timeofday <- with(data.df, sec+60\*min+3600\*hour) rm(data, data.lt)
+```r
+library(lattice) # always, always, always use this library
+
+# Get raw data as a vector of DateTime objects
+data <- as.POSIXct(
+  scan(unzip("data.zip"), what = character(0), sep = "\n"),
+  format = "%d.%m.%Y %T"
+)
+
+# Turn it into a data frame which will be easier to use
+data.lt <- as.POSIXlt(data)
+data.df <- data.frame(
+  time = data,
+  sec = jitter(data.lt$sec, amount = 0.5),
+  min = data.lt$min,
+  hour = data.lt$hour
+)
+data.df$timeofday <- with(data.df, sec + 60 * min + 3600 * hour)
+rm(data, data.lt)
+```
 
 Note that for this example we'll assume all events happened on the same day.
 
 Now here's the idea. We're going to build a counter that counts +1 for each event and -1 when that event has been served. In R, we can do that with the cumsum function. For example, suppose we have a series of ten events spaced apart according to a Poisson distribution with mean 4:
 
-\> x <- cumsum(rpois(10,4)) > x \[1\] 6 9 14 20 26 33 37 38 38 44
+```r
+> x <- cumsum(rpois(10, 4))
+> x
+[1] 6 9 14 20 26 33 37 38 38 44
+```
 
 Suppose each event takes 6 seconds to serve, and build a structure holding x, the coordinates of the original events and of their completion times, and y, the running counter of the number of events being served:
 
-\> temp <- list(x=c(x, x+kLatency),y=c(rep(1,length(x)), rep(-1, length(x)))) > reorder <- order(temp$x) > temp$x <- temp$x\[reorder\] > temp$y <- cumsum(temp$y\[reorder\])
+```r
+> temp <- list(
+    x = c(x, x + kLatency),
+    y = c(rep(1, length(x)), rep(-1, length(x)))
+  )
+> reorder <- order(temp$x)
+> temp$x <- temp$x[reorder]
+> temp$y <- cumsum(temp$y[reorder])
+```
 
 If you now plot the temp structure here is what you would get:
 
@@ -51,6 +82,33 @@ _The original example plot is no longer available._
 
 With all this in place, we have now everything we need to go ahead. The little script above can go into its own function or it can be defined as xyplot's panel argument:
 
-kLatency = 4 # seconds xyplot(1~timeofday, data.df, main = paste("Concurrent requests assuming", kLatency, "seconds latency"), xlab = "Time of day", ylab = "# concurrent requests", panel = function(x, darg, ...) { temp <- list(x = c(x, x + kLatency), y = c(rep(1,length(x)), rep(-1, length(x)))) reorder <- order(temp$x) temp$x <- temp$x\[reorder\] temp$y <- cumsum(temp$y\[reorder\]) panel.lines(temp, type="s") }, scales = list(x = list(at = seq(0, 86400, 7200), labels=c(0,"","", 6,"","", 12,"","", 18,"","",24)), y = list(limits = c(-1, 20))) )
+```r
+kLatency <- 4 # seconds
+
+xyplot(
+  1 ~ timeofday,
+  data.df,
+  main = paste("Concurrent requests assuming", kLatency, "seconds latency"),
+  xlab = "Time of day",
+  ylab = "# concurrent requests",
+  panel = function(x, darg, ...) {
+    temp <- list(
+      x = c(x, x + kLatency),
+      y = c(rep(1, length(x)), rep(-1, length(x)))
+    )
+    reorder <- order(temp$x)
+    temp$x <- temp$x[reorder]
+    temp$y <- cumsum(temp$y[reorder])
+    panel.lines(temp, type = "s")
+  },
+  scales = list(
+    x = list(
+      at = seq(0, 86400, 7200),
+      labels = c(0, "", "", 6, "", "", 12, "", "", 18, "", "", 24)
+    ),
+    y = list(limits = c(-1, 20))
+  )
+)
+```
 
 Unfortunately I cannot show you the results here, but this analysis showed me immediately when and how often the webserver would be under its most heavy load, and directly informed our infrastructure needs.

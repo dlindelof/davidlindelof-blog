@@ -7,7 +7,7 @@ categories:
 
 This week I started reading Garr Reynolds' _Presentation Zen_, the well-known book on presentation design and guidelines. (I've borrowed it from our library after waiting for something like 9 months. There were about 10 reservations before mine, so I guess it must be popular.)
 
-[![Cover of Presentation Zen](images/presentation-zen.jpg)](http://www.amazon.de/gp/product/0321525655)
+[![Cover of Presentation Zen](images/presentation-zen.jpg){width=240px}](https://books.google.com/books?id=4VRsCspB080C)
 
 On page 61 there's a nice list of questions one should **always** ask oneself before preparing a talk. Drilling through that list is definitely a good idea, and I'm writing it down here for further reference.
 

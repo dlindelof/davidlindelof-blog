@@ -11,7 +11,7 @@ When dealing with small sample sizes (less than, say, 20) it's generally not pos
 
 Statistics is like electrical work: it's very easy to do a job that looks correct but could kill or maim someone. For example we have all, at least once, taken a small sample and used the normal distribution to get confidence intervals. Here is what we would get for the example above, assuming that the measured heights were 184 cm and 178 cm:
 
-```
+```r
 > x <- c(184, 178)
 > xbar <- mean(x)
 > s <- sd(x)
@@ -19,13 +19,13 @@ Statistics is like electrical work: it's very easy to do a job that looks correc
 [1] 172.6846 189.3154
 ```
 
-The confidence interval we just obtained ($172 \\le \\mu \\le 189$) looks perfectly reasonable, but it's wrong. What's worse, there's nothing _obviously_ wrong with it. If $s$ was the true population standard deviation it might even be correct; but that's extremely unlikely.
+The confidence interval we just obtained ($172 \le \mu \le 189$) looks perfectly reasonable, but it's wrong. What's worse, there's nothing _obviously_ wrong with it. If $s$ was the true population standard deviation it might even be correct; but that's extremely unlikely.
 
-This is why [Student's t-distribution](http://en.wikipedia.org/wiki/Student%27s_t-distribution) was invented (or discovered?), to deal with small sample sizes. If we draw $N$ random samples from a normally distributed population, compute the sample mean $\\bar{x}$ and the sample standard deviation $s$, then the so-called _t-value_ $\\frac{\\bar{x}-\\mu}{s/\\sqrt{N}}$ will be distributed according to the t-distribution with $N-1$ degrees of freedom.
+This is why [Student's t-distribution](http://en.wikipedia.org/wiki/Student%27s_t-distribution) was invented (or discovered?), to deal with small sample sizes. If we draw $N$ random samples from a normally distributed population, compute the sample mean $\bar{x}$ and the sample standard deviation $s$, then the so-called _t-value_ $\frac{\bar{x}-\mu}{s/\sqrt{N}}$ will be distributed according to the t-distribution with $N-1$ degrees of freedom.
 
-With our example above, $N=2$, $\\bar{x} = \\frac{184+178}{2} = 181$, and $s=\\sqrt{(3^2 + 3^2)/(N-1)}=4.24$. If we want a 95% confidence interval for the true mean $\\mu$ we use the 2.5% and the 97.5% quantiles of the t-distribution with 1 degree of freedom:
+With our example above, $N=2$, $\bar{x} = \frac{184+178}{2} = 181$, and $s=\sqrt{(3^2 + 3^2)/(N-1)}=4.24$. If we want a 95% confidence interval for the true mean $\mu$ we use the 2.5% and the 97.5% quantiles of the t-distribution with 1 degree of freedom:
 
-```
+```r
 > N <- 2
 > x <- c(184, 178)
 > xbar <- mean(x)
@@ -34,7 +34,7 @@ With our example above, $N=2$, $\\bar{x} = \\frac{184+178}{2} = 181$, and $s=\\s
 [1] 142.8814 219.1186
 ```
 
-That last result gives you the correct 95% confidence interval for the true mean: $142 \\le \\mu \\le 219$. Compare this with the interval obtained earlier: it is much wider, and therefore the uncertainty on the true mean is much higher than what the normal distribution would have let you believe.
+That last result gives you the correct 95% confidence interval for the true mean: $142 \le \mu \le 219$. Compare this with the interval obtained earlier: it is much wider, and therefore the uncertainty on the true mean is much higher than what the normal distribution would have let you believe.
 
 This is, however, pretty good news. As long as your sample size is larger than 1, you can always infer correct (though perhaps useless) confidence intervals for the true mean, provided the population is normally distributed.
 
@@ -48,9 +48,9 @@ That's when I decided to shut up and write a blog post.
 
 We'll run a little computer experiment. Suppose again that the height of the swiss population is drawn from a normal distribution of mean 180 cm and standard deviation 20 cm (I am totally making this up). We're going to draw one sample at a time from this distribution and see the evolution of the sample mean and the confidence interval.
 
-The true mean $\\mu$ lies with 95% confidence within $\\left\[t\_{2.5\\%, N-1}\\times(\\frac{s}{\\sqrt{N}}+\\bar{x}), t\_{97.5\\%, N-1}\\times(\\frac{s}{\\sqrt{N}}+\\bar{x})\\right\]$. Let's form this confidence interval as we progressively sample elements from the parent population:
+The true mean $\mu$ lies with 95% confidence within $\left[t_{2.5\%,\,N-1}\frac{s}{\sqrt{N}}+\bar{x},\; t_{97.5\%,\,N-1}\frac{s}{\sqrt{N}}+\bar{x}\right]$. Let's form this confidence interval as we progressively sample elements from the parent population:
 
-```
+```r
 N <- 1000
 mean.height <- 180
 sd.height <- 20
@@ -76,4 +76,4 @@ It's obvious that for small sample sizes, the confidence interval quickly become
 
 _The original logarithmic confidence-interval chart is no longer available._
 
-The confidence interval becomes smaller than the population standard deviation (20) after only 15 samples. However, even for extremely small sample sizes (less than, say, 5) the confidence interval is roughly 40 cm. The true mean can therefore be estimated within $\\pm 20$, or with about 11% error, after only 5 samples. And that is thanks to the t-distribution.
+The confidence interval becomes smaller than the population standard deviation (20) after only 15 samples. However, even for extremely small sample sizes (less than, say, 5) the confidence interval is roughly 40 cm. The true mean can therefore be estimated within $\pm 20$, or with about 11% error, after only 5 samples. And that is thanks to the t-distribution.
