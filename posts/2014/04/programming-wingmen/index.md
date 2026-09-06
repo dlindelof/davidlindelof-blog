@@ -11,7 +11,7 @@ The Pair Programming community use the metaphor of two drivers alternating being
 
 What we are proposing instead, is that the same pair sticks together until the feature is complete. If the Pair Programming community uses a land-based metaphor, I'm going to use an aerial one. I'll liken this to a pair of wingmen flying a missions, sticking together until the mission is done.
 
-[![wingman-demotivational](images/wingman-demotivational-550x352.jpg)](http://computersandbuildings.com/wp-content/uploads/2014/04/wingman-demotivational.jpg)
+_The original wingman illustration is no longer available._
 
 I've been pairing for almost two weeks now with our test engineer. We write the R scripts that automatically analyze, and generate a report on, this winter's test data. Speaking for myself, I'm now convinced that this practice carries the same benefits as traditional pair programming, but brings several extra benefits:
 
@@ -27,6 +27,6 @@ A big issue with traditional Scrum is that by the end of the daily standup, ever
 
 How did we get started? By a simple change. So simple, in fact, that it borders on the trivial, and you can try it today. Assuming you use a whiteboard to track your work in progress, **figure out a way to indicate that a story is now owned by two people instead of one.** For us, we used to have parallel swimlanes across the whiteboard, one lane per team member. What we did was as simple as merge them together by pairs.
 
-[![storying](images/storying.jpg)](http://computersandbuildings.com/wp-content/uploads/2014/04/storying.jpg)
+_The original whiteboard photograph is no longer available._
 
 If you have any position of authority in your team, I dare you to try this experiment for just one week, and for just one pair of team members. You'll thank me for it.

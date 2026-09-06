@@ -5,7 +5,7 @@ categories:
   - "energy"
 ---
 
-Referring again to the power consumption of "stand-by" appliances discussed [earlier](http://www.visnet.ch/~lindelof/smartbuildings/archives/12), I recently stoborrowed a WSE Wattmeter, made by Messtechnik Schaffhausen GmbH, from our laboratory, and measured the power consumption of the few appliances we have at our place after our recent move.
+Referring again to the power consumption of "stand-by" appliances discussed [earlier](/posts/2006/01/standby-applicances-waste-of-energy/), I recently stoborrowed a WSE Wattmeter, made by Messtechnik Schaffhausen GmbH, from our laboratory, and measured the power consumption of the few appliances we have at our place after our recent move.
 
 - Sony stereo player: 6 W.
 - Aquarium, 60 L: 100 W with lighting turned on, 20 W with only filter, air pump and heater.

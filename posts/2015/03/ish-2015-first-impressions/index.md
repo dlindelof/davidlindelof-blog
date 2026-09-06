@@ -5,7 +5,7 @@ date: 2015-03-16
 
 ISH, held every two years in Frankfurt, describes itself as "The world’s leading trade fair The Bathroom Experience, Building, Energy, Air-conditioning Technology, Renewable Energies". At Neurobat we develop systems for improved and more efficient indoor climate control systems, and it was only natural that we attend as visitors.
 
-[![Untitled](images/16592813498_30202789ca.jpg)](https://www.flickr.com/photos/13583850@N00/sets/72157651304983792/)
+*The original Flickr photo is no longer available.*
 
 A small party from our company visited the fair, which was spread out over 12 halls according to topics. Each of these halls would have easily required at least half a day do it proper justice, so it was obviously not possible to visit the entire fair.
 

@@ -9,7 +9,7 @@ CARNOT is in the process of being moved to a new hosting provider. In the meanti
 
 CARNOT is distributed as a zip file, `carnot_60_2013b_public_22oct2015.zip`. I decompress it and find what looks like a Simulink top-level model called `carnot.slx`, and several sub-folders. Very encouragingly, I see there's an installation guide:
 
-[![CARNOT root folder](images/Screen-Shot-2015-12-02-at-18.32.32.png)](http://computersandbuildings.com/wp-content/uploads/2015/12/Screen-Shot-2015-12-02-at-18.32.32.png)
+_The original screenshot of the CARNOT root folder is no longer available._
 
 I move the decompressed folder to the folder where I keep all my in-progress projects, and create a symbolic link to it named more simply `carnot`.
 
@@ -39,7 +39,7 @@ So that's why felt more appropriate to find where in the call `mex` was being ca
 
 Once this was done, I could finally type `carnot` at the command line and the toolbox would open:
 
-![Screen Shot 2015-12-04 at 03.56.40](images/Screen-Shot-2015-12-04-at-03.56.40.png)
+_The original screenshot of the running toolbox is no longer available._
 
 I was immediately drawn to the box that says `double click to open examples` and that yielded another set of errors, again related to file paths. After fixing those I could open an example model, the `example_House_SFH45`, click run, and saw the simulation running. I was all set and done.
 

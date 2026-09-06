@@ -11,7 +11,7 @@ The problem was that we tend to select our reviewers based on various subjective
 
 At Neurobat we currently have a rule that all pull requests must be reviewed by two other team members (one, if the pull request was paired on). To ensure these reviewers are selected fairly and without subjectivity, we have now introduced a **reviewer queue**: our names are listed on the main whiteboard and an arrow is drawn, showing who is next in the review queue. When a reviewer is assigned, the arrow moves to the next name.
 
-[![Neurobat reviewer queue](images/review_queue-225x300.jpeg)](http://computersandbuildings.com/wp-content/uploads/2015/11/review_queue.jpeg)
+_The original photograph of the reviewer queue is no longer available._
 
 We've had this in place for a couple of sprints now and the results have been very satisfying:
 

@@ -11,7 +11,7 @@ Out of these 34 candidates, 10 were from France, 5 from Switzerland, and the oth
 
 Here I show the boxplots for the normalized test scores, where I plotted separately the swiss and the french candidates, and lumped everybody else in a third category. The boxplots are sorted by increasing median.
 
-[![programming\_scores](images/Rplot001.png)](http://computersandbuildings.com/wp-content/uploads/2013/05/Rplot001.png)
+_The original programming-scores boxplot is no longer available._
 
 There is a clear trend suggesting that the further away a candidate comes from, the higher their test scores. However, I must stress that with such low statistics the difference is _not_ statistically significant. An analysis of variance test on the test scores against a simple 2-valued factor (swiss vs non-swiss) gives an F-value for one degree of freedom of 2.076, i.e. a p-value of 0.163. Similarly, a Wilcoxon rank sum test gives a p-value of 0.1698.
 

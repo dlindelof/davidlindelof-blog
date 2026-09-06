@@ -63,7 +63,7 @@ library(lattice)
 histogram(~ errors | approach, errors)
 ```
 
-[![Taxicabs errors](images/taxicabs_errors-550x422.png)](http://computersandbuildings.com/wp-content/uploads/2015/11/taxicabs_errors.png)
+_The original histogram of the estimation errors is no longer available._
 
 Both error distributions are skewed towards negative values, meaning that both approaches tend to underestimate $N$. However, the bayesian errors have a tighter distribution around 0 than the frequentist ones.
 

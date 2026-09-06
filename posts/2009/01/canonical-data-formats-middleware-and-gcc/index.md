@@ -30,5 +30,3 @@ The [GCC](http://en.wikipedia.org/wiki/GNU_Compiler_Collection) can compile C, C
 Simple. It uses a canonical data format. More specifically, GCC's frontend compiles the source code into an intermediate language-neutral and platform-neutral representation called [GIMPLE](http://en.wikipedia.org/wiki/GIMPLE). This representation is then translated by GCC's backend into platform-specific code. If a language is modified, only the frontend must be revised. If a platform changes, only the backend must be revised.
 
 The GCC folks (and probably many others) had been doing Canonical Data Format for decades before this pattern became recognized as such. And I thought we were being so clever...
-
-[![Reblog this post \[with Zemanta\]](images/reblog_e.png)](http://reblog.zemanta.com/zemified/00c90648-5a99-4dae-95b6-ea33ce549a96/ "Zemified by Zemanta")

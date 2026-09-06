@@ -33,7 +33,3 @@ Lessons learned:
 - **Do not unit test JavaBeans**. Unit test the methods that use the JavaBean methods instead.
 - **Monitor your test code coverage**. Tools such as [Cobertura](http://cobertura.sourceforge.net/) make this trivial.
 - Improve your test code coverage through relentless refactoring. Not only will your coverage improve, but so will probably your design.
-
-[![Reblog this post \[with Zemanta\]](images/reblog_e.png)](http://reblog.zemanta.com/zemified/9e14fa56-e2ce-4775-a783-510e7d8c5175/ "Zemified by Zemanta")
-
-<script type="text/javascript" src="http://static.zemanta.com/readside/loader.js" defer="defer"></script>

@@ -5,4 +5,6 @@
 .env.local
 _site/
 .Rhistory
+.RData
+*.Rproj
 *.log

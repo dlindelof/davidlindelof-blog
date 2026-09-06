@@ -5,7 +5,7 @@ date: 2016-06-27
 
 Once you publish a paper in a journal, you are expected to regularly review papers for that journal. It's part of the normal scientific process. Some may consider it a chore, but I see it as an opportunity to keep in touch with my field and to help quality papers get published.
 
-[![dilbert\_review](images/dilbert_review.png)](https://davidlindelof.com//wp-content/uploads/2016/06/dilbert_review.png)
+![Dilbert review](images/dilbert_review.png)
 
 When I was first asked to review a paper there was very little help available on the subject. Things have considerably improved since; for example, Elsevier maintains an [Elsevier for Reviewers](https://www.elsevier.com/reviewers) website with plenty of information. I recommend you start there for some basic reviewer training. But the last time I checked, that site would not yet tell you anything about how to read a paper or how to actually write a reviewer report.
 

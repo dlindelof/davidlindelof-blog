@@ -3,7 +3,7 @@ title: "Great moments in the history of CO2 mitigation"
 date: 2013-06-17
 ---
 
-[![co2\_fail](images/co2_fail1.png)](http://computersandbuildings.com/wp-content/uploads/2013/06/co2_fail1.png)
+_The original illustration is no longer available._
 
 Sources:
 

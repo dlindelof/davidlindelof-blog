@@ -9,7 +9,7 @@ In _[Trustworthy Online Controller Experiments](https://a.co/d/b6Emaxo)_ I came 
 
 > Because $X$ and $Y$ are jointly bivariate normal in the limit, $M$, as the ratio of the two averages, is also normally distributed.
 
-That's only partially true. According to [https://en.wikipedia.org/wiki/Ratio\_distribution](Wikipedia), the ratio of two uncorrelated noncentral normal variables $X = N(\\mu\_X, \\sigma\_X^2)$ and $Y = N(\\mu\_Y, \\sigma\_Y^2)$ has mean $\\mu\_X / \\mu\_Y$ and variance approximately $\\frac{\\mu\_X^2}{\\mu\_Y^2}\\left( \\frac{\\sigma\_X^2}{\\mu\_X^2} + \\frac{\\sigma\_Y^2}{\\mu\_Y^2} \\right)$. The article implies that this is true when $Y$ is unlikely to assume negative values, say $\\mu\_Y > 3 \\sigma\_Y$.
+That's only partially true. According to [Wikipedia](https://en.wikipedia.org/wiki/Ratio_distribution), the ratio of two uncorrelated noncentral normal variables $X = N(\\mu\_X, \\sigma\_X^2)$ and $Y = N(\\mu\_Y, \\sigma\_Y^2)$ has mean $\\mu\_X / \\mu\_Y$ and variance approximately $\\frac{\\mu\_X^2}{\\mu\_Y^2}\\left( \\frac{\\sigma\_X^2}{\\mu\_X^2} + \\frac{\\sigma\_Y^2}{\\mu\_Y^2} \\right)$. The article implies that this is true when $Y$ is unlikely to assume negative values, say $\\mu\_Y > 3 \\sigma\_Y$.
 
 As always, the best way to believe something is to see it yourself. Let's generate some uncorrelated normal variables far from 0 and their ratio:
 

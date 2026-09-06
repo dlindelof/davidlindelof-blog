@@ -24,7 +24,7 @@ There are, conventionally, five different sources of energy, four of which are c
 - [Wind power](http://en.wikipedia.org/wiki/Wind_power "Wind power")
 - [Hydroelectric power](http://en.wikipedia.org/wiki/Hydroelectricity)
 
-But, as [Thomas L. Friedman](http://www.thomaslfriedman.com/) mentioned in his excellent _Hot, Flat and Crowded_ ([see my review here](book-review-hot-flat-and-crowded)), there is a **sixth energy source: the energy that we do not use**.
+But, as [Thomas L. Friedman](http://www.thomaslfriedman.com/) mentioned in his excellent _Hot, Flat and Crowded_ ([see my review here](/posts/2009/07/book-review-hot-flat-and-crowded/)), there is a **sixth energy source: the energy that we do not use**.
 
 And the key challenge we face as a race for the next century or so is to shift our energy consumption patterns more and more towards that sixth source, instead of trying to draw more and more energy from the four carbon-neutral ones.
 

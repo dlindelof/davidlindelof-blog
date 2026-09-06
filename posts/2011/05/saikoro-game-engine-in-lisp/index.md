@@ -11,7 +11,7 @@ tags:
 
 Here at Neurobat we consecrate one day per sprint as a \*Lab Day\*, i.e. a day when, not unlike what Google does, we are free to work on whatever we want.
 
-Today was Lab Day and I took the opportunity to brush up my Lisp skills by writing a game, inspiring myself heavily from Conrad Burski's wonderful book [Land of Lisp](http://www.amazon.com/gp/product/1593272812/ref=as_li_ss_tl?ie=UTF8&tag=compandsmarbu-20&linkCode=as2&camp=217145&creative=399349&creativeASIN=1593272812)![](images/ir), which will teach you the necessary Lisp skills for the most important programming gig ever, that is, writing games.
+Today was Lab Day and I took the opportunity to brush up my Lisp skills by writing a game, inspiring myself heavily from Conrad Burski's wonderful book [Land of Lisp](http://www.amazon.com/gp/product/1593272812), which will teach you the necessary Lisp skills for the most important programming gig ever, that is, writing games.
 
 I wrote a game engine for the [Saikoro](http://boardgamegeek.com/boardgame/27813/saikoro) boardgame, a game simple enough to be amenable to the kind of AI described in the book. Without doing any major kind of optimization, the computer will play a perfect game on a 4 x 4 board by computing exhaustively a tree of all possible games from a starting position.
 

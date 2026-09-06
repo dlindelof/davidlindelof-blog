@@ -11,7 +11,7 @@ What is the very first question one is supposed to answer during a standup meeti
 
 then congratulations. You have given the canonical answer recommended by [Mike Cohn himself](https://www.mountaingoatsoftware.com/agile/scrum/daily-scrum). But I am now convinced that this is the wrong question to ask.
 
-[![](images/fc55c2f06d6401301d80001dd8b71c47)](http://dilbert.com/strip/2000-03-18)
+[![Dilbert characters discussing tasks and accomplishments](images/standup-obstacles.gif)](http://dilbert.com/strip/2000-03-18)
 
 When you ask someone _What did you do?_, you are inviting an answer along the lines of:
 

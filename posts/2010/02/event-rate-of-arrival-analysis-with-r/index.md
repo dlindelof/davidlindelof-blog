@@ -47,7 +47,7 @@ Suppose each event takes 6 seconds to serve, and build a structure holding x, th
 
 If you now plot the temp structure here is what you would get:
 
-[![](images/example-299x300.png)](http://computersandbuildings.com/wp-content/uploads/2010/02/example.png)
+_The original example plot is no longer available._
 
 With all this in place, we have now everything we need to go ahead. The little script above can go into its own function or it can be defined as xyplot's panel argument:
 

@@ -10,7 +10,7 @@ I often need to edit files on remote machines or on embedded devices, that is, m
 
 In the past that has always left me with the rather painful choice between vi and nano. Now I have never invested enough time in learning vi beyond the most basic editing commands. And nano is okayish for small edits but hopeless for larger ones.
 
-[![](images/51dake2iual_sl160_.jpg)](http://www.amazon.de/gp/product/0596006489?ie=UTF8&tag=compandsmarbu-21&linkCode=as2&camp=1638&creative=6742&creativeASIN=0596006489)![](images/ir)
+[![Cover of Learning GNU Emacs](images/gnu-emacs-manual.jpg)](http://www.amazon.de/gp/product/0596006489)
 
 So I was delighted to learn that you can edit files remotely through ssh with Emacs. If you want to remotely edit aFile on host aHost, open the following file:
 

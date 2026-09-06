@@ -70,10 +70,10 @@ upper.interval <- sd.sample / sqrt(1:N) * qt(0.975, 1:N - 1) + mean.sample
 
 And here is the result:
 
-[![Sample mean and 95% confidence interval](images/confidence_interval.png)](http://computersandbuildings.com/wp-content/uploads/2014/03/confidence_interval.png)
+_The original sample-mean and confidence-interval chart is no longer available._
 
 It's obvious that for small sample sizes, the confidence interval quickly becomes smaller than the parent standard deviation. We can see this by plotting the log of the confidence interval over time:
 
-[![log\_confidence\_interval](images/log_confidence_interval.png)](http://computersandbuildings.com/wp-content/uploads/2014/03/log_confidence_interval.png)
+_The original logarithmic confidence-interval chart is no longer available._
 
 The confidence interval becomes smaller than the population standard deviation (20) after only 15 samples. However, even for extremely small sample sizes (less than, say, 5) the confidence interval is roughly 40 cm. The true mean can therefore be estimated within $\\pm 20$, or with about 11% error, after only 5 samples. And that is thanks to the t-distribution.

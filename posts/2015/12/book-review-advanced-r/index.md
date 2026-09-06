@@ -6,7 +6,7 @@ categories:
   - "r"
 ---
 
-[![](images/q)](http://www.amazon.com/gp/product/1466586966/ref=as_li_tl?ie=UTF8&camp=1789&creative=390957&creativeASIN=1466586966&linkCode=as2&tag=compandsmarbu-20&linkId=XEO5P4SMVCTE76WD)![](images/ir)
+[![Cover of Advanced R](images/advanced-r.jpg)](http://www.amazon.com/gp/product/1466586966)
 
 I would like to call this the best second book on R, except that I wouldn't know what the first one would be. I learned R from classes and tutorials about 10 years ago, used it on my PhD and four articles, and use it today on a daily basis at work; yet only now, after reading this book, do I feel like I could possibly be called an R programmer rather than just a user.
 

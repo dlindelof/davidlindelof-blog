@@ -65,7 +65,7 @@ That was the only place where an assertion was called. Could this assertion ever
 
 But we're dealing with floating-point variables here, where common-sense mathematics doesn't always hold. Could it be that all the values were greater than their average? I asked that [question on Stackoverflow.](http://stackoverflow.com/questions/20102906/can-a-set-of-floating-point-numbers-be-all-above-average) Several answers came quickly back: it is indeed perfectly possible for a set of floating-point numbers to all be above their average.
 
-[![Above-Average-Children](images/Above-Average-Children.png)](https://davidlindelof.com//wp-content/uploads/2016/04/Above-Average-Children.png)
+![Above-average children](images/Above-Average-Children.png)
 
 In fact, it's easy to find such a set of numbers if they are all the same. One respondent gave a list of floating-point values that, when averaged, turned out to all be greater than their average. For example:
 

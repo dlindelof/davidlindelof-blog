@@ -19,7 +19,7 @@ Let's define the amount of loading $\\rho$ as the fraction of heads that will re
 
 <figure>
 
-![](images/2Q==)
+![The two sides of a coin](images/fairness-coins.jpg)
 
 <figcaption>
 

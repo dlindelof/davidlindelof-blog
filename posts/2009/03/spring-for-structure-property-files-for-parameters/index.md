@@ -69,7 +69,3 @@ And your beans can then refer to these properties like this:
 \[code='xml'\] \[/code\]
 
 I have found this way particularly useful, namely **put the structural data in the Spring config file, and put the parameter data in its properties file**. Doing so not only makes it easy for the user to run the program with different parameters. It also lets you stash away the Spring config file in your application's jarfile, putting it out of the way of the user. And that, I believe, is a very good thing, because you typically do not want to confuse the user with Spring's syntax.
-
-[![Reblog this post \[with Zemanta\]](images/reblog_e.png)](http://reblog.zemanta.com/zemified/6a020740-079d-46d3-be0c-2bc492a13737/ "Zemified by Zemanta")
-
-<script type="text/javascript" src="http://static.zemanta.com/readside/loader.js" defer="defer"></script>

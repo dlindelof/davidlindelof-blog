@@ -15,6 +15,6 @@ They've developed \`Webminer', a Java library for extracting data in a structure
 
 On \[DB4ALL's website\](http://www.db4all.com) you will find references to \[the two most popular datasets\](http://db4all.com/databases/) that they've mined: the above-mentioned CIA World Factbook, and the SourceForge database of open-source projects. Having such data in a relational form is invaluable for any researcher or marketing analyst. Suppose for instance that you want scientific data on the popularity of different programming languages over time in open-source projects. Well with these datasets you have all you need to get started.
 
-This, for instance, is a screenshot of the SourceForge dataset opened in Excel: ![](images/sourceforge_20100222_sample.png)
+At the time, I illustrated this with a screenshot of the SourceForge dataset opened in Excel. The original screenshot is no longer available.
 
 All in all, if you need publicly available data from a website stored in a relational database form, you should definitely consider using \[DB4ALL\](http://www.db4all.com)'s services.

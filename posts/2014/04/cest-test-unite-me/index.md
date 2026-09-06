@@ -7,7 +7,7 @@ Most french-speaking professional programmers I've worked with will translate "U
 
 Forgive my obsessive-compulsive disorder, but I believe the proper french translation of "unit test" should be "test unité", and not "test unitaire".
 
-\[caption id="attachment\_1852" align="aligncenter" width="450"\]\[![Psst I told them that we write unit tests!](images/French-Soldiers-monty-python-380143_800_441.jpg)\][2](http://computersandbuildings.com/wp-content/uploads/2014/04/French-Soldiers-monty-python-380143_800_441.jpg) Psst I told them that we write unit tests!\[/caption\]
+_The original Monty Python illustration is no longer available._
 
 The english "unit" and the french "unitaire" mean two completely different things. "Unit" refers to a small, indivisible part of a system. "Unitaire" is a word that I have never seen used outside of linear algebra. For example a "matrice unitaire" ("[unitary matrix](http://en.wikipedia.org/wiki/Unitary_matrix)") refers to a complex matrix $U$ whose inverse is its conjugate transpose: $U \\times U^\* = I$.
 

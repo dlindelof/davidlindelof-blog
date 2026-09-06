@@ -9,7 +9,7 @@ If you're in that situation, where forces outside of your control demand more an
 
 To make sure I get at least two uninterrupted days per week dedicated to technical work, I have simply scheduled them. Here is what my calendar looks like for a typical week in December:
 
-![Screen Shot 2015-12-03 at 05.21.58](images/Screen-Shot-2015-12-03-at-05.21.58.png)
+_The original calendar screenshot is no longer available._
 
 There are two huge blocks of time on Wednesday and Thursday dedicated to programming, and under no circumstances will I allow anything else to be scheduled on either of these days. And I have completely removed any feeling of guilt: when asked if I would be available for a meeting or a telco on these days, I simply reply "No, got something else planned on these days".
 

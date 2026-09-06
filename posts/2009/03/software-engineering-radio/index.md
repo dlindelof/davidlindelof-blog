@@ -15,12 +15,8 @@ Now imagine for a minute that we could get the product owner to assign utility v
 
 (Later that day I went to the library to research this topic but all I found was an exercise from the classic [Introduction to Algorithms](http://www.amazon.com/gp/product/0072970545?ie=UTF8&tag=compandsmarbu-20&linkCode=as2&camp=1789&creative=390957&creativeASIN=0072970545) in which the reader is asked to optimize such a job schedule. The chapter in question was the one about [Dynamic Programming](http://en.wikipedia.org/wiki/Dynamic_programming "Dynamic programming"), in case anyone is interested.)
 
-[![](images/Clrs.jpg)](http://www.amazon.com/gp/product/0072970545?ie=UTF8&tag=compandsmarbu-20&linkCode=as2&camp=1789&creative=390957&creativeASIN=0072970545)
+[![Cover of Introduction to Algorithms](images/introduction-to-algorithms.jpg)](http://www.amazon.com/gp/product/0072970545)
 
 Anyway, back to SE-Radio. I've found the episodes' quality range from good to very good, covering a broad range of topics. Perhaps they could be slightly improved with a little bit more structure, and also if the interviewer would stop regularly interrupting the guests with their own opinions. Sound quality has been an issue in the early days (ONE episode in particular was literally painful to listen to—I won't say which one) but now it's much, much better.
 
 These days I listen to at least one episode a day, my goal being to listen to all of them. I can really recommend it.
-
-[![Reblog this post \[with Zemanta\]](images/reblog_e.png)](http://reblog.zemanta.com/zemified/b9ea6b5e-96d7-41e7-b867-eb278bc83347/ "Zemified by Zemanta")
-
-<script type="text/javascript" src="http://static.zemanta.com/readside/loader.js" defer="defer"></script>

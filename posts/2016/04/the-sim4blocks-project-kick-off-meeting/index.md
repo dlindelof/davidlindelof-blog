@@ -11,7 +11,7 @@ The official, "long" title of the project is _Simulation Supported Real Time Ene
 
 > ... develop innovative demand response (DR) services for smaller residential and commercial customers, implement and test these services in three pilot sites and transfer successful DR models to customers of project partners in further European countries. ...
 
-[![SIM4Blocks kick-off meeting](images/Photo-Apr-05-09-24-31-300x108.jpg)](http://computersandbuildings.com/wp-content/uploads/2016/04/Photo-Apr-05-09-24-31.jpg)
+_The original photograph of the kick-off meeting is no longer available._
 
 The kick-off meeting was held in the traditional manner: after an introduction by the coordinator, and a short (remote) intervention by our project officer, each work package leader presented their work packages, going through the tasks that were defined, clarifying questions and making sure we had a common understanding of what was to be done.
 
@@ -19,6 +19,6 @@ Neurobat's part will consist in offering our online heating optimisation server 
 
 One the second day we went north to the [Wüstenrot village](http://www.gemeinde-wuestenrot.de), where a cluster of single family houses (and a couple of commercial buildings) draw their heating power from what some call an _energy ring_, a cold water circuit from which the heat pumps draw the heat for each building. This will be one of three pilot sites, the other two being in Spain and in Switzerland.
 
-[![The Wüstenrot pilot site](images/Photo-Apr-06-15-22-33-300x225.jpg)](http://computersandbuildings.com/wp-content/uploads/2016/04/Photo-Apr-06-15-22-33.jpg)
+_The original photograph of the Wüstenrot pilot site is no longer available._
 
 This project has received funding from the European Union’s Horizon 2020 research and innovation programme under grant agreement No 695965. It will last four years and we are honored to have been invited to join it. We look forward to a successful collaboration with the other members of the consortium.

@@ -1,20 +1,55 @@
 on:
+  workflow_dispatch:
+  pull_request:
+    branches: main
   push:
     branches: main
 
-name: Render and Deploy Quarto Blog
+name: Check and Deploy Quarto Blog
+
+permissions:
+  contents: read
 
 jobs:
-  build-deploy:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Set up Quarto
+        uses: quarto-dev/quarto-actions/setup@v2
+        with:
+          version: 1.9.38
+
+      - name: Render site
+        run: quarto render
+
+      - name: Check internal links
+        uses: lycheeverse/lychee-action@v2
+        with:
+          workingDirectory: _site
+          args: >-
+            --offline
+            --no-progress
+            --root-dir "${{ github.workspace }}/_site"
+            --index-files index.html
+            "./**/*.html"
+
+  deploy:
+    if: github.event_name != 'pull_request'
+    needs: check
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
       - name: Check out repository
         uses: actions/checkout@v6
-        
+
       - name: Set up Quarto
         uses: quarto-dev/quarto-actions/setup@v2
+        with:
+          version: 1.9.38
 
       - name: Render and Publish
         uses: quarto-dev/quarto-actions/publish@v2

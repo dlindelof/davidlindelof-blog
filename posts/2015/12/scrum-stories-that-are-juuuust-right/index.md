@@ -17,6 +17,4 @@ Perhaps Mike Cohn summarises the issue best, in his [User Stories Applied](http:
 
 I'm not a big fan of hyperbole, but this passage was a little bit of a revelation to me. Here we had been faithfully trying hard to break up stories that were too large into tiny weeny stories that could be implemented in a couple of days or two by a motivated developer; and now I'm being told that there is such a thing as a story that is _too small_? Talk about being in a Goldilock-ish fix.
 
-[![](images/goldilocks.jpg)](http://home.netcom.com/~swansont/)
-
 Very well Goldilocks er... I mean Mr Cohn, I'll bring this up at our next retrospective and we'll see whether our stories are really too small.

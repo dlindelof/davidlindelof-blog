@@ -9,17 +9,7 @@ When I joined Neurobat in 2010, the company's vision was to develop an add-on co
 
 Most of that library was initially written in C. Soon, we realized that the design could greatly benefit from full object-orientation. So once we made sure that our toolchain supported C++ we began to port many modules to that language. (That was C++98, the most recent version of C++ our toolchain would support.)
 
-<figure>
-
-![](images/C-Programmers.jpg)
-
-<figcaption>
-
-Source: [https://www.improgrammer.net/c-programmers-humor/](https://www.improgrammer.net/c-programmers-humor/)
-
-</figcaption>
-
-</figure>
+*The original C programmers illustration is no longer available.*
 
 But around 2016, the company's strategy began to shift from single homes in favour of large, commercial buildings whose facility managers were less price-sensitive than homeowners. It had become economical to shift to more powerful devices that could run Python, or even to cloud-based platforms. There was less of an imperative to stick to C++, and some team members experimented with porting our library to Python. In the end, I was perhaps the only one in a team of six engineers who knew the library, and C++, well enough to maintain it.
 

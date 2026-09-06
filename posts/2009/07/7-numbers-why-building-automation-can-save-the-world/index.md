@@ -18,7 +18,7 @@ To make matters worse, people who rent the home or apartment they live in have l
 
 If financial considerations won't motivate people to invest in smarter buildings, here I propose another incentive. **Building automation, if implemented globally, is one of the most cost-effective strategies for keeping the atmospheric CO2 concentration at safe levels until 2050.**
 
-I reviewed [Thomas L. Friedman](http://www.thomaslfriedman.com/)'s _Hot, Flat and Crowded_ in [an earlier post](/smartbuildings/book-review-hot-flat-and-crowded). In that book, Mr Friedman refers to a paper published by Pacala and Socolow in _Science_ in August 2004.
+I reviewed [Thomas L. Friedman](http://www.thomaslfriedman.com/)'s _Hot, Flat and Crowded_ in [an earlier post](/posts/2009/07/book-review-hot-flat-and-crowded/). In that book, Mr Friedman refers to a paper published by Pacala and Socolow in _Science_ in August 2004.
 
 I've traced that paper. You can find it here: [_Stabilization Wedges: Solving the Climate Problem for the Next 50 Years with Current Technologies_](http://www.sciencemag.org/cgi/content/abstract/305/5686/968?siteid=sci&ijkey=Y58LIjdWjMPsw&keytype=ref). Even if you don't read the full paper, _please_ do read the first couple of pages. The authors do a fantastic job at summarizing our current situation with respect with CO2 emissions and where we are headed if we do not act now. The abstract speaks for itself:
 
@@ -34,7 +34,7 @@ For the most part of human history, the CO2 concentration in the atmosphere rema
 
 The CO2 concentration at the time of the article (2004). But remember that CO2 concentration has always increased since careful measurements started in the late fifities:
 
-\[caption id="attachment\_301" align="alignnone" width="432" caption='CO2 atmospheric concentration measured on Mauna Loa (Hawaii) for the past 50 years, adapted from [my thesis](bayesian-controller).'\][![CO2 atmospheric concentration for the past 50 years](images/co2_50years.png "CO2 atmospheric concentration for the past 50 years")](/wp-content/uploads/2009/07/co2_50years.png)\[/caption\]
+\[caption id="attachment\_301" align="alignnone" width="432" caption='CO2 atmospheric concentration measured on Mauna Loa (Hawaii) for the past 50 years, adapted from [my thesis](https://doi.org/10.5075/EPFL-THESIS-3918).'\][![CO2 atmospheric concentration for the past 50 years](images/co2_50years.png "CO2 atmospheric concentration for the past 50 years")](images/co2_50years.png)\[/caption\]
 
 ### 500 ppm CO2 atmospheric concentration
 
@@ -48,7 +48,7 @@ When [Pacala and Socolow](http://en.wikipedia.org/wiki/Mitigation_of_global_warm
 
 If we fail to act **now**, by 2054 we will be pumping out 14 billion tons of CO2 per year in the atmosphere, according to the so-called Business As Usual (BAU) scenarios. Such an emission rate will almost certainly result in a CO2 concentration of more than 500 ppm, i.e. beyond the safe upper limit. The consequences on [global warming](http://en.wikipedia.org/wiki/Global_warming) can only be disastrous.
 
-\[caption id="attachment\_302" align="alignnone" width="432" caption='Average global temperatures for the last 150 years, adapted from [my thesis](/smartbuildings/bayesian-controller).'\][![Average global temperatures for the last 150 years](images/global_temperature.png "Average global temperatures for the last 150 years")](/wp-content/uploads/2009/07/global_temperature.png)\[/caption\]
+\[caption id="attachment\_302" align="alignnone" width="432" caption='Average global temperatures for the last 150 years, adapted from [my thesis](https://doi.org/10.5075/EPFL-THESIS-3918).'\][![Average global temperatures for the last 150 years](images/global_temperature.png "Average global temperatures for the last 150 years")](images/global_temperature.png)\[/caption\]
 
 ### 50 years
 
@@ -66,10 +66,10 @@ The third wedge proposed by the authors appears to me as the **easiest to implem
 
 Yes, that's right. If we or our children are to make it safely through the second half of this century, we must implement at least 7 of 15 strategies, one of which is **the reduction in carbon emissions by 25% in buildings and appliances**.
 
-And how, you may ask, can we achieve this? Well, there are really only two solutions. We may switch to more carbon-neutral energy sources, or we may reduce our energy demand. As I've argued in a [previous post](/smartbuildings/enjoying-a-no-energy-home), we should prefer the latter option for the following reasons:
+And how, you may ask, can we achieve this? Well, there are really only two solutions. We may switch to more carbon-neutral energy sources, or we may reduce our energy demand. As I've argued in a [previous post](/posts/2009/07/enjoying-a-no-energy-home/), we should prefer the latter option for the following reasons:
 
 - Our fundamental problem is our dependency on cheap sources of energy. Carbon-neutral energy sources, although much cheaper than only ten years ago, are still far from competitive.
-- We have enjoyed cheap sources of energy for so long that we have never had to consider the need to reduce our demand. In other words, **we are addicted to energy, not oil**.\[caption id="attachment\_319" align="alignright" width="240" caption='Credits: [RogeSun Media](http://www.flickr.com/photos/shuttercat7/449400025/)'\][![5 hours energy](images/449400025_7344a49274_m.jpg "5 hours energy")](/wp-content/uploads/2009/07/449400025_7344a49274_m.jpg)\[/caption\]
+- We have enjoyed cheap sources of energy for so long that we have never had to consider the need to reduce our demand. In other words, **we are addicted to energy, not oil**.\[caption id="attachment\_319" align="alignright" width="240" caption='Credits: [RogeSun Media](http://www.flickr.com/photos/shuttercat7/449400025/)'\][![5 hours energy](images/449400025_7344a49274_m.jpg "5 hours energy")](images/449400025_7344a49274_m.jpg)\[/caption\]
 - It is much, much more cost-effective to reduce the energy demand of buildings and appliances, particularly through better home and building automation, than attempting to replace our current sources of energy with carbon-neutral ones.
 
   

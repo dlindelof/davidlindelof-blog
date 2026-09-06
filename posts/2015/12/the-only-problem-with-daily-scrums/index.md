@@ -11,7 +11,7 @@ Over the past five years, our team has attended more than 120 daily standup meet
 2. What will you do today?
 3. Any impediments?
 
-[![](images/9051bb106cb801301d46001dd8b71c47)](http://dilbert.com/strip/2008-04-16)
+[![Dilbert characters discussing successes and obstacles at a daily huddle](images/daily-huddle.gif)](http://dilbert.com/strip/2008-04-16)
 
 There seems to be one flaw with this format, however. **The flaw is that you cannot say what you will do for the day before having heard if anyone else has an impediment.**
 

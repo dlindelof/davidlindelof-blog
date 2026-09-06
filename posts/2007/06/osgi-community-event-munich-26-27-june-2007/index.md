@@ -8,7 +8,7 @@ categories:
   - "tools"
 ---
 
-I have already mentioned [elsewhere](http://www.visnet.ch/smartbuildings/review-decompiling-java/) that the [OSGi](http://en.wikipedia.org/wiki/Osgi) technology is likely to play an important part in the computerization of current and future buildings. It is a very attractive programming model for building management systems, especially with respect to its software lifecycle model (stopping, updating and restarting) that does not require a reboot of the whole system---nor indeed of your own application.
+I have already mentioned [elsewhere](/posts/2006/03/review-decompiling-java/) that the [OSGi](http://en.wikipedia.org/wiki/Osgi) technology is likely to play an important part in the computerization of current and future buildings. It is a very attractive programming model for building management systems, especially with respect to its software lifecycle model (stopping, updating and restarting) that does not require a reboot of the whole system---nor indeed of your own application.
 
 In a nutshell, OSGi is an extension to the Java programming language whereby a framework program (just called the "framework") runs continuously, in which small applications packaged as "bundles" (which are nothing else but jarfiles with some extra description information in their manifest) are installed, registered, started, stopped, updated and uninstalled. Each bundle can register "services" in the framework, i.e. objects available for use to other bundles. In a carefully designed OSGi program, when a bundle is uninstalled all bundles forget everything about it, and in particular its classes are eventually unloaded---something that never ever happens in classic Java (or any other language that I know of). For this reason, OSGi has more than once been referred to as "ClassLoaders on steroids".
 
@@ -16,7 +16,7 @@ This being my weblog on building automation, I report here what I found to be re
 
 (Full disclaimer: my trip was financed by [Adhoco AG](http://www.adhoco.com), with whom I work, but I promise will be as unbiased as I can.)
 
-![OSGi Community Event](images/648174077_5adbbf5e58_m.jpg)
+*The original Flickr photos from the event are no longer available.*
 
 ### OSGi and home automation
 
@@ -33,8 +33,6 @@ I suppose this is an approach we could try with home automation as well, but wha
 I must however confess being thoroughly confused by this service specification at the moment. I spent three hours on the train trying to understand it (once more) but gave up. I've started a thread about this on the Apache Felix (an open-source OSGi implementation) [mailing-list](http://www.mail-archive.com/users@felix.apache.org/).
 
 I've often wondered whether it is better to have one central service responsible for dealing out references to the devices to client bundles, or if each device should be represented by a service. (This dilemma is faced by anyone architecting a distributed computing environment, such as network of automatic teller machines---do you have each ATM communicate with on object that represents the bank, or with thousands of smaller objects that each represent an account?) Richard Hall, author of the Apache Felix OSGi implementation, suggested that the latter model is better, as it allows client bundles to react to the "disapperance" of devices.
-
-![OSGi technical discussions](images/648174807_0a14c9cfaf_m.jpg)
 
 ### OSGi technical discussions
 
@@ -141,8 +139,6 @@ Like many other of these best practices, this one holds for any Java application
 
 I am by no means a concurrency expert, but a common cause of deadlocks is when you make foreign method calls inside a synchronized block. Do not, ever, do this. You have no idea what that method you are calling might be doing---in particular, it might well try to acquire your own lock, resulting in a deadlock and a frozen application.
 
-![OSGi evangelist in action](images/648206061_4770680940_m.jpg)
-
 ### Miscellaneous
 
 When he wrote the original open-source Oscar implementation of the OSGi specs, Richard Hall introduced the idea of a bundle repository: a centralized place from where OSGi bundles can be downloaded, and whose contents are described in a XML format.
@@ -154,8 +150,6 @@ In my line of work I have found the OBR idea very useful, and a great tool for s
 Stuart McCulloch talked about other tools for bundle developers. It was from him that I heard for the first time about the [Bnd](http://www.aqute.biz/Code/Bnd) tool to help create OSGi bundles. Like probably many others, I'm still relying on good old Ant scripts to do that, so any tool that might make it easier is welcome indeed.
 
 Remote management was often mentioned during the event. Kai Hackbarth, from ProSyst AG, gave a talk on the challenge of managing the lifecycles of potentially millions of OSGi devices in the field, not all of which can be assumed to be connected to the internet at all times. He presented the [mPRM](http://www.prosyst.com/products/back_end_mgmt.html) software product that his company makes, a product that helps automate this daunting task.
-
-![OSGi discussions](images/648174457_383db4bbc8_m.jpg)
 
 ### Overall impression
 

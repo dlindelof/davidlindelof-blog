@@ -67,7 +67,7 @@ Boxplot(Reign ~ Deeds,
         kings)
 ```
 
-[![Duration of biblical reign, depending whether the Bible judges the king to have been a just or an evil one](images/kings.png)](http://computersandbuildings.com/wp-content/uploads/2016/01/kings.png)
+_The original boxplot of reign durations is no longer available._
 
 This plot confirms our impression: "evil" kings tend to have shorter reigns that "good" kings, with the obvious exception of Manasseh, the same one of whom it was said
 

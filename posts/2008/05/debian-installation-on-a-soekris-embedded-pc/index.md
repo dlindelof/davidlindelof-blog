@@ -9,7 +9,7 @@ categories:
 
 Ubiquitous home automation will never become a reality unless cheap embedded PCs are available to be the "brains" of the home. Some time ago I came across a company called [Soekris Engineering](http://www.soekris.com/) who make relatively cheap embedded PCs, like the one shown below.
 
-![net4801](http://www.visnet.ch/smartbuildings/wp-content/uploads/2008/05/net4801_bc_front_big.jpg)
+_The original photograph of the Soekris net4801 is no longer available._
 
 This little guy packs a 20Gb CompactFlash harddisk, 128 Mb RAM, and a 266 MHz Intel processor. Of course I managed to hose mine's operating system and had to reinstall it from scratch. Here are the steps I followed to install Debian from my laptop (running Ubuntu 7.10), connected to the Soekris with a null-modem cable.
 
@@ -17,7 +17,7 @@ This little guy packs a 20Gb CompactFlash harddisk, 128 Mb RAM, and a 266 MHz In
 
 Install the minicom package on the host system, you're going to need it to communicate with the Soekris box during the installation. Here is what my minicom configuration looks like:
 
-![Minicom default configuration](http://www.visnet.ch/smartbuildings/wp-content/uploads/2008/05/minicom-config.png)
+_The original Minicom configuration screenshot is no longer available._
 
 I also suggest you run the following before starting minicom:
 
@@ -63,13 +63,13 @@ You will at some point be asked how you want to partition the 20 Gb disk. If you
 
 Your setup should look something like this:
 
-![Debian installer partitions setup](http://www.visnet.ch/smartbuildings/wp-content/uploads/2008/05/debian-installer-partitions.png)
+_The original partitioning screenshot is no longer available._
 
 When prompted, say yes to install GRUB on the master boot record.
 
 You will also be asked what types of software to install. For a standalone, headless mini-server like this, I configured it like this:
 
-![Debian software types](http://www.visnet.ch/smartbuildings/wp-content/uploads/2008/05/debian-installer-server.png)
+_The original software-selection screenshot is no longer available._
 
 ### Conclusion
 

@@ -43,7 +43,7 @@ I spent almost 10 years learning Emacs. I think most of my graduate thesis was w
 What's that got to do with vi? Well vi is designed with touch typists in mind. Navigating through a document is done with the H (left), J (up), K (down), and L (right) keys. Similarly, the most common editing operations are done through keys on the home row (D for delete, F for find, S for substitute etc).
 
 I have invested in a [Das Keyboard](https://www.daskeyboard.com/) with blank keys and work most of the time without looking at the keys. Am I any good at it? I'm not sure. But I'm definitely a faster typer than when I began to learn touch typing, and can transcribe a passage from a book or an article without looking either at the screen or the keyboard. And boy do I love vi now (more on that below).  
-![](images/Pasted-image-20230712083814-6-300x300.png)![](images/9e41bf8f44ad61b2c0e9b1d3459954b9.png)
+![A keyboard with blank keycaps](images/Pasted-image-20230712083814-6-300x300.png)
 
 ## Note-taking
 
