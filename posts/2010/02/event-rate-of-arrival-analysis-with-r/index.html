@@ -24,6 +24,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -372,7 +407,7 @@ window.Quarto = {
 
 
 <p>Here is a very common problem: suppose you’re give a series of event timestamps. The events can be anything—website logins, persons entering a building, anything that recurs regularly in time but whose rate of arrival is not known in advance. Here is, for example, such a file which I had to analyze:</p>
-<pre><code>05.02.2010 09:00:18
+<pre class="text"><code>05.02.2010 09:00:18
 05.02.2010 09:00:18
 05.02.2010 09:00:21
 05.02.2010 09:00:23
@@ -386,18 +421,68 @@ window.Quarto = {
 <p>That, it turns out, was a terrible idea. I think I must have spent a day and a half figuring out how to use R’s density function and its arguments, especially the bandwidth parameter. There are two problems with density: 1) it yields a density, which means that you have to scale it if you want to obtain a rate of events; 2) it’s an interpolation of a sum of kernels, which has the unfortunate side-effect of yielding a curve whose integral is not necessarily unity.</p>
 <p>In the morning of the second day, I realized I had been solving the wrong problem. I’m not really interested in knowing the rate of arrival. What I really need to know is <strong>how many items is my system handling simultaneously</strong>. Think about that for a second. If your data represent the visitors to your website, <strong>you really don’t want to know how many visitors come per second if you don’t know how much time the server needs to serve each one</strong>. In other words, if you want to make sure the server never melts down, you need to know how many users are served concurrently by the server, and to know that you also need to know how much time is needed for each request.</p>
 <p>Or again, if you’re designing a building or a space to which people are supposed to come, be served somehow, and then leave, you really don’t need to know how many people will come per hour; you need to know how many people will be in the building at the same time.</p>
-<p>There is something called Little’s Law which states this a bit more formally. Assuming the system can serve the requests (or people, or jobs) without any pileup, then <em>N</em>=<em>t</em>× Λ, where <em>N</em> is the number of requests being served concurrently, <em>t</em> is the time spent on each request, and Λ is the request rate. Now it should be obvious that if you know <em>t</em>, the data will give you <em>N</em> from which you can derive Λ (if you want).</p>
+<p>There is something called Little’s Law which states this a bit more formally. Assuming the system can serve the requests (or people, or jobs) without any pileup, then <span class="math inline">\(N = t \times \Lambda\)</span>, where <span class="math inline">\(N\)</span> is the number of requests being served concurrently, <span class="math inline">\(t\)</span> is the time spent on each request, and <span class="math inline">\(\Lambda\)</span> is the request rate. Now it should be obvious that if you know <span class="math inline">\(t\)</span>, the data will give you <span class="math inline">\(N\)</span> from which you can derive <span class="math inline">\(\Lambda\)</span> (if you want).</p>
 <p>Here’s how I did it in R. Suppose the data comes in a zipped data.zip file, with timestamps formatted as above. Then:</p>
-<p>library(lattice) # always, always, always use this library # Get raw data as a vector of DateTime objects data &lt;- as.POSIXct(scan(unzip(“data.zip”), what=character(0), sep=“\n”), format=“%d.%m.%Y %T”) # Turn it into a dataframe which will be easier to use data.lt &lt;- as.POSIXlt(data) data.df &lt;- data.frame(time=data, sec=jitter(data.lt<span class="math inline">\(sec, amount=.5), min=data.lt\)</span>min, hour=data.lt<span class="math inline">\(hour) data.df\)</span>timeofday &lt;- with(data.df, sec+60*min+3600*hour) rm(data, data.lt)</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lattice) <span class="co"># always, always, always use this library</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Get raw data as a vector of DateTime objects</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">as.POSIXct</span>(</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scan</span>(<span class="fu">unzip</span>(<span class="st">"data.zip"</span>), <span class="at">what =</span> <span class="fu">character</span>(<span class="dv">0</span>), <span class="at">sep =</span> <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>),</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">format =</span> <span class="st">"%d.%m.%Y %T"</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Turn it into a data frame which will be easier to use</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>data.lt <span class="ot">&lt;-</span> <span class="fu">as.POSIXlt</span>(data)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>data.df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">time =</span> data,</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">sec =</span> <span class="fu">jitter</span>(data.lt<span class="sc">$</span>sec, <span class="at">amount =</span> <span class="fl">0.5</span>),</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">min =</span> data.lt<span class="sc">$</span>min,</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">hour =</span> data.lt<span class="sc">$</span>hour</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>data.df<span class="sc">$</span>timeofday <span class="ot">&lt;-</span> <span class="fu">with</span>(data.df, sec <span class="sc">+</span> <span class="dv">60</span> <span class="sc">*</span> min <span class="sc">+</span> <span class="dv">3600</span> <span class="sc">*</span> hour)</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(data, data.lt)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Note that for this example we’ll assume all events happened on the same day.</p>
 <p>Now here’s the idea. We’re going to build a counter that counts +1 for each event and -1 when that event has been served. In R, we can do that with the cumsum function. For example, suppose we have a series of ten events spaced apart according to a Poisson distribution with mean 4:</p>
-<p>&gt; x &lt;- cumsum(rpois(10,4)) &gt; x [1] 6 9 14 20 26 33 37 38 38 44</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> x <span class="ot">&lt;-</span> <span class="fu">cumsum</span>(<span class="fu">rpois</span>(<span class="dv">10</span>, <span class="dv">4</span>))</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> x</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>[<span class="dv">1</span>] <span class="dv">6</span> <span class="dv">9</span> <span class="dv">14</span> <span class="dv">20</span> <span class="dv">26</span> <span class="dv">33</span> <span class="dv">37</span> <span class="dv">38</span> <span class="dv">38</span> <span class="dv">44</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Suppose each event takes 6 seconds to serve, and build a structure holding x, the coordinates of the original events and of their completion times, and y, the running counter of the number of events being served:</p>
-<p>&gt; temp &lt;- list(x=c(x, x+kLatency),y=c(rep(1,length(x)), rep(-1, length(x)))) &gt; reorder &lt;- order(temp<span class="math inline">\(x) &gt; temp\)</span>x &lt;- temp<span class="math inline">\(x\[reorder\] &gt; temp\)</span>y &lt;- cumsum(temp$y[reorder])</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> temp <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="fu">c</span>(x, x <span class="sc">+</span> kLatency),</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="dv">1</span>, <span class="fu">length</span>(x)), <span class="fu">rep</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="fu">length</span>(x)))</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> reorder <span class="ot">&lt;-</span> <span class="fu">order</span>(temp<span class="sc">$</span>x)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> temp<span class="sc">$</span>x <span class="ot">&lt;-</span> temp<span class="sc">$</span>x[reorder]</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> temp<span class="sc">$</span>y <span class="ot">&lt;-</span> <span class="fu">cumsum</span>(temp<span class="sc">$</span>y[reorder])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>If you now plot the temp structure here is what you would get:</p>
 <p><em>The original example plot is no longer available.</em></p>
 <p>With all this in place, we have now everything we need to go ahead. The little script above can go into its own function or it can be defined as xyplot’s panel argument:</p>
-<p>kLatency = 4 # seconds xyplot(1~timeofday, data.df, main = paste(“Concurrent requests assuming”, kLatency, “seconds latency”), xlab = “Time of day”, ylab = “# concurrent requests”, panel = function(x, darg, …) { temp &lt;- list(x = c(x, x + kLatency), y = c(rep(1,length(x)), rep(-1, length(x)))) reorder &lt;- order(temp<span class="math inline">\(x) temp\)</span>x &lt;- temp<span class="math inline">\(x\[reorder\] temp\)</span>y &lt;- cumsum(temp$y[reorder]) panel.lines(temp, type=“s”) }, scales = list(x = list(at = seq(0, 86400, 7200), labels=c(0,““,”“, 6,”“,”“, 12,”“,”“, 18,”“,”“,24)), y = list(limits = c(-1, 20))) )</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>kLatency <span class="ot">&lt;-</span> <span class="dv">4</span> <span class="co"># seconds</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">xyplot</span>(</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="dv">1</span> <span class="sc">~</span> timeofday,</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  data.df,</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">main =</span> <span class="fu">paste</span>(<span class="st">"Concurrent requests assuming"</span>, kLatency, <span class="st">"seconds latency"</span>),</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab =</span> <span class="st">"Time of day"</span>,</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab =</span> <span class="st">"# concurrent requests"</span>,</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">panel =</span> <span class="cf">function</span>(x, darg, ...) {</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    temp <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>      <span class="at">x =</span> <span class="fu">c</span>(x, x <span class="sc">+</span> kLatency),</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>      <span class="at">y =</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="dv">1</span>, <span class="fu">length</span>(x)), <span class="fu">rep</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="fu">length</span>(x)))</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    reorder <span class="ot">&lt;-</span> <span class="fu">order</span>(temp<span class="sc">$</span>x)</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    temp<span class="sc">$</span>x <span class="ot">&lt;-</span> temp<span class="sc">$</span>x[reorder]</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    temp<span class="sc">$</span>y <span class="ot">&lt;-</span> <span class="fu">cumsum</span>(temp<span class="sc">$</span>y[reorder])</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">panel.lines</span>(temp, <span class="at">type =</span> <span class="st">"s"</span>)</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>  },</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">scales =</span> <span class="fu">list</span>(</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="fu">list</span>(</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>      <span class="at">at =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">86400</span>, <span class="dv">7200</span>),</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>      <span class="at">labels =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="st">""</span>, <span class="st">""</span>, <span class="dv">6</span>, <span class="st">""</span>, <span class="st">""</span>, <span class="dv">12</span>, <span class="st">""</span>, <span class="st">""</span>, <span class="dv">18</span>, <span class="st">""</span>, <span class="st">""</span>, <span class="dv">24</span>)</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="fu">list</span>(<span class="at">limits =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="dv">20</span>))</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Unfortunately I cannot show you the results here, but this analysis showed me immediately when and how often the webserver would be under its most heavy load, and directly informed our infrastructure needs.</p>
 
 

@@ -24,6 +24,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -372,48 +407,48 @@ window.Quarto = {
 <p>When dealing with small sample sizes (less than, say, 20) it’s generally not possible to assume that the <em>sample</em> variance is a good approximation of the <em>population</em> variance. There simply isn’t enough data, and you cannot use the normal distribution to infer meaningful confidence intervals.</p>
 <p><img src="images/t_distribution.png" class="img-fluid"></p>
 <p>Statistics is like electrical work: it’s very easy to do a job that looks correct but could kill or maim someone. For example we have all, at least once, taken a small sample and used the normal distribution to get confidence intervals. Here is what we would get for the example above, assuming that the measured heights were 184 cm and 178 cm:</p>
-<pre><code>&gt; x &lt;- c(184, 178)
-&gt; xbar &lt;- mean(x)
-&gt; s &lt;- sd(x)
-&gt; qnorm(c(0.025, 0.975), xbar, s)
-[1] 172.6846 189.3154</code></pre>
-<p>The confidence interval we just obtained (<span class="math inline">\(172 \\le \\mu \\le 189\)</span>) looks perfectly reasonable, but it’s wrong. What’s worse, there’s nothing <em>obviously</em> wrong with it. If <span class="math inline">\(s\)</span> was the true population standard deviation it might even be correct; but that’s extremely unlikely.</p>
-<p>This is why <a href="http://en.wikipedia.org/wiki/Student%27s_t-distribution">Student’s t-distribution</a> was invented (or discovered?), to deal with small sample sizes. If we draw <span class="math inline">\(N\)</span> random samples from a normally distributed population, compute the sample mean <span class="math inline">\(\\bar{x}\)</span> and the sample standard deviation <span class="math inline">\(s\)</span>, then the so-called <em>t-value</em> <span class="math inline">\(\\frac{\\bar{x}-\\mu}{s/\\sqrt{N}}\)</span> will be distributed according to the t-distribution with <span class="math inline">\(N-1\)</span> degrees of freedom.</p>
-<p>With our example above, <span class="math inline">\(N=2\)</span>, <span class="math inline">\(\\bar{x} = \\frac{184+178}{2} = 181\)</span>, and <span class="math inline">\(s=\\sqrt{(3^2 + 3^2)/(N-1)}=4.24\)</span>. If we want a 95% confidence interval for the true mean <span class="math inline">\(\\mu\)</span> we use the 2.5% and the 97.5% quantiles of the t-distribution with 1 degree of freedom:</p>
-<pre><code>&gt; N &lt;- 2
-&gt; x &lt;- c(184, 178)
-&gt; xbar &lt;- mean(x)
-&gt; s &lt;- sd(x)
-&gt; qt(c(0.025, 0.975), N-1) * s / sqrt(N) + xbar
-[1] 142.8814 219.1186</code></pre>
-<p>That last result gives you the correct 95% confidence interval for the true mean: <span class="math inline">\(142 \\le \\mu \\le 219\)</span>. Compare this with the interval obtained earlier: it is much wider, and therefore the uncertainty on the true mean is much higher than what the normal distribution would have let you believe.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">184</span>, <span class="dv">178</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> xbar <span class="ot">&lt;-</span> <span class="fu">mean</span>(x)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> s <span class="ot">&lt;-</span> <span class="fu">sd</span>(x)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">qnorm</span>(<span class="fu">c</span>(<span class="fl">0.025</span>, <span class="fl">0.975</span>), xbar, s)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>[<span class="dv">1</span>] <span class="fl">172.6846</span> <span class="fl">189.3154</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The confidence interval we just obtained (<span class="math inline">\(172 \le \mu \le 189\)</span>) looks perfectly reasonable, but it’s wrong. What’s worse, there’s nothing <em>obviously</em> wrong with it. If <span class="math inline">\(s\)</span> was the true population standard deviation it might even be correct; but that’s extremely unlikely.</p>
+<p>This is why <a href="http://en.wikipedia.org/wiki/Student%27s_t-distribution">Student’s t-distribution</a> was invented (or discovered?), to deal with small sample sizes. If we draw <span class="math inline">\(N\)</span> random samples from a normally distributed population, compute the sample mean <span class="math inline">\(\bar{x}\)</span> and the sample standard deviation <span class="math inline">\(s\)</span>, then the so-called <em>t-value</em> <span class="math inline">\(\frac{\bar{x}-\mu}{s/\sqrt{N}}\)</span> will be distributed according to the t-distribution with <span class="math inline">\(N-1\)</span> degrees of freedom.</p>
+<p>With our example above, <span class="math inline">\(N=2\)</span>, <span class="math inline">\(\bar{x} = \frac{184+178}{2} = 181\)</span>, and <span class="math inline">\(s=\sqrt{(3^2 + 3^2)/(N-1)}=4.24\)</span>. If we want a 95% confidence interval for the true mean <span class="math inline">\(\mu\)</span> we use the 2.5% and the 97.5% quantiles of the t-distribution with 1 degree of freedom:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> N <span class="ot">&lt;-</span> <span class="dv">2</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">184</span>, <span class="dv">178</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> xbar <span class="ot">&lt;-</span> <span class="fu">mean</span>(x)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> s <span class="ot">&lt;-</span> <span class="fu">sd</span>(x)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">qt</span>(<span class="fu">c</span>(<span class="fl">0.025</span>, <span class="fl">0.975</span>), N<span class="dv">-1</span>) <span class="sc">*</span> s <span class="sc">/</span> <span class="fu">sqrt</span>(N) <span class="sc">+</span> xbar</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>[<span class="dv">1</span>] <span class="fl">142.8814</span> <span class="fl">219.1186</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>That last result gives you the correct 95% confidence interval for the true mean: <span class="math inline">\(142 \le \mu \le 219\)</span>. Compare this with the interval obtained earlier: it is much wider, and therefore the uncertainty on the true mean is much higher than what the normal distribution would have let you believe.</p>
 <p>This is, however, pretty good news. As long as your sample size is larger than 1, you can always infer correct (though perhaps useless) confidence intervals for the true mean, provided the population is normally distributed.</p>
 <p>Recently I got angry was discussing statistics in a phone conference. The question was how many experimental test sites were necessary to estimate the CO2 reduction potential of <a href="http://neurobat.net">Neurobat’s</a> technology. I pointed out that no matter how many test sites we had, the t-distribution would always let us infer confidence intervals about the true CO2 reduction potential. But the statistics experts on the other side of the line disagreed, arguing that anything less than 10 was not statistically significant.</p>
 <p>I tried the analogy above and showed that <span class="math inline">\(N=2\)</span> was enough to derive a confidence interval for the average height of the population.</p>
 <p>“No, we don’t think so”, was the answer.</p>
 <p>That’s when I decided to shut up and write a blog post.</p>
 <p>We’ll run a little computer experiment. Suppose again that the height of the swiss population is drawn from a normal distribution of mean 180 cm and standard deviation 20 cm (I am totally making this up). We’re going to draw one sample at a time from this distribution and see the evolution of the sample mean and the confidence interval.</p>
-<p>The true mean <span class="math inline">\(\\mu\)</span> lies with 95% confidence within <span class="math inline">\(\\left\[t\_{2.5\\%, N-1}\\times(\\frac{s}{\\sqrt{N}}+\\bar{x}), t\_{97.5\\%, N-1}\\times(\\frac{s}{\\sqrt{N}}+\\bar{x})\\right\]\)</span>. Let’s form this confidence interval as we progressively sample elements from the parent population:</p>
-<pre><code>N &lt;- 1000
-mean.height &lt;- 180
-sd.height &lt;- 20
-height.sample &lt;- rnorm(N, mean.height, sd.height)
-
-mean.sample &lt;- numeric(N)
-sd.sample &lt;- numeric(N)
-
-for (i in 1:N) {
-  mean.sample[i] &lt;- mean(height.sample[1:i])
-  sd.sample[i] &lt;- sd(height.sample[1:i])
-}
-
-low.interval &lt;- sd.sample / sqrt(1:N) * qt(0.025, 1:N - 1) + mean.sample
-upper.interval &lt;- sd.sample / sqrt(1:N) * qt(0.975, 1:N - 1) + mean.sample</code></pre>
+<p>The true mean <span class="math inline">\(\mu\)</span> lies with 95% confidence within <span class="math inline">\(\left[t_{2.5\%,\,N-1}\frac{s}{\sqrt{N}}+\bar{x},\; t_{97.5\%,\,N-1}\frac{s}{\sqrt{N}}+\bar{x}\right]\)</span>. Let’s form this confidence interval as we progressively sample elements from the parent population:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>N <span class="ot">&lt;-</span> <span class="dv">1000</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>mean.height <span class="ot">&lt;-</span> <span class="dv">180</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>sd.height <span class="ot">&lt;-</span> <span class="dv">20</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>height.sample <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(N, mean.height, sd.height)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>mean.sample <span class="ot">&lt;-</span> <span class="fu">numeric</span>(N)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>sd.sample <span class="ot">&lt;-</span> <span class="fu">numeric</span>(N)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>N) {</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  mean.sample[i] <span class="ot">&lt;-</span> <span class="fu">mean</span>(height.sample[<span class="dv">1</span><span class="sc">:</span>i])</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  sd.sample[i] <span class="ot">&lt;-</span> <span class="fu">sd</span>(height.sample[<span class="dv">1</span><span class="sc">:</span>i])</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>low.interval <span class="ot">&lt;-</span> sd.sample <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="dv">1</span><span class="sc">:</span>N) <span class="sc">*</span> <span class="fu">qt</span>(<span class="fl">0.025</span>, <span class="dv">1</span><span class="sc">:</span>N <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">+</span> mean.sample</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>upper.interval <span class="ot">&lt;-</span> sd.sample <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="dv">1</span><span class="sc">:</span>N) <span class="sc">*</span> <span class="fu">qt</span>(<span class="fl">0.975</span>, <span class="dv">1</span><span class="sc">:</span>N <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">+</span> mean.sample</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>And here is the result:</p>
 <p><em>The original sample-mean and confidence-interval chart is no longer available.</em></p>
 <p>It’s obvious that for small sample sizes, the confidence interval quickly becomes smaller than the parent standard deviation. We can see this by plotting the log of the confidence interval over time:</p>
 <p><em>The original logarithmic confidence-interval chart is no longer available.</em></p>
-<p>The confidence interval becomes smaller than the population standard deviation (20) after only 15 samples. However, even for extremely small sample sizes (less than, say, 5) the confidence interval is roughly 40 cm. The true mean can therefore be estimated within <span class="math inline">\(\\pm 20\)</span>, or with about 11% error, after only 5 samples. And that is thanks to the t-distribution.</p>
+<p>The confidence interval becomes smaller than the population standard deviation (20) after only 15 samples. However, even for extremely small sample sizes (less than, say, 5) the confidence interval is roughly 40 cm. The true mean can therefore be estimated within <span class="math inline">\(\pm 20\)</span>, or with about 11% error, after only 5 samples. And that is thanks to the t-distribution.</p>
 
 
 

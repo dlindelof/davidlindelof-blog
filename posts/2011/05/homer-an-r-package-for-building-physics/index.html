@@ -24,6 +24,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -345,13 +380,35 @@ ul.task-list li input[type="checkbox"] {
 
 <p>For the past few weeks we’ve been very busy here at Neurobat with the analysis of field tests results. In the process of doing that, we had to implement several functions in R that relate to building physics.</p>
 <p>We thought it might be useful for the community to have access to those functions, so we decided to begin submitting them to <a href="http://cran.r-project.org/">CRAN</a>. That’s why we’re pleased to announce the first release of the <a href="http://cran.r-project.org/web/packages/homeR/index.html">homeR</a> package, which we will fill over time with such functions.</p>
-<p>This first release, version 0.1, contains just `pmv`, a function to calculate the so-called <a href="http://en.wikipedia.org/wiki/Thermal_comfort#Research">Predicted Mean Vote</a>, i.e.&nbsp;a measure from -3 (cold) to +3 (hot) of thermal comfort as a function of several variables, including air temperature, clothing and metabolism.</p>
-<p>Here I show how with this function one can derive a contour plot showing, for given clothing and metabolism, the optimal indoor temperature (assuming 50% relative humidity). We’re basically going to solve `pmv(clo, met, temp, sat) = 0` equation for `temp` across a grid of `clo` and `met` values with the `uniroot` function.</p>
-<p>&gt; clo &lt;- seq(0,2,length=21) &gt; met &lt;- seq(0.6,3.2,length=21) &gt; zero.pmv &lt;- function(clo, met) uniroot(function(temp) pmv(clo,met,temp,50), c(-10,40))$root &gt; contourplot((outer(clo,met,Vectorize(zero.pmv))), cuts=20, aspect=“fill”, panel=function(…) { panel.grid(h=-1,v=-1,…) panel.contourplot(…) }, row.values=clo, column.values=met, xlim=extendrange(clo), ylim=extendrange(met), xlab=“[Clo]”, ylab=“[Met]”) And here is the resulting plot:</p>
+<p>This first release, version 0.1, contains just <code>pmv</code>, a function to calculate the so-called <a href="http://en.wikipedia.org/wiki/Thermal_comfort#Research">Predicted Mean Vote</a>, i.e.&nbsp;a measure from -3 (cold) to +3 (hot) of thermal comfort as a function of several variables, including air temperature, clothing and metabolism.</p>
+<p>Here I show how with this function one can derive a contour plot showing, for given clothing and metabolism, the optimal indoor temperature (assuming 50% relative humidity). We’re basically going to solve the <code>pmv(clo, met, temp, sat) = 0</code> equation for <code>temp</code> across a grid of <code>clo</code> and <code>met</code> values with the <code>uniroot</code> function.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>clo <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">2</span>, <span class="at">length =</span> <span class="dv">21</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>met <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fl">0.6</span>, <span class="fl">3.2</span>, <span class="at">length =</span> <span class="dv">21</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>zero.pmv <span class="ot">&lt;-</span> <span class="cf">function</span>(clo, met) {</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">uniroot</span>(<span class="cf">function</span>(temp) <span class="fu">pmv</span>(clo, met, temp, <span class="dv">50</span>), <span class="fu">c</span>(<span class="sc">-</span><span class="dv">10</span>, <span class="dv">40</span>))<span class="sc">$</span>root</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">contourplot</span>(</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">outer</span>(clo, met, <span class="fu">Vectorize</span>(zero.pmv)),</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">cuts =</span> <span class="dv">20</span>,</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">aspect =</span> <span class="st">"fill"</span>,</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">panel =</span> <span class="cf">function</span>(...) {</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">panel.grid</span>(<span class="at">h =</span> <span class="sc">-</span><span class="dv">1</span>, <span class="at">v =</span> <span class="sc">-</span><span class="dv">1</span>, ...)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">panel.contourplot</span>(...)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  },</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">row.values =</span> clo,</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">column.values =</span> met,</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlim =</span> <span class="fu">extendrange</span>(clo),</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylim =</span> <span class="fu">extendrange</span>(met),</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab =</span> <span class="st">"[Clo]"</span>,</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab =</span> <span class="st">"[Met]"</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>And here is the resulting plot:</p>
 <p><em>The original Predicted Mean Vote contour plot is no longer available.</em></p>
 <p>As you can see, this is pretty similar to that sort of plots one finds in standard textbooks on the subject, such as Claude-Alain Roulet’s <em>Santé et qualité de l’environnement intérieur dans les bâtiments</em>:</p>
 <p><em>The original textbook contour plot is no longer available.</em></p>
-<p>Please give the `homeR` package a try, and give us your feedback. There’s only the `pmv` function in there at the time of writing but we plan to extend the package in the weeks to come.</p>
+<p>Please give the <code>homeR</code> package a try, and give us your feedback. There’s only the <code>pmv</code> function in there at the time of writing but we plan to extend the package in the weeks to come.</p>
 
 
 

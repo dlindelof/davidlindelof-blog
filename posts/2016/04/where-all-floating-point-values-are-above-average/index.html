@@ -24,6 +24,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -367,21 +402,21 @@ ul.task-list li input[type="checkbox"] {
 </ul>
 <p>(A watchdog is a countdown timer that will reboot the system after a given timeout, typically of the order of the second. You’re supposed to manually reset the timer at regular intervals throughout your application. It’s meant to prevent the system from being stuck in infinite loops.)</p>
 <p>At this point I went through the implementation of that algorithm very carefully, keeping an eye on anything that could be an infinite loop or a failed assertion. When I was done, I was fairly confident (i.e.&nbsp;could almost prove) that it would always terminate. But I also came across a section of code whose gist was the following:</p>
-<pre><code>float child[24]; // assume child[] is filled here with some floating-point values
-float sum = 0;
-float avg;
-for (int i = 0; i &lt; 24; i++) 
-  sum += child[i];
-avg = sum / 24; // compute the average of the elements of child[]
-
-int n_above_avg = 0; // count how many elements are greater than the average
-int n_below_avg = 0; // count how many elements are less than or equal to the average
-for (int i = 0; i &lt; 24; i++)
-  if (child[i] &lt;= avg)
-    n_below_avg++;
-  else 
-    n_above_avg++;
-assert(n_below_avg &gt; 0); // at least one element must be less than or equal to the average</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dt">float</span> child<span class="op">[</span><span class="dv">24</span><span class="op">];</span> <span class="co">// assume child[] is filled here with some floating-point values</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="dt">float</span> sum <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="dt">float</span> avg<span class="op">;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> <span class="dv">24</span><span class="op">;</span> i<span class="op">++)</span> </span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  sum <span class="op">+=</span> child<span class="op">[</span>i<span class="op">];</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>avg <span class="op">=</span> sum <span class="op">/</span> <span class="dv">24</span><span class="op">;</span> <span class="co">// compute the average of the elements of child[]</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> n_above_avg <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> <span class="co">// count how many elements are greater than the average</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> n_below_avg <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> <span class="co">// count how many elements are less than or equal to the average</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> <span class="dv">24</span><span class="op">;</span> i<span class="op">++)</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="op">(</span>child<span class="op">[</span>i<span class="op">]</span> <span class="op">&lt;=</span> avg<span class="op">)</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    n_below_avg<span class="op">++;</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span> </span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    n_above_avg<span class="op">++;</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>assert<span class="op">(</span>n_below_avg <span class="op">&gt;</span> <span class="dv">0</span><span class="op">);</span> <span class="co">// at least one element must be less than or equal to the average</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>That was the only place where an assertion was called. Could this assertion ever fail? This code calculates the average of a set of floating-point values, and counts how many elements are less than or equal to the average (<code>n_below_avg</code>), and how many are greater (<code>n_above_avg</code>). Elementary mathematics tells you that at least one element must be less than or equal to the average.</p>
 <p>But we’re dealing with floating-point variables here, where common-sense mathematics doesn’t always hold. Could it be that all the values were greater than their average? I asked that <a href="http://stackoverflow.com/questions/20102906/can-a-set-of-floating-point-numbers-be-all-above-average">question on Stackoverflow.</a> Several answers came quickly back: it is indeed perfectly possible for a set of floating-point numbers to all be above their average.</p>
 <div class="quarto-figure quarto-figure-center">
@@ -391,22 +426,22 @@ assert(n_below_avg &gt; 0); // at least one element must be less than or equal t
 </figure>
 </div>
 <p>In fact, it’s easy to find such a set of numbers if they are all the same. One respondent gave a list of floating-point values that, when averaged, turned out to all be greater than their average. For example:</p>
-<pre><code>#include &lt;iostream&gt;
-#include &lt;cassert&gt;
-
-using namespace std;
-
-int main() {
-  int sz = 24;
-  int i;
-  double values[sz];
-  for (i = 0; i &lt; sz; i++) values[i] = 0.108809;
-  double avg;
-  for (avg = 0, i = 0; i &lt; sz; i++) avg += values[i];
-  avg /= sz;
-  assert (values[0] &gt; avg);
-  return 0;
-}</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;cassert&gt;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> std<span class="op">;</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> sz <span class="op">=</span> <span class="dv">24</span><span class="op">;</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> i<span class="op">;</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> values<span class="op">[</span>sz<span class="op">];</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> <span class="op">(</span>i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> sz<span class="op">;</span> i<span class="op">++)</span> values<span class="op">[</span>i<span class="op">]</span> <span class="op">=</span> <span class="fl">0.108809</span><span class="op">;</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> avg<span class="op">;</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> <span class="op">(</span>avg <span class="op">=</span> <span class="dv">0</span><span class="op">,</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> sz<span class="op">;</span> i<span class="op">++)</span> avg <span class="op">+=</span> values<span class="op">[</span>i<span class="op">];</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  avg <span class="op">/=</span> sz<span class="op">;</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="ot">assert</span> <span class="op">(</span>values<span class="op">[</span><span class="dv">0</span><span class="op">]</span> <span class="op">&gt;</span> avg<span class="op">);</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Once the root cause of the problem was identified, it was relatively easy to write a failing unit-test and implement a solution.</p>
 <p>Well, that’s the news from the world of programming where all the floating-point values <em>can</em> be above average. Who said <a href="https://en.wikipedia.org/wiki/Lake_Wobegon#Standard_monologue_items">Lake Wobegon</a> was pure fiction?</p>
 

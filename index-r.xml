@@ -4344,42 +4344,165 @@ font-style: inherit;">1433</span></span>
 
 <p>You have been lied to. By me.</p>
 <p><em>The original introductory illustration is no longer available.</em></p>
-<p>I taught once a programming class and introduced my students to the notion of an <em>unbiased estimator</em> of the variance of a population. The problem can be stated as follows: given a set of observations <img src="https://latex.codecogs.com/png.latex?(x%5C_1,%20x%5C_2,%20...,%20x%5C_n)">, what can you say about the variance of the population from which this sample is drawn?</p>
+<p>I taught once a programming class and introduced my students to the notion of an <em>unbiased estimator</em> of the variance of a population. The problem can be stated as follows: given a set of observations <img src="https://latex.codecogs.com/png.latex?(x_1,%20x_2,%20%5Cldots,%20x_n)">, what can you say about the variance of the population from which this sample is drawn?</p>
 <p>Classical textbooks, <a href="http://mathworld.wolfram.com/SampleVariance.html">MathWorld</a>, the <a href="https://www.khanacademy.org/math/probability/descriptive-statistics/variance-std-deviation/v/sample-variance">Khan Academy</a>, and <a href="https://en.wikipedia.org/wiki/Variance#Population_variance_and_sample_variance">Wikipedia</a> all give you the formula for the so-called <em>unbiased estimator</em> of the population variance:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%5C%5Chat%7Bs%7D%5E2%20=%20%5C%5Cfrac%7B1%7D%7Bn-1%7D%5C%5Csum%5C_%7Bi=1%7D%5En%20(x%5C_i%20-%20%5C%5Cbar%7Bx%7D)%5E2"></p>
-<p>where <img src="https://latex.codecogs.com/png.latex?%5C%5Cbar%7Bx%7D"> is the sample mean. The expected error of this estimator is zero:</p>
-<p><img src="https://latex.codecogs.com/png.latex?E%5C%5B%5C%5Chat%7Bs%7D%5E2%20-%20%5C%5Csigma%5E2%5C%5D%20=%200"></p>
-<p>where <img src="https://latex.codecogs.com/png.latex?%5C%5Csigma%5E2"> is the ``true’’ population variance. Put another way, the expected value of this estimator is exactly the population variance:</p>
-<p><img src="https://latex.codecogs.com/png.latex?E%5C%5B%5C%5Chat%7Bs%7D%5E2%5C%5D%20=%20%5C%5Csigma%5E2"></p>
+<p><img src="https://latex.codecogs.com/png.latex?%5Chat%7Bs%7D%5E2%20=%20%5Cfrac%7B1%7D%7Bn-1%7D%5Csum_%7Bi=1%7D%5En%20(x_i%20-%20%5Cbar%7Bx%7D)%5E2"></p>
+<p>where <img src="https://latex.codecogs.com/png.latex?%5Cbar%7Bx%7D"> is the sample mean. The expected error of this estimator is zero:</p>
+<p><img src="https://latex.codecogs.com/png.latex?E%5B%5Chat%7Bs%7D%5E2%20-%20%5Csigma%5E2%5D%20=%200"></p>
+<p>where <img src="https://latex.codecogs.com/png.latex?%5Csigma%5E2"> is the “true” population variance. Put another way, the expected value of this estimator is exactly the population variance:</p>
+<p><img src="https://latex.codecogs.com/png.latex?E%5B%5Chat%7Bs%7D%5E2%5D%20=%20%5Csigma%5E2"></p>
 <p>So far so good. The expected error is zero, therefore it’s the best estimator, right? This is what orthodox statistics (and teachers like me who don’t know better) will have you believe.</p>
-<p>But Jaynes (<a href="http://amzn.com/0521592712">Probability Theory</a>) points out that in practical problems one does not care about the expected error of the estimated variances (or of <em>any</em> estimator for that matter). What matters is how <em>accurate</em> this estimator is, i.e.&nbsp;how close it is to the true variance. And this calls for an estimator that will minimise the <em>expected squared error</em> <img src="https://latex.codecogs.com/png.latex?E%5C%5B(%5C%5Chat%7Bs%7D%5E2%20-%20%5C%5Csigma%5E2)%5E2%5C%5D">. But we can also write this expected squared error as:</p>
-<p><img src="https://latex.codecogs.com/png.latex?E%5C%5B(%5C%5Chat%7Bs%7D%5E2%20-%20%5C%5Csigma%5E2)%5E2%5C%5D%20=%20(E%5C%5B%5C%5Chat%7Bs%7D%5E2%5C%5D%20-%20%5C%5Csigma%5E2)%5E2%20+%20%5C%5Cmathrm%7BVar%7D(%5C%5Chat%7Bs%7D%5E2)"></p>
+<p>But Jaynes (<a href="http://amzn.com/0521592712">Probability Theory</a>) points out that in practical problems one does not care about the expected error of the estimated variances (or of <em>any</em> estimator for that matter). What matters is how <em>accurate</em> this estimator is, i.e.&nbsp;how close it is to the true variance. And this calls for an estimator that will minimise the <em>expected squared error</em> <img src="https://latex.codecogs.com/png.latex?E%5B(%5Chat%7Bs%7D%5E2%20-%20%5Csigma%5E2)%5E2%5D">. But we can also write this expected squared error as:</p>
+<p><img src="https://latex.codecogs.com/png.latex?E%5B(%5Chat%7Bs%7D%5E2%20-%20%5Csigma%5E2)%5E2%5D%20=%20(E%5B%5Chat%7Bs%7D%5E2%5D%20-%20%5Csigma%5E2)%5E2%20+%20%5Cmathrm%7BVar%7D(%5Chat%7Bs%7D%5E2)"></p>
 <p>The expected squared error of our estimator is thus the sum of two terms: the square of the expected error, and the variance of the estimator. When following the cookbooks of orthodox statistics, <em>only the first term is minimised</em> and there is no guarantee that the total error is minimised.</p>
 <p>For samples drawn from a Gaussian distribution, Jaynes shows that an estimator that minimises the total (squared) error is</p>
-<p><img src="https://latex.codecogs.com/png.latex?%5C%5Chat%7Bs%7D%5E2%20=%20%5C%5Cfrac%7B1%7D%7Bn+1%7D%5C%5Csum%5C_%7Bi=1%7D%5En%20(x%5C_i%20-%20%5C%5Cbar%7Bx%7D)%5E2"></p>
+<p><img src="https://latex.codecogs.com/png.latex?%5Chat%7Bs%7D%5E2%20=%20%5Cfrac%7B1%7D%7Bn+1%7D%5Csum_%7Bi=1%7D%5En%20(x_i%20-%20%5Cbar%7Bx%7D)%5E2"></p>
 <p>Notice that the <img src="https://latex.codecogs.com/png.latex?n-1"> denominator has been replaced with <img src="https://latex.codecogs.com/png.latex?n+1">. In a fit of fancifulness I’ll call this an <em>opinionated</em> estimator. Let’s test how well this estimator performs.</p>
 <p>First we generate 1000 random sets of 10 samples with mean 0 and variance 25:</p>
-<pre><code>samples &lt;- matrix(rnorm(10000, sd = 5), ncol = 10)</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1">samples <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">matrix</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rnorm</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10000</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">sd =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span>), <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">ncol =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span>)</span></code></pre></div></div>
 <p>For each group of 10 samples, we estimate the population variance first with the canonical <img src="https://latex.codecogs.com/png.latex?n-1"> denominator. This is what R’s built-in <code>var</code> function will do, according to its documentation:</p>
-<pre><code>unbiased &lt;- apply(samples, MARGIN = 1, var)</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1">unbiased <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">apply</span>(samples, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">MARGIN =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, var)</span></code></pre></div></div>
 <p>Next we estimate the population variance with the <img src="https://latex.codecogs.com/png.latex?n+1"> denominator. We take a little shortcut here by multiplying the unbiased estimator by <img src="https://latex.codecogs.com/png.latex?(n-1)/(n+1)">, but it makes no difference:</p>
-<pre><code>opinionated &lt;- apply(samples, MARGIN = 1, function(x) var(x) * (length(x) - 1) / (length(x) + 1))</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1">opinionated <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">apply</span>(samples, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">MARGIN =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span>(x) <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">var</span>(x) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> (<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">length</span>(x) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> (<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">length</span>(x) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>))</span></code></pre></div></div>
 <p>Finally we combine everything in one convenient data frame:</p>
-<pre><code>estimators &lt;- rbind(data.frame(estimator = "Unbiased", estimate = unbiased),
-                    data.frame(estimator = "Opinionated", estimate = opinionated))
-
-histogram(~ estimate | estimator, estimators,
-          panel = function(...) {
-            panel.histogram(...)
-            panel.abline(v = 25, col = "red", lwd = 5)
-          })</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1">estimators <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rbind</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">data.frame</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">estimator =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Unbiased"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">estimate =</span> unbiased),</span>
+<span id="cb4-2">                    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">data.frame</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">estimator =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Opinionated"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">estimate =</span> opinionated))</span>
+<span id="cb4-3"></span>
+<span id="cb4-4"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">histogram</span>(<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span> estimate <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|</span> estimator, estimators,</span>
+<span id="cb4-5">          <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">panel =</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span>(...) {</span>
+<span id="cb4-6">            <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">panel.histogram</span>(...)</span>
+<span id="cb4-7">            <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">panel.abline</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">v =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">25</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">col =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"red"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">lwd =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span>)</span>
+<span id="cb4-8">          })</span></code></pre></div></div>
 <p><em>The original estimator-comparison histogram is no longer available.</em></p>
-<p>It’s a bit hard to tell visually which one is ``better’’. But let’s compute the average squared error for each estimator:</p>
-<pre><code>aggregate(estimate ~ estimator, estimators, function(x) mean((x - 25)^2))
-
-##     estimator estimate
-## 1    Unbiased 145.1007
-## 2 Opinionated 115.5074</code></pre>
+<p>It’s a bit hard to tell visually which one is “better”. But let’s compute the average squared error for each estimator:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">aggregate</span>(estimate <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span> estimator, estimators, <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span>(x) <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mean</span>((x <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">25</span>)<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">^</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>))</span>
+<span id="cb5-2"></span>
+<span id="cb5-3"><span class="do" style="color: #5E5E5E;
+background-color: null;
+font-style: italic;">##     estimator estimate</span></span>
+<span id="cb5-4"><span class="do" style="color: #5E5E5E;
+background-color: null;
+font-style: italic;">## 1    Unbiased 145.1007</span></span>
+<span id="cb5-5"><span class="do" style="color: #5E5E5E;
+background-color: null;
+font-style: italic;">## 2 Opinionated 115.5074</span></span></code></pre></div></div>
 <p>This shows clearly that the <img src="https://latex.codecogs.com/png.latex?n+1"> denominator yields a smaller total (squared) error than the so-called unbiased <img src="https://latex.codecogs.com/png.latex?n-1"> estimator, at leat for a sample drawn from a Gaussian distribution.</p>
 <p>So do your brain a favour and question everything I tell you. Including this post.</p>
 
