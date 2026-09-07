@@ -2,6 +2,8 @@ project:
   type: website
   resources:
     - CNAME
+  post-render:
+    - python3 scripts/normalize_site_urls.py
 
 website:
   description: "Notes on statistics, data science, software engineering, and scientific computing."
@@ -29,6 +31,7 @@ website:
         aria-label: RSS
 format:
   html:
+    canonical-url: true
     theme:
       light: flatly
       dark: darkly
