@@ -199,17 +199,111 @@ tibble(
 ```
 
 There are two sensible scores. **Type accuracy** gives every dictionary entry one
-vote. **Usage-weighted accuracy** gives a noun with frequency (f_i) exactly
-(f_i) votes:
+vote. **Usage-weighted accuracy** gives a noun with frequency $f_i$ exactly
+$f_i$ votes:
 
-\[
+$$
   \operatorname{accuracy}_{\mathrm{usage}}
   = \frac{\sum_i f_i\,\mathbb{1}(\hat y_i = y_i)}{\sum_i f_i}.
-\]
+$$
 
 The second is the primary score because it better reflects how often a learner
 would actually need the rule. I will still report both so that a handful of very
 frequent words cannot silently define success.
+
+## Compare the gender distributions
+
+Before fitting anything, it is useful to ask what the class balance looks like.
+Fedden et al. report two relevant reference distributions. Their cleaned database
+of 30,576 noun types is 36% masculine, 45% feminine, and 19% neuter (their Table
+1). They also reproduce CELEX token counts of 35%, 42%, and 23%, respectively
+(their Table 3).
+
+First, here is the comparison when every noun lemma gets one vote.
+
+```{r}
+#| label: type-distribution
+
+paper_type_distribution <- tribble(
+  ~gender, ~paper_noun_types, ~paper_type_share,
+  "der", 10866, 0.36,
+  "die", 13766, 0.45,
+  "das",  5944, 0.19
+) |>
+  mutate(gender = factor(gender, levels = c("der", "die", "das")))
+
+type_distribution <- noun_data |>
+  count(gender, name = "our_noun_types") |>
+  mutate(our_type_share = our_noun_types / sum(our_noun_types)) |>
+  left_join(paper_type_distribution, by = "gender") |>
+  mutate(
+    gender = recode(
+      as.character(gender),
+      der = "Masculine (der)",
+      die = "Feminine (die)",
+      das = "Neuter (das)"
+    ),
+    across(ends_with("share"), function(x) percent(x, accuracy = 0.1))
+  )
+
+type_distribution |>
+  kable(
+    col.names = c(
+      "Gender", "Our noun types", "Our share",
+      "Paper noun types", "Paper share"
+    ),
+    format.args = list(big.mark = ",")
+  )
+```
+
+Next, each noun is weighted by the number of matched subtitle occurrences. The
+counts in the CELEX comparison are included for scale, although they come from a
+different corpus.
+
+```{r}
+#| label: token-distribution
+
+paper_token_distribution <- tribble(
+  ~gender, ~celex_tokens, ~celex_token_share,
+  "der", 380770, 0.35,
+  "die", 447048, 0.42,
+  "das", 248147, 0.23
+) |>
+  mutate(gender = factor(gender, levels = c("der", "die", "das")))
+
+token_distribution <- noun_data |>
+  count(gender, wt = frequency, name = "subtitle_occurrences") |>
+  mutate(
+    subtitle_weighted_share = subtitle_occurrences /
+      sum(subtitle_occurrences)
+  ) |>
+  left_join(paper_token_distribution, by = "gender") |>
+  mutate(
+    gender = recode(
+      as.character(gender),
+      der = "Masculine (der)",
+      die = "Feminine (die)",
+      das = "Neuter (das)"
+    ),
+    across(ends_with("share"), function(x) percent(x, accuracy = 0.1))
+  )
+
+token_distribution |>
+  kable(
+    col.names = c(
+      "Gender", "Matched subtitle occurrences", "Our weighted share",
+      "CELEX tokens", "CELEX share"
+    ),
+    format.args = list(big.mark = ",")
+  )
+```
+
+Our subtitle-filtered sample is more masculine and less feminine than the paper's
+database, under both counting schemes. That is not necessarily a contradiction:
+the authors' main point in this part of the paper is that gender proportions depend
+on the corpus and the frequency range. Our counts also cover exact, unambiguous
+lemma spellings rather than every noun token, while the paper's CELEX token row is
+not subtitle-based. This comparison is therefore a diagnostic, not a replication.
 
 ## Turn spelling into learnable questions
 
@@ -307,6 +401,17 @@ feature_names <- c(
 
 semantic_summary <- imap_dfr(semantic_sets, function(words, semantic_class) {
   rows <- filter(model_data, lemma %in% words)
+
+  if (nrow(rows) == 0) {
+    return(tibble(
+      semantic_class,
+      nouns = 0L,
+      subtitle_tokens = 0,
+      majority_article = NA_character_,
+      weighted_purity = NA_real_
+    ))
+  }
+
   article_counts <- count(rows, gender, wt = frequency, name = "weight")
 
   tibble(
@@ -318,7 +423,8 @@ semantic_summary <- imap_dfr(semantic_sets, function(words, semantic_class) {
     ),
     weighted_purity = max(article_counts$weight) / sum(article_counts$weight)
   )
-})
+}) |>
+  filter(nouns > 0)
 
 semantic_summary |>
   mutate(weighted_purity = percent(weighted_purity, accuracy = 0.1)) |>
