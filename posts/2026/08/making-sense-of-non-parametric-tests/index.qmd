@@ -1,5 +1,13 @@
 ---
 title: "Making sense of non-parametric tests"
+description: "Explore how the mean, median, and Hodges–Lehmann estimator tell different stories about treatment effects—and why the question should guide your choice."
+image: preview.png
+image-alt: "A skewed treatment-effect distribution with the median and Hodges–Lehmann estimate below zero and the mean above zero."
+image-width: "1200"
+image-height: "630"
+open-graph: true
+twitter-card:
+  card-style: summary_large_image
 date: 2026-08-27
 draft: true
 categories:
@@ -13,8 +21,8 @@ When I was studying physics we had our required share of lab work, which was
 also our introduction to experimental statistics. It was there that I heard
 for the first time about [hypothesis testing](https://en.wikipedia.org/wiki/Statistical_hypothesis_test),
 in particular about [the t-test](https://en.wikipedia.org/wiki/Student%27s_t-test).
-And since I never formally studied statistics, this is what I always assumed
-to be one of the most fundamental tests there was. How wrong I was.
+And since I never formally studied statistics, I always assumed this test 
+was one of the most fundamental ones. How wrong I was.
 
 The problem with the t-test, which is often overlooked, lies in the assumptions
 it relies on---particularly the [normality assumption](https://en.wikipedia.org/wiki/Normal_distribution).
@@ -25,7 +33,7 @@ wrong conclusions.
 Imagine we have an experiment with 300 pairs of matched subjects, where one
 member of each pair, chosen at random, gets some treatment. For each pair $i$
 we measure $d_i = r_{Ti} - r_{Ci}$, the difference in responses between the
-treated unit and the control unit. Let's assume now that $d_i$ isn't normally
+treated unit and the control unit. Let's assume that $d_i$ isn't normally
 distributed but instead follows a shifted [lognormal distribution](https://en.wikipedia.org/wiki/Log-normal_distribution):
 
 ```{r}
@@ -103,9 +111,9 @@ ggplot(data.frame(d), aes(x = d)) +
   theme(legend.position = "top")
 ```
 
-As you'd expect from a lognormal distribution, there's a heavy tail and the
-mean is substantially larger than the median. In fact, they are of opposite
-signs!
+The plot above shows the histogram of this distribution and a density plot. As
+you'd expect from a lognormal distribution, there's a heavy tail and the mean is
+substantially larger than the median. In fact, they are of opposite signs!
 
 What is a [point estimate](https://en.wikipedia.org/wiki/Point_estimation)
 anyway? It's the value of an estimator. What do we want from an estimator?
@@ -116,9 +124,12 @@ textbooks define a (usually) unbiased estimator as one that maximizes the
 of what? Of the model that you *assume* describes the distribution of the data.
 An equivalent definition is that it's an unbiased estimator of the parameter
 you're trying to estimate. What parameter? The parameter of the model that you
-*assume* describes the distribution of the data. See where I'm going with this?
+*assume* describes the distribution of the data. What I'm saying is that by
+choosing an estimand---fancy name for the quantity you're estimating---you've
+already committed to a model that you assumes describes the data you've
+collected.
 
-In the plot above we show three reference lines:
+Coming back to that lognormal distribution. In the plot above we show three reference lines:
 
 - the median: gives you the minimum effect size for half the population
 - the mean: gives you the average effect size
