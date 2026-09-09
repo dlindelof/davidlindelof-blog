@@ -8,8 +8,8 @@ image-height: "630"
 open-graph: true
 twitter-card:
   card-style: summary_large_image
-date: 2026-08-27
-draft: true
+date: 2026-09-09
+draft: false
 categories:
   - r
   - statistics
