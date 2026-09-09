@@ -10,7 +10,307 @@
 <atom:link href="https://blog.davidlindelof.com/index-r.xml" rel="self" type="application/rss+xml"/>
 <description>Notes on statistics, data science, software engineering, and scientific computing.</description>
 <generator>quarto-1.9.38</generator>
-<lastBuildDate>Sun, 23 Aug 2026 00:00:00 GMT</lastBuildDate>
+<lastBuildDate>Wed, 09 Sep 2026 00:00:00 GMT</lastBuildDate>
+<item>
+  <title>Making sense of non-parametric tests</title>
+  <link>https://blog.davidlindelof.com/posts/2026/08/making-sense-of-non-parametric-tests/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+
+<p>When I was studying physics we had our required share of lab work, which was also our introduction to experimental statistics. It was there that I heard for the first time about <a href="https://en.wikipedia.org/wiki/Statistical_hypothesis_test">hypothesis testing</a>, in particular about <a href="https://en.wikipedia.org/wiki/Student%27s_t-test">the t-test</a>. And since I never formally studied statistics, I always assumed this test was one of the most fundamental ones. How wrong I was.</p>
+<p>The problem with the t-test, which is often overlooked, lies in the assumptions it relies on—particularly the <a href="https://en.wikipedia.org/wiki/Normal_distribution">normality assumption</a>. Violations of this assumption, we’re told, can introduce bias. This makes it sound as if the error is minor at worst; in fact it can lead to completely wrong conclusions.</p>
+<p>Imagine we have an experiment with 300 pairs of matched subjects, where one member of each pair, chosen at random, gets some treatment. For each pair <img src="https://latex.codecogs.com/png.latex?i"> we measure <img src="https://latex.codecogs.com/png.latex?d_i%20=%20r_%7BTi%7D%20-%20r_%7BCi%7D">, the difference in responses between the treated unit and the control unit. Let’s assume that <img src="https://latex.codecogs.com/png.latex?d_i"> isn’t normally distributed but instead follows a shifted <a href="https://en.wikipedia.org/wiki/Log-normal_distribution">lognormal distribution</a>:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">set.seed</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">20260826</span>)</span>
+<span id="cb1-2"></span>
+<span id="cb1-3">n <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">300</span></span>
+<span id="cb1-4">d <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rlnorm</span>(n, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">meanlog =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">sdlog =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1.4</span></span>
+<span id="cb1-5"></span>
+<span id="cb1-6">w <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">wilcox.test</span>(</span>
+<span id="cb1-7">  d,</span>
+<span id="cb1-8">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">mu =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,</span>
+<span id="cb1-9">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">conf.int =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span>,</span>
+<span id="cb1-10">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">exact =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">FALSE</span></span>
+<span id="cb1-11">)</span>
+<span id="cb1-12"></span>
+<span id="cb1-13"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(</span>
+<span id="cb1-14">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">mean   =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mean</span>(d),</span>
+<span id="cb1-15">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">median =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">median</span>(d),</span>
+<span id="cb1-16">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">HL     =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">unname</span>(w<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>estimate)</span>
+<span id="cb1-17">)</span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      mean     median         HL 
+ 0.3181297 -0.3297339 -0.1049871 </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://blog.davidlindelof.com/posts/2026/08/making-sense-of-non-parametric-tests/index_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The plot above shows the histogram of this distribution and a density plot. As you’d expect from a lognormal distribution, there’s a heavy tail and the mean is substantially larger than the median. In fact, they are of opposite signs!</p>
+<p>What is a <a href="https://en.wikipedia.org/wiki/Point_estimation">point estimate</a> anyway? It’s the value of an estimator. What do we want from an estimator? Whatever you want but people usually want it to be <a href="https://en.wikipedia.org/wiki/Bias_of_an_estimator">unbiased</a>. Statistics 101 textbooks define a (usually) unbiased estimator as one that maximizes the <a href="https://en.wikipedia.org/wiki/Likelihood_function">likelihood</a>. The likelihood of what? Of the model that you <em>assume</em> describes the distribution of the data. An equivalent definition is that it’s an unbiased estimator of the parameter you’re trying to estimate. What parameter? The parameter of the model that you <em>assume</em> describes the distribution of the data. What I’m saying is that by choosing an estimand—fancy name for the quantity you’re estimating—you’ve already committed to a model that you assumes describes the data you’ve collected.</p>
+<p>Coming back to that lognormal distribution. In the plot above we show three reference lines:</p>
+<ul>
+<li>the median: gives you the minimum effect size for half the population</li>
+<li>the mean: gives you the average effect size</li>
+<li>the <a href="https://en.wikipedia.org/wiki/Hodges%E2%80%93Lehmann_estimator">Hodges–Lehmann estimator</a></li>
+</ul>
+<p><em>The WHAT estimator?</em></p>
+<p>Yeah, I know, this is not something you come across in introductory textbooks. Or job interviews for that matter. I learned about it from a textbook about observational studies, like, three weeks ago. Think of it as the appropriate point estimator when you’re using the non-parametric <a href="https://en.wikipedia.org/wiki/Wilcoxon_signed-rank_test">signed-rank test</a> instead of the t-test. We don’t need to discuss how it’s defined; we just need to know that it is returned by the <code>wilcox.test()</code> function when setting <code>conf.int = TRUE</code> as the <code>estimate</code> value of the returned list.</p>
+<p>The HL estimator is, strictly speaking, only useful when the distribution is symmetric. Like the mean or the median it is a location estimator. It is <a href="https://en.wikipedia.org/wiki/Robust_statistics">robust</a> against outliers (unlike the mean) but more reliable than the median. Use it for “serious” decisions like launch decisions, but stick to the median in stakeholder presentations.</p>
+<p>It bears repeating: which estimator to use depends on the application. You want to use the mean if you worry about the average impact of your treatment; you want to use the median or the HL estimator if you worry about the impact on the middle customer experience. This is a product decision, not a data science one.</p>
+<p>On a final note, for these estimators we can <a href="https://en.wikipedia.org/wiki/Bootstrapping_%28statistics%29">bootstrap</a> the matched-pair differences to estimate their <a href="https://en.wikipedia.org/wiki/Confidence_interval">confidence intervals</a>:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1">estimate_location <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span>(x) {</span>
+<span id="cb3-2">  w <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">wilcox.test</span>(</span>
+<span id="cb3-3">    x,</span>
+<span id="cb3-4">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">mu =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,</span>
+<span id="cb3-5">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">conf.int =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span>,</span>
+<span id="cb3-6">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">exact =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">FALSE</span></span>
+<span id="cb3-7">  )</span>
+<span id="cb3-8"></span>
+<span id="cb3-9">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(</span>
+<span id="cb3-10">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">Mean   =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mean</span>(x),</span>
+<span id="cb3-11">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">Median =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">median</span>(x),</span>
+<span id="cb3-12">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">HL     =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">unname</span>(w<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>estimate)</span>
+<span id="cb3-13">  )</span>
+<span id="cb3-14">}</span>
+<span id="cb3-15"></span>
+<span id="cb3-16"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">set.seed</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">20260828</span>)</span>
+<span id="cb3-17"></span>
+<span id="cb3-18">B <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5000</span></span>
+<span id="cb3-19"></span>
+<span id="cb3-20">boot_estimates <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">replicate</span>(B, {</span>
+<span id="cb3-21">  d_boot <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sample</span>(d, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">size =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">length</span>(d), <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">replace =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span>)</span>
+<span id="cb3-22">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">estimate_location</span>(d_boot)</span>
+<span id="cb3-23">})</span>
+<span id="cb3-24"></span>
+<span id="cb3-25"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Percentile bootstrap intervals</span></span>
+<span id="cb3-26">bounds <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">t</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">apply</span>(</span>
+<span id="cb3-27">  boot_estimates,</span>
+<span id="cb3-28">  <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,</span>
+<span id="cb3-29">  quantile,</span>
+<span id="cb3-30">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">probs =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.025</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.975</span>),</span>
+<span id="cb3-31">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">names =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">FALSE</span></span>
+<span id="cb3-32">))</span>
+<span id="cb3-33"></span>
+<span id="cb3-34">observed <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">estimate_location</span>(d)</span>
+<span id="cb3-35"></span>
+<span id="cb3-36">results <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">data.frame</span>(</span>
+<span id="cb3-37">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">estimand =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">names</span>(observed),</span>
+<span id="cb3-38">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">estimate =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">unname</span>(observed),</span>
+<span id="cb3-39">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">lower_95 =</span> bounds[, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>],</span>
+<span id="cb3-40">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">upper_95 =</span> bounds[, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>],</span>
+<span id="cb3-41">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">row.names =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">NULL</span></span>
+<span id="cb3-42">)</span>
+<span id="cb3-43"></span>
+<span id="cb3-44">results</span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  estimand   estimate   lower_95    upper_95
+1     Mean  0.3181297  0.1116221  0.54105203
+2   Median -0.3297339 -0.4190513 -0.14664311
+3       HL -0.1049871 -0.2456868  0.07329634</code></pre>
+</div>
+</div>
+<p>This shows that the percentile-bootstrap intervals for the median and HL estimator are both narrower than the mean’s interval:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://blog.davidlindelof.com/posts/2026/08/making-sense-of-non-parametric-tests/index_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Taken together, these results underscore why the <a href="https://en.wikipedia.org/wiki/Estimand">estimand</a> must follow the business question. The mean, median, and HL estimator all tell a completely different story because they describe different aspects of the same data, and can therefore support different decisions. Choosing the relevant quantity requires business judgment; estimating it correctly requires statistical judgment. Good data science needs both.</p>
+
+
+
+ ]]></description>
+  <category>r</category>
+  <category>statistics</category>
+  <guid>https://blog.davidlindelof.com/posts/2026/08/making-sense-of-non-parametric-tests/</guid>
+  <pubDate>Wed, 09 Sep 2026 00:00:00 GMT</pubDate>
+  <media:content url="https://blog.davidlindelof.com/posts/2026/08/making-sense-of-non-parametric-tests/preview.png" medium="image" type="image/png" height="76" width="144"/>
+</item>
 <item>
   <title>Beyond DAU: How to Measure User Retention with Survival Analysis</title>
   <link>https://blog.davidlindelof.com/posts/2026/08/beyond-dau/</link>
