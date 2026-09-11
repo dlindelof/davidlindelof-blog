@@ -1,0 +1,25 @@
+---
+title: "Controlling for multiple testing with non-inferiority tests"
+date: 2026-09-11
+draft: true
+categories:
+  - statistics
+---
+
+We all know that multiple hypothesis testing suffers from an inflated false positive rate under the null hypothesis: if you have $N$ independent tests, each has a $\alpha$ probability of yielding a p-value $< \alpha$ , so the probability of *any* test yielding a statistically significant result is the complement of the probability of *no* test yielding a statistically significant result: $1 - (1 - \alpha)^N$ , which for small $\alpha$ is $\sim N\alpha$ . So far so good: $N$ independent tests multiply the false positive rate by about $N$, which is why the Bonferroni correction divides the desired significance level by $N$.
+
+But non-inferiority tests are... weird. You're testing to make sure that the difference $d$  between your proposed treatment's metric and your baseline's metric isn't worse than some (typically small) threshold $- \delta$ , assuming that you want your metric to be large. You'd *think* that the null hypothesis is that there's no difference between treatment and control. Wrong. With non-inferiority tests, the null hypothesis $H0$ is the opposite: $d \in ]-\infty; - \delta]$ . This means that you want the test to actually reject the null hypothesis. So your change will "pass" the test with probability $\alpha$[^1].
+
+Now what if you have more than one metric? Intuition warns us that you need to watch out for some multiple testing. So let's work this out. Let's assume there is no correlation between the $N$ metrics. The happy path is when we reject the $N$ null hypotheses. The sad path is when *any* metric shows a regression but we reject its null hypothesis (as well as that for every other metric). What's the probability of that happening?
+
+In the worst case (when the regression is exactly $- \delta$), that probability is $\alpha$ times the probability of rejecting the null for each of the other metrics that didn't regress. We don't know what the latter is, because the probability of rejecting the null under the alternative hypothesis is the statistical power of the test and we didn't specify that. But it's a probability (and usually a large one) so let's assume it's slightly smaller than 1. It is *certainly* a far cry from $N$.
+
+Wait. What happened.
+
+We just computed the probability of giving the whole set of tests a "pass", conditional on *one* metric having regressed. No, you don't need to multiply again by the number of metrics because we said it's condition on *one* metric having regressed, so the only metric that "donates" to the overall probability is just that one. (That's unlike the multiple testing above where *every* metric "donates" to the overall probability of having at least *one* test rejecting the null.)
+
+Nah you're not convinced yet. Let's simulate.
+
+
+
+[^1]: That's not quite true because $H0$ is a composite hypothesis, not a simple one. The false positive rate is $\alpha$ only when $d = - \delta$.
