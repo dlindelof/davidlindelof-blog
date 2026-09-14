@@ -20,6 +20,95 @@ We just computed the probability of giving the whole set of tests a "pass", cond
 
 Nah you're not convinced yet. Let's simulate.
 
+Let's simulate independent normally distributed estimates of treatment effects,
+with known standard errors, so we can use one-sided z-tests. We'll use 200
+observations per arm and a population standard deviation of 1 in each arm.
+Rather than generate every observation, we can draw each estimated difference
+directly from its sampling distribution: $\hat d \sim N(d, 2/200)$.
+
+For ordinary testing, every true effect is zero and we count an error when
+*any* test rejects $H_0: d \leq 0$. For non-inferiority testing, one metric is
+exactly at the null boundary $d = -\delta$, the others have zero effect, and
+we count an error only when *all* tests reject their respective
+$H_0: d \leq -\delta$. We use $\alpha = 0.05$ for every test, without any
+multiple-testing correction.
+
+```{r}
+set.seed(20260911)
+
+alpha <- 0.05
+n_per_arm <- 200
+se <- sqrt(2 / n_per_arm)
+delta <- 0.4
+critical_z <- qnorm(1 - alpha)
+n_sim <- 100000
+metric_counts <- c(1, 2, 5, 10, 20, 50)
+
+# Power of a non-inferiority test when the true effect is zero.
+power_no_regression <- pnorm(delta / se - critical_z)
+
+simulate_tests <- function(N) {
+  # Each row is one experiment; each column is an independent metric.
+  noise <- matrix(rnorm(n_sim * N, sd = se), nrow = n_sim)
+
+  # Ordinary tests: all true effects are zero; any rejection is an error.
+  ordinary_reject <- noise / se > critical_z
+  ordinary_error <- rowSums(ordinary_reject) > 0
+
+  # Non-inferiority: metric 1 is at -delta, all others are at zero.
+  # Reusing the noise makes the comparison reproducible without changing
+  # either scenario's marginal distribution.
+  estimated_effects <- noise
+  estimated_effects[, 1] <- estimated_effects[, 1] - delta
+  ni_reject <- (estimated_effects + delta) / se > critical_z
+  ni_error <- rowSums(ni_reject) == N
+
+  data.frame(
+    N = N,
+    ordinary_simulated = mean(ordinary_error),
+    ordinary_theory = 1 - (1 - alpha)^N,
+    ni_simulated = mean(ni_error),
+    ni_theory = alpha * power_no_regression^(N - 1)
+  )
+}
+
+results <- do.call(rbind, lapply(metric_counts, simulate_tests))
+
+knitr::kable(
+  results,
+  digits = 4,
+  col.names = c(
+    "Metrics", "Ordinary: simulated", "Ordinary: theory",
+    "Non-inferiority: simulated", "Non-inferiority: theory"
+  ),
+  caption = "Probability of a false positive decision across 100,000 experiments."
+)
+```
+
+The ordinary false positive rate climbs from 5% for one metric to about 92%
+for 50 metrics. The non-inferiority false pass rate starts at 5% and falls as
+we add metrics. Here, each metric with zero effect has about 99% power to
+pass its non-inferiority test. Requiring all of them to pass can only reduce
+the chance that the whole experiment passes. With independent metrics, that
+chance is exactly $\alpha\,\mathrm{power}^{N-1}$ in this scenario.
+
+Simulation illustrates the argument; the proof is even shorter. Whenever at
+least one metric has a true effect $d_j \leq -\delta$, passing every test
+requires incorrectly rejecting that metric's null hypothesis. Therefore,
+
+$$
+P(\text{all tests pass})
+\leq P(\text{test } j \text{ passes})
+\leq \alpha.
+$$
+
+This bound holds even when the metrics are correlated, when several metrics
+are at or below the margin, or when a regression is worse than $-\delta$.
+Independence is needed for the product formula above, but not for this bound.
+The key is that our decision requires *every* metric to demonstrate
+non-inferiority. A rule that accepts the treatment when *any* metric passes
+would answer a different question.
+
 
 
 [^1]: That's not quite true because $H0$ is a composite hypothesis, not a simple one. The false positive rate is $\alpha$ only when $d = - \delta$.
