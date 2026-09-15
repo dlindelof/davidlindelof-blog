@@ -114,11 +114,13 @@ exactly one gender.
 
 gender_columns <- c("genus", paste("genus", 1:4))
 
-nouns <- read_csv(
+nouns_raw <- read_csv(
   noun_path,
   col_types = cols(.default = col_character()),
   show_col_types = FALSE
-) |>
+)
+
+nouns <- nouns_raw |>
   filter(
     pos == "Substantiv",
     str_detect(lemma, "^[A-ZÄÖÜ][[:alpha:]]+$")
@@ -140,7 +142,49 @@ nouns <- read_csv(
       levels = c("der", "die", "das")
     )
   )
+
+inflection_columns <- names(nouns_raw) |>
+  keep(
+    ~ str_detect(
+      .x,
+      "^(nominativ|genitiv|dativ|akkusativ) (singular|plural)"
+    )
+  )
+
+noun_forms <- nouns_raw |>
+  filter(pos == "Substantiv", lemma %in% nouns$lemma) |>
+  select(lemma, all_of(inflection_columns)) |>
+  pivot_longer(
+    -lemma,
+    names_to = "inflection",
+    values_to = "form",
+    values_drop_na = TRUE
+  ) |>
+  filter(str_detect(form, "^[A-ZÄÖÜ][[:alpha:]]+$")) |>
+  select(lemma, form) |>
+  bind_rows(nouns |> transmute(lemma, form = lemma)) |>
+  distinct(lemma, form) |>
+  inner_join(nouns, by = "lemma") |>
+  group_by(form) |>
+  mutate(
+    is_headword = form == lemma,
+    has_headword = any(is_headword),
+    number_of_lemmas = n_distinct(lemma)
+  ) |>
+  filter(
+    (has_headword & is_headword) |
+      (!has_headword & number_of_lemmas == 1)
+  ) |>
+  select(lemma, form, gender) |>
+  ungroup()
 ```
+
+The dictionary also includes case forms in both singular and plural. I reshape
+those columns into a surface-form-to-lemma map. Exact headwords take precedence;
+other spellings are discarded when they point to more than one lemma. Every
+retained form is therefore assigned to one canonical dictionary lemma;
+occurrences of *Häuser*, for example, contribute to *Haus*. Plural-only nouns
+remain under the lemma supplied by the dictionary.
 
 The subtitle list has no part-of-speech tags. Capitalization gets us most of the
 way to identifying nouns, but a sentence-initial *Ich* is still capitalized. A
@@ -150,6 +194,14 @@ That retains *Frau* and *Mädchen*, whose lowercase occurrences are mostly noise
 while rejecting *Ich*, *Du*, and *Ist*. It also loses genuinely ambiguous nouns
 such as *Leben*, but avoids assigning millions of pronoun and verb tokens to rare
 metalinguistic nouns.
+
+There is one residual problem that a context-free frequency list cannot solve:
+some dictionary headwords are also overwhelmingly used as interjections or
+function words in subtitles. I exclude a short, explicit list of those
+homographs. This is intentionally auditable rather than a claim that *Oh* or
+*Aber* can never be used nominally. A stronger follow-up would estimate noun use
+from POS-tagged subtitle sentences instead of assigning every occurrence of a
+spelling to its dictionary noun entry.
 
 ```{r}
 #| label: clean-frequencies
@@ -177,25 +229,80 @@ lowercase_frequency <- subtitle_frequency |>
     lowercase_frequency = frequency
   )
 
-noun_frequency <- subtitle_frequency |>
+dominant_non_noun_uses <- c(
+  "Ach", "Ah", "Aha", "Äh", "Ähm", "Au", "Bah", "Buh", "Danke", "Hallo",
+  "He", "Hey", "Hi", "Hm", "Hmmm", "Ho", "Huch", "Hui", "Hurra", "Ja",
+  "Nein", "Oh", "Oha", "Okay", "Psst", "Tja", "Ups", "Wow",
+  "Aber", "Als", "Bitte", "Da", "Das", "Der", "Die", "Du", "Ein", "Er",
+  "Es", "Ich", "Ihr", "Ist", "Los", "Man", "Mit", "Nach", "Sie", "So",
+  "Und", "Vom", "Von", "Was", "Wer", "Wie", "Wir", "Zu"
+)
+
+capitalized_frequency <- subtitle_frequency |>
   filter(str_detect(word, "^[A-ZÄÖÜ]")) |>
   mutate(lowercase_spelling = str_to_lower(word, locale = "de")) |>
   left_join(lowercase_frequency, by = "lowercase_spelling") |>
   filter(
     is.na(lowercase_frequency) |
       frequency >= 5 * lowercase_frequency
-  ) |>
-  transmute(lemma = word, frequency)
+  )
 
-noun_data <- nouns |>
-  inner_join(noun_frequency, by = "lemma") |>
+excluded_surface_frequency <- capitalized_frequency |>
+  inner_join(noun_forms, by = c("word" = "form")) |>
+  filter(word %in% dominant_non_noun_uses)
+
+noun_surface_frequency <- capitalized_frequency |>
+  filter(!word %in% dominant_non_noun_uses) |>
+  inner_join(noun_forms, by = c("word" = "form")) |>
+  transmute(
+    lemma,
+    gender,
+    form = word,
+    frequency
+  )
+
+noun_frequency <- noun_surface_frequency |>
+  group_by(lemma, gender) |>
+  summarise(
+    frequency = sum(frequency),
+    matched_forms = n_distinct(form),
+    .groups = "drop"
+  ) |>
   arrange(desc(frequency))
 
+noun_data <- noun_frequency
+
 tibble(
-  measure = c("noun lemmas", "matched subtitle tokens"),
-  value = c(nrow(noun_data), sum(noun_data$frequency))
+  measure = c(
+    "noun lemmas",
+    "distinct inflected forms matched",
+    "matched subtitle tokens",
+    "explicitly excluded non-noun spellings"
+  ),
+  value = c(
+    nrow(noun_data),
+    n_distinct(noun_surface_frequency$form),
+    sum(noun_data$frequency),
+    n_distinct(excluded_surface_frequency$word)
+  )
 ) |>
   kable(format.args = list(big.mark = ","))
+```
+
+The resulting `noun_frequency` table has one row per lemma. `matched_forms` makes
+the singular/plural aggregation visible rather than hiding it inside the join.
+
+```{r}
+#| label: noun-frequency-preview
+
+noun_frequency |>
+  select(lemma, gender, matched_forms, frequency) |>
+  slice_head(n = 12) |>
+  kable(
+    col.names = c("Lemma", "Gender", "Matched forms", "Frequency"),
+    format.args = list(big.mark = ","),
+    align = c("l", "l", "r", "r")
+  )
 ```
 
 There are two sensible scores. **Type accuracy** gives every dictionary entry one
@@ -301,9 +408,10 @@ token_distribution |>
 Our subtitle-filtered sample is more masculine and less feminine than the paper's
 database, under both counting schemes. That is not necessarily a contradiction:
 the authors' main point in this part of the paper is that gender proportions depend
-on the corpus and the frequency range. Our counts also cover exact, unambiguous
-lemma spellings rather than every noun token, while the paper's CELEX token row is
-not subtitle-based. This comparison is therefore a diagnostic, not a replication.
+on the corpus and the frequency range. Our counts cover dictionary forms that can
+be assigned to a single lemma after the spelling filters, rather than POS-tagged
+noun tokens, while the paper's CELEX token row is not subtitle-based. This
+comparison is therefore a diagnostic, not a replication.
 
 ## Turn spelling into learnable questions
 
