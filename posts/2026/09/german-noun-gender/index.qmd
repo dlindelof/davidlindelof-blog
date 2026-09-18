@@ -56,6 +56,13 @@ It was made from 25,399,099 words of movie and television subtitles and preserve
 letter case. The list is split into pages of 5,000 entries; the first ten pages are
 enough for this experiment.
 
+Two of the proposed rules depend on recognizing verbs. For those I use the
+infinitive column from the Wiktionary-derived
+[german-verbs-database](https://github.com/viorelsfetea/german-verbs-database).
+It lets me distinguish a spelling test from a semantic claim: a noun can look
+exactly like an infinitive or verb stem without actually being derived from that
+verb.
+
 The following chunk downloads about 21 MB in total and caches it in this post's
 `data` directory. That directory is ignored by Git.
 
@@ -73,6 +80,16 @@ noun_path <- file.path(data_dir, "nouns.csv")
 
 if (!file.exists(noun_path)) {
   download.file(noun_url, noun_path, mode = "wb", quiet = TRUE)
+}
+
+verb_url <- paste0(
+  "https://raw.githubusercontent.com/viorelsfetea/",
+  "german-verbs-database/master/output/verbs.csv"
+)
+verb_path <- file.path(data_dir, "verbs.csv")
+
+if (!file.exists(verb_path)) {
+  download.file(verb_url, verb_path, mode = "wb", quiet = TRUE)
 }
 
 starts <- seq(1, 45001, by = 5000)
@@ -270,6 +287,11 @@ noun_frequency <- noun_surface_frequency |>
   ) |>
   arrange(desc(frequency))
 
+stopifnot(
+  nrow(noun_forms) == n_distinct(noun_forms$form),
+  nrow(noun_frequency) == n_distinct(noun_frequency$lemma)
+)
+
 noun_data <- noun_frequency
 
 tibble(
@@ -416,8 +438,10 @@ comparison is therefore a diagnostic, not a replication.
 ## Turn spelling into learnable questions
 
 The spelling features are not arbitrary character fragments. They are a short,
-predeclared set of endings that a learner could plausibly recognize. The tree is
-free to ignore most of them.
+predeclared set of endings, beginnings, and word shapes that a learner could
+plausibly recognize. This is where I add the proposed rules for *ge-*, *kn-*,
+*dr-*, *tr-*, *-ft*, *-xt*, *-ur*, *-et*, and *-ett*. The tree is free to ignore
+rules that do not improve held-out predictions.
 
 ```{r}
 #| label: spelling-features
@@ -432,12 +456,71 @@ suffixes <- c(
   ment = "ment", um = "um", ma = "ma", o = "o"
 )
 
-make_suffix_features <- function(words) {
+count_written_syllables <- function(words) {
+  words |>
+    str_to_lower(locale = "de") |>
+    str_replace_all("äu|au|ei|ai|eu|ie", "a_") |>
+    str_count("[aeiouyäöü]+")
+}
+
+make_spelling_features <- function(words) {
+  lowercase_words <- str_to_lower(words, locale = "de")
+
   features <- lapply(suffixes, function(suffix) {
-    str_ends(str_to_lower(words, locale = "de"), fixed(suffix))
+    str_ends(lowercase_words, fixed(suffix))
   })
 
-  as_tibble(setNames(features, paste0("ends_", names(suffixes))))
+  as_tibble(setNames(features, paste0("ends_", names(suffixes)))) |>
+    mutate(
+      starts_ge = str_starts(lowercase_words, fixed("ge")),
+      starts_kn = str_starts(lowercase_words, fixed("kn")),
+      starts_dr_or_tr = str_detect(lowercase_words, "^(dr|tr)"),
+      one_written_syllable = count_written_syllables(words) == 1,
+      ends_ft_or_xt = str_detect(lowercase_words, "(ft|xt)$"),
+      ends_et_or_ett = str_detect(lowercase_words, "(et|ett)$")
+    )
+}
+```
+
+`one_written_syllable` is necessarily an orthographic approximation. It counts
+vowel groups after collapsing common German diphthongs; it is useful for a toy
+learner's rule, but it is not a phonetic syllabifier.
+
+The remaining two rules need a verb lexicon. An exact infinitive spelling is a
+proxy for a nominalized infinitive, while an exact match to an infinitive with
+its final *-en* or *-n* removed is a proxy for a zero-derived verbal noun. These
+tests catch examples such as *Essen* and *Kauf*, but they also flag homographs
+such as *Rasen*. The classifier must decide whether the tendencies survive those
+exceptions.
+
+```{r}
+#| label: verbal-features
+
+verbs <- read_csv(
+  verb_path,
+  col_types = cols(.default = col_character()),
+  show_col_types = FALSE
+) |>
+  transmute(
+    infinitive = str_to_lower(Infinitive, locale = "de")
+  ) |>
+  filter(str_detect(infinitive, "^[a-zäöüß]+$")) |>
+  distinct()
+
+verb_infinitives <- verbs$infinitive
+verb_stems <- verbs |>
+  transmute(stem = str_remove(infinitive, "(?:en|n)$")) |>
+  filter(str_length(stem) >= 3) |>
+  distinct() |>
+  pull(stem)
+
+make_verbal_features <- function(words) {
+  lowercase_words <- str_to_lower(words, locale = "de")
+
+  tibble(
+    is_infinitive = lowercase_words %in% verb_infinitives,
+    has_verbal_base = lowercase_words %in% verb_stems
+  )
 }
 ```
 
@@ -492,7 +575,10 @@ semantic_sets <- list(
 )
 
 model_data <- noun_data |>
-  bind_cols(make_suffix_features(noun_data$lemma)) |>
+  bind_cols(
+    make_spelling_features(noun_data$lemma),
+    make_verbal_features(noun_data$lemma)
+  ) |>
   mutate(
     meaning_calendar = lemma %in% semantic_sets$calendar,
     meaning_direction = lemma %in% semantic_sets$direction,
@@ -503,6 +589,9 @@ model_data <- noun_data |>
 
 feature_names <- c(
   paste0("ends_", names(suffixes)),
+  "starts_ge", "starts_kn", "starts_dr_or_tr",
+  "one_written_syllable", "ends_ft_or_xt", "ends_et_or_ett",
+  "is_infinitive", "has_verbal_base",
   "meaning_calendar", "meaning_direction", "meaning_colour",
   "meaning_female", "meaning_male"
 )
@@ -549,6 +638,71 @@ This semantic annotation is intentionally small. An obvious extension would be t
 replace the hand-built lists with a reproducible ontology, while keeping the
 learner-facing feature names at this level of abstraction.
 
+## Check the added rules
+
+Before allowing the tree to combine the new features, I can test each tendency
+on its own. “Usage-weighted hit rate” answers: among subtitle occurrences of
+nouns matching this rule, what proportion has the proposed article? It is a
+measure of a one-sided rule's reliability, not the accuracy of a complete
+three-way classifier.
+
+```{r}
+#| label: added-rule-summary
+
+weighted_accuracy <- function(truth, estimate, weight) {
+  sum(weight * (truth == estimate)) / sum(weight)
+}
+
+added_rules <- tribble(
+  ~feature, ~rule, ~predicted_article,
+  "starts_ge", "starts with ge-", "das",
+  "is_infinitive", "spelling is a verb infinitive", "das",
+  "has_verbal_base", "spelling matches a verb stem", "der",
+  "starts_kn", "starts with kn-", "der",
+  "one_written_syllable", "one written syllable", "der",
+  "starts_dr_or_tr", "starts with dr- or tr-", "der",
+  "ends_ft_or_xt", "ends with -ft or -xt", "die",
+  "ends_ur", "ends with -ur", "die",
+  "ends_et_or_ett", "ends with -et or -ett", "das"
+)
+
+rule_summary <- pmap_dfr(
+  added_rules,
+  function(feature, rule, predicted_article) {
+    matches <- model_data |>
+      filter(.data[[feature]])
+
+    tibble(
+      rule,
+      predicted_article,
+      noun_lemmas = nrow(matches),
+      subtitle_tokens = sum(matches$frequency),
+      type_hit_rate = mean(matches$gender == predicted_article),
+      usage_weighted_hit_rate = weighted_accuracy(
+        matches$gender,
+        factor(predicted_article, levels = levels(matches$gender)),
+        matches$frequency
+      )
+    )
+  }
+)
+
+rule_summary |>
+  mutate(
+    across(ends_with("hit_rate"), function(x) percent(x, accuracy = 0.1))
+  ) |>
+  kable(
+    col.names = c(
+      "Rule", "Predicted article", "Noun lemmas", "Subtitle tokens",
+      "Type hit rate", "Usage-weighted hit rate"
+    ),
+    format.args = list(big.mark = ",")
+  )
+```
+
+These rows also make weak or corpus-sensitive rules visible. Nothing is forced
+into the final tree merely because it appeared on the candidate list.
+
 ## Start with one rule
 
 The opening classifier is the folk rule proposed at the start: if a noun ends in
@@ -556,10 +710,6 @@ The opening classifier is the folk rule proposed at the start: if a noun ends in
 
 ```{r}
 #| label: baseline
-
-weighted_accuracy <- function(truth, estimate, weight) {
-  sum(weight * (truth == estimate)) / sum(weight)
-}
 
 baseline_prediction <- factor(
   if_else(model_data$ends_e, "die", "der"),
@@ -788,8 +938,11 @@ text(final_tree, use.n = FALSE, all = FALSE, pretty = 0, cex = 0.9)
 
 Feature names translate directly into questions: `ends_chen` means “does the word
 end in *-chen*?”, and `meaning_calendar` means “is it a weekday, month, or
-canonical season?” The resulting tree is the object to critique as a learner: are
-its rules memorable, and is the accuracy gain worth each additional branch?
+canonical season?” Likewise, `is_infinitive` asks whether the spelling occurs in
+the verb lexicon, and `one_written_syllable` uses the deliberately simple vowel-
+group approximation described above. The resulting tree is the object to critique
+as a learner: are its rules memorable, and is the accuracy gain worth each
+additional branch?
 
 The calendar feature is present in the dataset but does not appear in this small
 tree. That is informative rather than a bug: all of the annotated calendar names
@@ -797,6 +950,10 @@ are masculine, and the default prediction on their spelling branch is already
 *der*. A true linguistic generalization need not buy predictive accuracy. The
 male- and female-person features do enter the fitted tree because they protect or
 correct exceptions that suffixes alone would mishandle.
+
+None of the nine newly added tendencies enters this particular small tree either.
+Their individual hit rates remain useful learner-facing evidence, but under the
+eight-leaf budget the older, broader suffix and person rules buy more accuracy.
 
 ## Inspect the costly mistakes
 
@@ -821,10 +978,12 @@ cv_predictions |>
 ## What this experiment does not establish
 
 This is a model of dictionary lemmas, not noun tokens in context. The conservative
-capitalization filter removes many ambiguous words, and exact lemma counts miss
-plural and declined forms. Subtitle dialogue is closer to everyday speech than a
-dictionary's uniform type distribution, but translated dialogue is not identical
-to spontaneous German conversation.
+capitalization filter removes many ambiguous words. The frequency aggregation
+does include every recorded singular and plural case form that maps unambiguously
+to a lemma, but the source still cannot tell a noun use from a sentence-initial
+homograph. Subtitle dialogue is closer to everyday speech than a dictionary's
+uniform type distribution, but translated dialogue is not identical to
+spontaneous German conversation.
 
 The split is also random by lemma. A stricter follow-up would group morphologically
 related nouns or shared compound heads in the same fold, preventing near-duplicate
