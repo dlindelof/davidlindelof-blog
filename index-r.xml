@@ -1148,34 +1148,41 @@ font-style: inherit;">mean</span>(y)</span></code></pre></div></div>
 
 
 
-<p>In <em><a href="https://a.co/d/b6Emaxo">Trustworthy Online Controller Experiments</a></em> I came across this quote, referring to a ratio metric <img src="https://latex.codecogs.com/png.latex?M%20=%20%5C%5Cfrac%7BX%7D%7BY%7D">, which states that:</p>
+<p>In <em><a href="https://a.co/d/b6Emaxo">Trustworthy Online Controller Experiments</a></em> I came across this quote, referring to a ratio metric <img src="https://latex.codecogs.com/png.latex?M%20=%20%5Cfrac%7BX%7D%7BY%7D">, which states that:</p>
 <blockquote class="blockquote">
 <p>Because <img src="https://latex.codecogs.com/png.latex?X"> and <img src="https://latex.codecogs.com/png.latex?Y"> are jointly bivariate normal in the limit, <img src="https://latex.codecogs.com/png.latex?M">, as the ratio of the two averages, is also normally distributed.</p>
 </blockquote>
-<p>That’s only partially true. According to <a href="https://en.wikipedia.org/wiki/Ratio_distribution">Wikipedia</a>, the ratio of two uncorrelated noncentral normal variables <img src="https://latex.codecogs.com/png.latex?X%20=%20N(%5C%5Cmu%5C_X,%20%5C%5Csigma%5C_X%5E2)"> and <img src="https://latex.codecogs.com/png.latex?Y%20=%20N(%5C%5Cmu%5C_Y,%20%5C%5Csigma%5C_Y%5E2)"> has mean <img src="https://latex.codecogs.com/png.latex?%5C%5Cmu%5C_X%20/%20%5C%5Cmu%5C_Y"> and variance approximately <img src="https://latex.codecogs.com/png.latex?%5C%5Cfrac%7B%5C%5Cmu%5C_X%5E2%7D%7B%5C%5Cmu%5C_Y%5E2%7D%5C%5Cleft(%20%5C%5Cfrac%7B%5C%5Csigma%5C_X%5E2%7D%7B%5C%5Cmu%5C_X%5E2%7D%20+%20%5C%5Cfrac%7B%5C%5Csigma%5C_Y%5E2%7D%7B%5C%5Cmu%5C_Y%5E2%7D%20%5C%5Cright)">. The article implies that this is true when <img src="https://latex.codecogs.com/png.latex?Y"> is unlikely to assume negative values, say <img src="https://latex.codecogs.com/png.latex?%5C%5Cmu%5C_Y%20%3E%203%20%5C%5Csigma%5C_Y">.</p>
+<p>That’s only partially true. According to <a href="https://en.wikipedia.org/wiki/Ratio_distribution">Wikipedia</a>, the ratio of two uncorrelated noncentral normal variables <img src="https://latex.codecogs.com/png.latex?X%20=%20N(%5Cmu_X,%20%5Csigma_X%5E2)"> and <img src="https://latex.codecogs.com/png.latex?Y%20=%20N(%5Cmu_Y,%20%5Csigma_Y%5E2)"> has mean <img src="https://latex.codecogs.com/png.latex?%5Cmu_X%20/%20%5Cmu_Y"> and variance approximately <img src="https://latex.codecogs.com/png.latex?%5Cfrac%7B%5Cmu_X%5E2%7D%7B%5Cmu_Y%5E2%7D%5Cleft(%20%5Cfrac%7B%5Csigma_X%5E2%7D%7B%5Cmu_X%5E2%7D%20+%20%5Cfrac%7B%5Csigma_Y%5E2%7D%7B%5Cmu_Y%5E2%7D%20%5Cright)">. The article implies that this is true when <img src="https://latex.codecogs.com/png.latex?Y"> is unlikely to assume negative values, say <img src="https://latex.codecogs.com/png.latex?%5Cmu_Y%20%3E%203%20%5Csigma_Y">.</p>
 <p>As always, the best way to believe something is to see it yourself. Let’s generate some uncorrelated normal variables far from 0 and their ratio:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1">ux <span class="ot" style="color: #003B4F;
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">set.seed</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">20230503</span>)</span>
+<span id="cb1-2"></span>
+<span id="cb1-3">ux <span class="ot" style="color: #003B4F;
 background-color: null;
 font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">100</span></span>
-<span id="cb1-2">sdx <span class="ot" style="color: #003B4F;
+<span id="cb1-4">sdx <span class="ot" style="color: #003B4F;
 background-color: null;
 font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">2</span></span>
-<span id="cb1-3">uy <span class="ot" style="color: #003B4F;
+<span id="cb1-5">uy <span class="ot" style="color: #003B4F;
 background-color: null;
 font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">50</span></span>
-<span id="cb1-4">sdy <span class="ot" style="color: #003B4F;
+<span id="cb1-6">sdy <span class="ot" style="color: #003B4F;
 background-color: null;
 font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">0.5</span></span>
-<span id="cb1-5"></span>
-<span id="cb1-6">X <span class="ot" style="color: #003B4F;
+<span id="cb1-7"></span>
+<span id="cb1-8">X <span class="ot" style="color: #003B4F;
 background-color: null;
 font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
 background-color: null;
@@ -1186,7 +1193,7 @@ background-color: null;
 font-style: inherit;">mean =</span> ux, <span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">sd =</span> sdx)</span>
-<span id="cb1-7">Y <span class="ot" style="color: #003B4F;
+<span id="cb1-9">Y <span class="ot" style="color: #003B4F;
 background-color: null;
 font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
 background-color: null;
@@ -1197,39 +1204,107 @@ background-color: null;
 font-style: inherit;">mean =</span> uy, <span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">sd =</span> sdy)</span>
-<span id="cb1-8">Z <span class="ot" style="color: #003B4F;
+<span id="cb1-10">Z <span class="ot" style="color: #003B4F;
 background-color: null;
 font-style: inherit;">&lt;-</span> X <span class="sc" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">/</span> Y</span></code></pre></div></div>
+</div>
 <p>Their ratio looks normal enough:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><span class="fu" style="color: #4758AB;
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">hist</span>(Z)</span></code></pre></div></div>
-<p><img src="https://blog.davidlindelof.com/posts/2023/05/auto-draft/images/image-2-1024x731.png" class="img-fluid"></p>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://blog.davidlindelof.com/posts/2023/05/auto-draft/index_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
 <p>Which is confirmed by a q-q plot:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><span class="fu" style="color: #4758AB;
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">qqnorm</span>(Z)</span></code></pre></div></div>
-<p><img src="https://blog.davidlindelof.com/posts/2023/05/auto-draft/images/image-3-1024x731.png" class="img-fluid"></p>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://blog.davidlindelof.com/posts/2023/05/auto-draft/index_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
 <p>What about the mean and variance?</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><span class="fu" style="color: #4758AB;
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">mean</span>(Z)</span></code></pre></div></div>
-<pre><code>[1] 1.998794</code></pre>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1">ux <span class="sc" style="color: #5E5E5E;
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2.000533</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1">ux <span class="sc" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">/</span> uy</span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
 <pre><code>[1] 2</code></pre>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><span class="fu" style="color: #4758AB;
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">var</span>(Z)</span></code></pre></div></div>
-<pre><code>[1] 0.001783404</code></pre>
-<pre><code>ux^2 / uy^2 * (sdx^2 / ux^2 + sdy^2 / uy^2)</code></pre>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.001997246</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1">ux<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">^</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> uy<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">^</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> (sdx<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">^</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> ux<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">^</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> sdy<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">^</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> uy<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">^</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>)</span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.002</code></pre>
+</div>
+</div>
 <p>Both the mean and variance are <em>very</em> close to their theoretical values.</p>
 <p>But what happens now when the denominator <img src="https://latex.codecogs.com/png.latex?Y"> has a mean close to 0?</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1">ux <span class="ot" style="color: #003B4F;
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1">ux <span class="ot" style="color: #003B4F;
 background-color: null;
 font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
 background-color: null;
@@ -1277,16 +1352,33 @@ background-color: null;
 font-style: inherit;">&lt;-</span> X <span class="sc" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">/</span> Y</span></code></pre></div></div>
+</div>
 <p>Hard to call the resulting ratio normally distributed:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><span class="fu" style="color: #4758AB;
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">hist</span>(Z)</span></code></pre></div></div>
-<p><img src="https://blog.davidlindelof.com/posts/2023/05/auto-draft/images/image-4-1024x731.png" class="img-fluid"></p>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://blog.davidlindelof.com/posts/2023/05/auto-draft/index_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
 <p>Which is also clear with a q-q plot:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><span class="fu" style="color: #4758AB;
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">qqnorm</span>(Z)</span></code></pre></div></div>
-<p><img src="https://blog.davidlindelof.com/posts/2023/05/auto-draft/images/image-5-1024x731.png" class="img-fluid"></p>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://blog.davidlindelof.com/posts/2023/05/auto-draft/index_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
 <p>In other words, it is generally true that ratio metrics where the denominator is far from 0 will also be close enough to a normal distribution for practical purposes. But when the denominator’s mean is, say, closer than 5 sigmas from 0 that assumption breaks down.</p>
 
 
@@ -1295,6 +1387,7 @@ font-style: inherit;">qqnorm</span>(Z)</span></code></pre></div></div>
   <category>r</category>
   <guid>https://blog.davidlindelof.com/posts/2023/05/auto-draft/</guid>
   <pubDate>Wed, 03 May 2023 00:00:00 GMT</pubDate>
+  <media:content url="https://blog.davidlindelof.com/posts/2023/05/auto-draft/preview.png" medium="image" type="image/png" height="76" width="144"/>
 </item>
 <item>
   <title>Controlling for covariates is not the same as “slicing”</title>

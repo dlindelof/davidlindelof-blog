@@ -7,6 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="dcterms.date" content="2023-05-03">
+<meta name="description" content="Is a ratio of normal variables also normal? R simulations show when the approximation works and how the denominator can make it break down.">
 
 <title>Is The Ratio of Normal Variables Normal? – David’s blog</title>
 <style>
@@ -149,6 +150,20 @@ window.Quarto = {
 </script>
 
 <link rel="stylesheet" href="../../../../styles.css">
+<meta property="og:title" content="Is The Ratio of Normal Variables Normal? – David’s blog">
+<meta property="og:description" content="Is a ratio of normal variables also normal? R simulations show when the approximation works and how the denominator can make it break down.">
+<meta property="og:image" content="https://blog.davidlindelof.com/posts/2023/05/auto-draft/preview.png">
+<meta property="og:site_name" content="David’s blog">
+<meta property="og:image:height" content="630">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:alt" content="Simulated ratio distributions: nearly symmetric when the denominator is far from zero, and right-skewed when it is nearer zero.">
+<meta name="twitter:title" content="Is The Ratio of Normal Variables Normal? – David’s blog">
+<meta name="twitter:description" content="Is a ratio of normal variables also normal? R simulations show when the approximation works and how the denominator can make it break down.">
+<meta name="twitter:image" content="https://blog.davidlindelof.com/posts/2023/05/auto-draft/preview.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image-height" content="630">
+<meta name="twitter:image-width" content="1200">
+<meta name="twitter:image:alt" content="Simulated ratio distributions: nearly symmetric when the denominator is far from zero, and right-skewed when it is nearer zero.">
 <link rel="canonical" href="https://blog.davidlindelof.com/posts/2023/05/auto-draft/">
 </head>
 
@@ -372,7 +387,12 @@ window.Quarto = {
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
       <h1 class="title">Is The Ratio of Normal Variables Normal?</h1>
-                                <div class="quarto-categories">
+                  <div>
+        <div class="description">
+          Is a ratio of normal variables also normal? R simulations show when the approximation works and how the denominator can make it break down.
+        </div>
+      </div>
+                          <div class="quarto-categories">
                 <div class="quarto-category">r</div>
               </div>
                   </div>
@@ -407,38 +427,75 @@ window.Quarto = {
 
 
 
-<p>In <em><a href="https://a.co/d/b6Emaxo">Trustworthy Online Controller Experiments</a></em> I came across this quote, referring to a ratio metric <span class="math inline">\(M = \\frac{X}{Y}\)</span>, which states that:</p>
+<p>In <em><a href="https://a.co/d/b6Emaxo">Trustworthy Online Controller Experiments</a></em> I came across this quote, referring to a ratio metric <span class="math inline">\(M = \frac{X}{Y}\)</span>, which states that:</p>
 <blockquote class="blockquote">
 <p>Because <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> are jointly bivariate normal in the limit, <span class="math inline">\(M\)</span>, as the ratio of the two averages, is also normally distributed.</p>
 </blockquote>
-<p>That’s only partially true. According to <a href="https://en.wikipedia.org/wiki/Ratio_distribution">Wikipedia</a>, the ratio of two uncorrelated noncentral normal variables <span class="math inline">\(X = N(\\mu\_X, \\sigma\_X^2)\)</span> and <span class="math inline">\(Y = N(\\mu\_Y, \\sigma\_Y^2)\)</span> has mean <span class="math inline">\(\\mu\_X / \\mu\_Y\)</span> and variance approximately <span class="math inline">\(\\frac{\\mu\_X^2}{\\mu\_Y^2}\\left( \\frac{\\sigma\_X^2}{\\mu\_X^2} + \\frac{\\sigma\_Y^2}{\\mu\_Y^2} \\right)\)</span>. The article implies that this is true when <span class="math inline">\(Y\)</span> is unlikely to assume negative values, say <span class="math inline">\(\\mu\_Y &gt; 3 \\sigma\_Y\)</span>.</p>
+<p>That’s only partially true. According to <a href="https://en.wikipedia.org/wiki/Ratio_distribution">Wikipedia</a>, the ratio of two uncorrelated noncentral normal variables <span class="math inline">\(X = N(\mu_X, \sigma_X^2)\)</span> and <span class="math inline">\(Y = N(\mu_Y, \sigma_Y^2)\)</span> has mean <span class="math inline">\(\mu_X / \mu_Y\)</span> and variance approximately <span class="math inline">\(\frac{\mu_X^2}{\mu_Y^2}\left( \frac{\sigma_X^2}{\mu_X^2} + \frac{\sigma_Y^2}{\mu_Y^2} \right)\)</span>. The article implies that this is true when <span class="math inline">\(Y\)</span> is unlikely to assume negative values, say <span class="math inline">\(\mu_Y &gt; 3 \sigma_Y\)</span>.</p>
 <p>As always, the best way to believe something is to see it yourself. Let’s generate some uncorrelated normal variables far from 0 and their ratio:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>ux <span class="ot">=</span> <span class="dv">100</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>sdx <span class="ot">=</span> <span class="dv">2</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>uy <span class="ot">=</span> <span class="dv">50</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>sdy <span class="ot">=</span> <span class="fl">0.5</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>X <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1000</span>, <span class="at">mean =</span> ux, <span class="at">sd =</span> sdx)</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>Y <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1000</span>, <span class="at">mean =</span> uy, <span class="at">sd =</span> sdy)</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>Z <span class="ot">&lt;-</span> X <span class="sc">/</span> Y</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">20230503</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>ux <span class="ot">=</span> <span class="dv">100</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>sdx <span class="ot">=</span> <span class="dv">2</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>uy <span class="ot">=</span> <span class="dv">50</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>sdy <span class="ot">=</span> <span class="fl">0.5</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>X <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1000</span>, <span class="at">mean =</span> ux, <span class="at">sd =</span> sdx)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>Y <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1000</span>, <span class="at">mean =</span> uy, <span class="at">sd =</span> sdy)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>Z <span class="ot">&lt;-</span> X <span class="sc">/</span> Y</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
 <p>Their ratio looks normal enough:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(Z)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><img src="images/image-2-1024x731.png" class="img-fluid"></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(Z)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
 <p>Which is confirmed by a q-q plot:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(Z)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><img src="images/image-3-1024x731.png" class="img-fluid"></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(Z)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
 <p>What about the mean and variance?</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(Z)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code>[1] 1.998794</code></pre>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>ux <span class="sc">/</span> uy</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(Z)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2.000533</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>ux <span class="sc">/</span> uy</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
 <pre><code>[1] 2</code></pre>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">var</span>(Z)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code>[1] 0.001783404</code></pre>
-<pre><code>ux^2 / uy^2 * (sdx^2 / ux^2 + sdy^2 / uy^2)</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">var</span>(Z)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.001997246</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>ux<span class="sc">^</span><span class="dv">2</span> <span class="sc">/</span> uy<span class="sc">^</span><span class="dv">2</span> <span class="sc">*</span> (sdx<span class="sc">^</span><span class="dv">2</span> <span class="sc">/</span> ux<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> sdy<span class="sc">^</span><span class="dv">2</span> <span class="sc">/</span> uy<span class="sc">^</span><span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.002</code></pre>
+</div>
+</div>
 <p>Both the mean and variance are <em>very</em> close to their theoretical values.</p>
 <p>But what happens now when the denominator <span class="math inline">\(Y\)</span> has a mean close to 0?</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>ux <span class="ot">=</span> <span class="dv">100</span></span>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>ux <span class="ot">=</span> <span class="dv">100</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>sdx <span class="ot">=</span> <span class="dv">2</span></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>uy <span class="ot">=</span> <span class="dv">10</span></span>
 <span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>sdy <span class="ot">=</span> <span class="dv">2</span></span>
@@ -446,12 +503,29 @@ window.Quarto = {
 <span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>X <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1000</span>, <span class="at">mean =</span> ux, <span class="at">sd =</span> sdx)</span>
 <span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>Y <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1000</span>, <span class="at">mean =</span> uy, <span class="at">sd =</span> sdy)</span>
 <span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>Z <span class="ot">&lt;-</span> X <span class="sc">/</span> Y</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
 <p>Hard to call the resulting ratio normally distributed:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(Z)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><img src="images/image-4-1024x731.png" class="img-fluid"></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(Z)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
 <p>Which is also clear with a q-q plot:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(Z)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><img src="images/image-5-1024x731.png" class="img-fluid"></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(Z)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
 <p>In other words, it is generally true that ratio metrics where the denominator is far from 0 will also be close enough to a normal distribution for practical purposes. But when the denominator’s mean is, say, closer than 5 sigmas from 0 that assumption breaks down.</p>
 
 
