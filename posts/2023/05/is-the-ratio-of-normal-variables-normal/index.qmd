@@ -1,6 +1,8 @@
 ---
 title: "Is The Ratio of Normal Variables Normal?"
 date: 2023-05-03
+aliases:
+  - /posts/2023/05/auto-draft/
 description: "Is a ratio of normal variables also normal? R simulations show when the approximation works and how the denominator can make it break down."
 image: preview.png
 image-alt: "Simulated ratio distributions: nearly symmetric when the denominator is far from zero, and right-skewed when it is nearer zero."

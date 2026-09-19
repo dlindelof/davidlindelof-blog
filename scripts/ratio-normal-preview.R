@@ -1,4 +1,4 @@
-png('posts/2023/05/auto-draft/preview.png', width=1200, height=630, res=120)
+png('posts/2023/05/is-the-ratio-of-normal-variables-normal/preview.png', width=1200, height=630, res=120)
 par(bg='#101c30', mar=c(0,0,0,0), family='sans')
 plot.new(); plot.window(xlim=c(0,1), ylim=c(0,1), xaxs='i', yaxs='i')
 text(.07,.91,'STATISTICS  /  R SIMULATIONS',adj=0,col='#83cec8',cex=.92)
