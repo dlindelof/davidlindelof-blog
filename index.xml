@@ -1355,7 +1355,7 @@ font-style: inherit;">&gt;</span> -p 7000</span></code></pre></div></div>
 </item>
 <item>
   <title>Is The Ratio of Normal Variables Normal?</title>
-  <link>https://blog.davidlindelof.com/posts/2023/05/auto-draft/</link>
+  <link>https://blog.davidlindelof.com/posts/2023/05/is-the-ratio-of-normal-variables-normal/</link>
   <description><![CDATA[ 
 
 
@@ -1433,7 +1433,7 @@ font-style: inherit;">hist</span>(Z)</span></code></pre></div></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="https://blog.davidlindelof.com/posts/2023/05/auto-draft/index_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2023/05/is-the-ratio-of-normal-variables-normal/index_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -1446,7 +1446,7 @@ font-style: inherit;">qqnorm</span>(Z)</span></code></pre></div></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="https://blog.davidlindelof.com/posts/2023/05/auto-draft/index_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2023/05/is-the-ratio-of-normal-variables-normal/index_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -1576,7 +1576,7 @@ font-style: inherit;">hist</span>(Z)</span></code></pre></div></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="https://blog.davidlindelof.com/posts/2023/05/auto-draft/index_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2023/05/is-the-ratio-of-normal-variables-normal/index_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -1589,7 +1589,7 @@ font-style: inherit;">qqnorm</span>(Z)</span></code></pre></div></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="https://blog.davidlindelof.com/posts/2023/05/auto-draft/index_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="https://blog.davidlindelof.com/posts/2023/05/is-the-ratio-of-normal-variables-normal/index_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -1600,9 +1600,9 @@ font-style: inherit;">qqnorm</span>(Z)</span></code></pre></div></div>
 
  ]]></description>
   <category>r</category>
-  <guid>https://blog.davidlindelof.com/posts/2023/05/auto-draft/</guid>
+  <guid>https://blog.davidlindelof.com/posts/2023/05/is-the-ratio-of-normal-variables-normal/</guid>
   <pubDate>Wed, 03 May 2023 00:00:00 GMT</pubDate>
-  <media:content url="https://blog.davidlindelof.com/posts/2023/05/auto-draft/preview.png" medium="image" type="image/png" height="76" width="144"/>
+  <media:content url="https://blog.davidlindelof.com/posts/2023/05/is-the-ratio-of-normal-variables-normal/preview.png" medium="image" type="image/png" height="76" width="144"/>
 </item>
 <item>
   <title>Working with that data scientist</title>
