@@ -6,9 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2023-04-05">
+<meta name="description" content="Practical corporate R training and statistical consulting for startups, with David Lindelöf. Help with experiment design, data analysis, and reproducible work.">
 
-<title>Controlling for covariates is not the same as “slicing” – David's blog</title>
+<title>R Training &amp; Statistical Consulting — David Lindelöf – David's blog</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -24,66 +24,31 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-/* CSS for syntax highlighting */
-html { -webkit-text-size-adjust: 100%; }
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
 </style>
 
 
-<script src="../../../../site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="../../../../site_libs/quarto-nav/headroom.min.js"></script>
-<script src="../../../../site_libs/clipboard/clipboard.min.js"></script>
-<script src="../../../../site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="../../../../site_libs/quarto-search/fuse.min.js"></script>
-<script src="../../../../site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="../../../../">
-<link href="../../../../favicon.svg" rel="icon" type="image/svg+xml">
-<script src="../../../../site_libs/quarto-html/quarto.js" type="module"></script>
-<script src="../../../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="../../../../site_libs/quarto-html/popper.min.js"></script>
-<script src="../../../../site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="../../../../site_libs/quarto-html/anchor.min.js"></script>
-<link href="../../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting-dark-0a6b7249c26820e032cb0bd839ff02b1.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
-<script src="../../../../site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="../../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../../../site_libs/bootstrap/bootstrap-bbd078c381d723ded0e31fb48194a9cc.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../../../../site_libs/bootstrap/bootstrap-dark-60fb5363ddb6713553223898e32b8bfc.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="../../../../site_libs/bootstrap/bootstrap-bbd078c381d723ded0e31fb48194a9cc.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./favicon.svg" rel="icon" type="image/svg+xml">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-0a6b7249c26820e032cb0bd839ff02b1.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-bbd078c381d723ded0e31fb48194a9cc.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark-60fb5363ddb6713553223898e32b8bfc.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/bootstrap/bootstrap-bbd078c381d723ded0e31fb48194a9cc.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -118,41 +83,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   plausible.init()
 </script>
 
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
-
-<link rel="stylesheet" href="../../../../styles.css">
-<link rel="canonical" href="https://blog.davidlindelof.com/posts/2023/04/controlling-for-covariates-is-not-the-same-as-slicing/">
+<link rel="stylesheet" href="styles.css">
+<link rel="canonical" href="https://blog.davidlindelof.com/services.html">
 </head>
 
-<body class="nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+<body class="nav-fixed fullcontent quarto-light"><script id="quarto-html-before-body" type="application/javascript">
     const toggleBodyColorMode = (bsSheetEl) => {
       const mode = bsSheetEl.getAttribute("data-mode");
       const bodyEl = window.document.querySelector("body");
@@ -317,11 +253,11 @@ window.Quarto = {
   </script>
 
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+  <header id="quarto-header" class="headroom fixed-top">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="../../../../">
+    <a class="navbar-brand" href="./">
     <span class="navbar-title">David’s blog</span>
     </a>
   </div>
@@ -332,11 +268,11 @@ window.Quarto = {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../../../../services.html"> 
+    <a class="nav-link active" href="./services.html" aria-current="page"> 
 <span class="menu-text">Services</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../../../about.html"> 
+    <a class="nav-link" href="./about.html"> 
 <span class="menu-text">About</span></a>
   </li>  
   <li class="nav-item">
@@ -359,7 +295,7 @@ window.Quarto = {
 <span class="menu-text"></span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="../../../../index.xml"> <i class="bi bi-rss" role="img" aria-label="RSS">
+    <a class="nav-link" href="./index.xml"> <i class="bi bi-rss" role="img" aria-label="RSS">
 </i> 
 <span class="menu-text"></span></a>
   </li>  
@@ -372,113 +308,103 @@ window.Quarto = {
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
-  <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-body">
-      <h1 class="title">Controlling for covariates is not the same as “slicing”</h1>
-                                <div class="quarto-categories">
-                <div class="quarto-category">r</div>
-              </div>
-                  </div>
-  </div>
-    
-  
-  <div class="quarto-title-meta">
-
-      
-      <div>
-      <div class="quarto-title-meta-heading">Published</div>
-      <div class="quarto-title-meta-contents">
-        <p class="date">April 5, 2023</p>
-      </div>
-    </div>
-    
-      
-    </div>
-    
-  
-  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
-    </div>
+    
 <!-- main -->
-<main class="content quarto-banner-title-block" id="quarto-document-content">
+<main class="content" id="quarto-document-content">
 
 
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">R training &amp; statistical consulting</h1>
+</div>
+
+<div>
+  <div class="description">
+    Practical corporate R training and statistical consulting for startups, with David Lindelöf. Help with experiment design, data analysis, and reproducible work.
+  </div>
+</div>
 
 
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
 
 
-<p>To detect small effects in experiments you need to reduce the experimental noise as much as possible. You can do it by working with larger sample sizes, but that doesn’t scale well. A far better approach consists in controlling for covariates that are correlated with your response.</p>
-<p>I recently gave a talk at our company on the design of online experiments, and someone pointed out that our automated experiment analysis tool implemented “slicing”, that is, running separate analyses on subsets of the data. Wasn’t that the same thing as controlling for covariates?</p>
-<p><img src="images/no-no-no-no-margaret-thatcher.gif" class="img-fluid"></p>
-<p>Controlling for covariates means you include them in your statistical model. Running separate analyses means each of your sub-analyses has a smaller sample size; you may gain in precision because your response will be less variable in each subset, but you lose the benefits that come from using a larger sample size.</p>
-<p>Let’s illustrate this with a simulation. Let’s say we wish to measure the impact of some treatment, whose effect is about 10 times smaller than the standard deviation of the error term:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>mu <span class="ot">&lt;-</span> <span class="dv">10</span>  <span class="co"># some intercept</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>err <span class="ot">&lt;-</span> <span class="dv">1</span>  <span class="co"># standard deviation of the error</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>treat_effect <span class="ot">&lt;-</span> <span class="fl">0.1</span>  <span class="co"># the treatment effect to estimate</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Let’s say we have a total of 1000 units in each arm of this two-sample experiment, and that they belong to 4 different equal-sized groups labeled&nbsp;<code>A</code>,&nbsp;<code>B</code>,&nbsp;<code>C</code>, and&nbsp;<code>D</code>:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">1000</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>predictor <span class="ot">&lt;-</span> </span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">group =</span> <span class="fu">gl</span>(<span class="dv">4</span>, n <span class="sc">/</span> <span class="dv">4</span>, n <span class="sc">*</span> <span class="dv">2</span>, <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">'A'</span>, <span class="st">'B'</span>, <span class="st">'C'</span>, <span class="st">'D'</span>)),</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">treat =</span> <span class="fu">gl</span>(<span class="dv">2</span>, n, <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">'treat'</span>, <span class="st">'control'</span>)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Let’s simulate the response. For simplicity, let’s say that the group membership has an impact on the response equal to the treatment effect:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>group_effect <span class="ot">&lt;-</span> treat_effect</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>response <span class="ot">&lt;-</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">with</span>(</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    predictor,</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    mu <span class="sc">+</span> <span class="fu">as.integer</span>(group) <span class="sc">*</span> group_effect <span class="sc">+</span> (treat <span class="sc">==</span> <span class="st">'treat'</span>) <span class="sc">*</span> treat_effect <span class="sc">+</span> <span class="fu">rnorm</span>(n <span class="sc">*</span> <span class="dv">2</span>, <span class="at">sd =</span> err))</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">cbind</span>(predictor, response)</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(df)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code> group       treat         response     
- A:500   treat  :1000   Min.   : 6.368  
- B:500   control:1000   1st Qu.: 9.607  
- C:500                  Median :10.335  
- D:500                  Mean   :10.325  
-                        3rd Qu.:11.015  
-                        Max.   :13.757  </code></pre>
-<p>The following plot shows how the response is distributed in each group. This is one of those instances where you need statistical models to detect effects that are hard to see in a plot:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>ggplot2<span class="sc">::</span><span class="fu">ggplot</span>(df, ggplot2<span class="sc">::</span><span class="fu">aes</span>(<span class="at">x =</span> group, <span class="at">y =</span> response)) <span class="sc">+</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">geom_boxplot</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><img src="images/image-1-1024x731.png" class="img-fluid"></p>
-<p>Fitting the full model yields the following confidence intervals:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>mod_full <span class="ot">&lt;-</span> <span class="fu">lm</span>(response <span class="sc">~</span> group <span class="sc">+</span> treat, df)</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">confint</span>(mod_full)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code>                    2.5 %      97.5 %
-(Intercept)  10.122391874 10.32334506
-groupB        0.009174272  0.26336218
-groupC        0.106049411  0.36023732
-groupD        0.116794148  0.37098206
-treatcontrol -0.193199676 -0.01346168</code></pre>
-<p>All coefficients are estimated correctly, and the width of the confidence interval of the treatment effect is about 0.18. The treatment effect is statistically significant. Recall that the error is taken to have a standard deviation of 1, and that <span class="math inline">\(n=1000\)</span>&nbsp;per arm, so we would except the 95% confidence interval on the treatment effect to be&nbsp;<span class="math inline">\(2 \\times 1.96 \\times \\sigma \\times \\sqrt{2/n}\)</span>, or about 0.18. We are not very far off.</p>
-<p>What happens now if, instead of controlling for the group, we “sliced” the analysis, i.e.&nbsp;we fit four separate models, one per group? On one hand we will have a smaller error than if we fitted a global model that did not control for the group covariate; on the other hand we will have fewer observations per group, which will hurt our confidence intervals. Let’s check:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">confint</span>(<span class="fu">lm</span>(response <span class="sc">~</span> treat, df, <span class="at">subset =</span> group <span class="sc">==</span> <span class="st">'A'</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code>                  2.5 %      97.5 %
-(Intercept)  10.0482082 10.30293094
-treatcontrol -0.2967421  0.06349024</code></pre>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">confint</span>(<span class="fu">lm</span>(response <span class="sc">~</span> treat, df, <span class="at">subset =</span> group <span class="sc">==</span> <span class="st">'B'</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code>                  2.5 %      97.5 %
-(Intercept)  10.2324904 10.48601591
-treatcontrol -0.3688051 -0.01026586</code></pre>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">confint</span>(<span class="fu">lm</span>(response <span class="sc">~</span> treat, df, <span class="at">subset =</span> group <span class="sc">==</span> <span class="st">'C'</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code>                 2.5 %      97.5 %
-(Intercept)  10.303706 10.55182387
-treatcontrol -0.309723  0.04116836</code></pre>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">confint</span>(<span class="fu">lm</span>(response <span class="sc">~</span> treat, df, <span class="at">subset =</span> group <span class="sc">==</span> <span class="st">'D'</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code>                  2.5 %      97.5 %
-(Intercept)  10.4170354 10.66328177
-treatcontrol -0.3825046 -0.03425957</code></pre>
-<p>The estimates for the treatment effect remain unbiased, but now the confidence intervals are about 0.35—or&nbsp;<span class="math inline">\(2 \\times 1.96 \\times \\sqrt{2/(n/4)}\)</span>, which is what you would expect for a sample size that’s four times smaller. That’s twice as large as when fitting the whole data with a model that includes the group covariate. In fact most of the groups now have statistically unsignificant results.</p>
-<p>I’m all for automated experiment analysis tools; but when the goal is to detect small effects, I think there’s currently no substitute for a manual analysis by a trained statistician (which I am not). Increasing sample sizes can only take you so far; remember that the confidence intervals scale with&nbsp;<span class="math inline">\(\\sqrt{n}\)</span>&nbsp;only. It is almost always better to search for a set of covariates correlated with the response, and include them in your statistical model. And that’s what controlling for a covariate means.</p>
+</header>
 
 
+<p>I help teams use R and statistics to answer practical questions. I offer corporate R training and statistical consulting for startups, particularly when the work calls for both statistical reasoning and working software.</p>
+<p>My background spans physics, building science, data science, and software engineering. The approach is the same across these fields: start with a clear question, examine the assumptions, and make the analysis reproducible.</p>
+<section id="corporate-r-training" class="level2">
+<h2 class="anchored" data-anchor-id="corporate-r-training">Corporate R training</h2>
+<p>For teams getting started with R or looking to make their day-to-day analysis more reliable, I can help with:</p>
+<ul>
+<li><strong>Working with data:</strong> importing, cleaning, summarizing, and visualizing it.</li>
+<li><strong>Applied statistics:</strong> choosing methods, checking assumptions, and interpreting results.</li>
+<li><strong>Reproducible analysis:</strong> turning a collection of scripts into an analysis that colleagues can understand, rerun, and maintain.</li>
+</ul>
+<p>The starting point is what your team needs to do and what they already know. We can discuss the topics, exercises, and workshop format around that. The aim is for participants to understand the reasoning as well as the R code, and to apply both in their own work.</p>
+<p>For a sense of how I explain statistical ideas, see <a href="./posts/2026/08/making-sense-of-non-parametric-tests/">Making sense of non-parametric tests</a>.</p>
+</section>
+<section id="statistical-consulting" class="level2">
+<h2 class="anchored" data-anchor-id="statistical-consulting">Statistical consulting for startups</h2>
+<p>You may have data but still be unsure what it says about your product, or need to design an experiment before collecting any. I can help turn the decision you face into a question that an analysis can usefully answer.</p>
+<p>Examples of work we could tackle together include:</p>
+<ul>
+<li><strong>Experiment design:</strong> deciding what to measure, how to compare groups, and how much data an experiment needs.</li>
+<li><strong>Product and retention analysis:</strong> examining whether a change leads to lasting engagement, and choosing measures that reflect the question.</li>
+<li><strong>Statistical review:</strong> checking an analysis, its assumptions, and whether the conclusions follow from the evidence.</li>
+<li><strong>Implementation in R:</strong> building a reproducible analysis that your team can inspect and continue using.</li>
+</ul>
+<p>My article on <a href="./posts/2026/08/beyond-dau/">measuring retention with survival analysis</a> illustrates the kind of product question I enjoy working through.</p>
+</section>
+<section id="working-together" class="level2">
+<h2 class="anchored" data-anchor-id="working-together">Working together</h2>
+<p>Tell me what you are trying to achieve, where you are stuck, and any timing constraints. For training, it helps to know the size of the team and their experience with R. For consulting, a brief description of the decision and the available data is enough to start.</p>
+<p>We can then agree on a scope and useful deliverables, whether that is a workshop, a review of an existing analysis, or help working through a specific problem.</p>
+</section>
+<section id="contact" class="level2">
+<h2 class="anchored" data-anchor-id="contact">Get in touch</h2>
+<p>Use the form below or reach me on <a href="https://www.linkedin.com/in/lindelof/">LinkedIn</a>.</p>
+<form class="services-contact-form" action="https://formspree.io/f/xdekewdr" method="post" aria-describedby="contact-form-privacy">
+  <fieldset>
+    <legend>Enquire about training or consulting</legend>
+    <div class="mb-3">
+      <label for="contact-name" class="form-label">Name</label>
+      <input id="contact-name" name="name" type="text" autocomplete="name" class="form-control" required="" maxlength="200">
+    </div>
+    <div class="mb-3">
+      <label for="contact-email" class="form-label">Email</label>
+      <input id="contact-email" name="email" type="email" autocomplete="email" class="form-control" required="" maxlength="254">
+    </div>
+    <div class="mb-3">
+      <label for="contact-service" class="form-label">What would you like help with?</label>
+      <select id="contact-service" name="service" class="form-select" required="">
+        <option value="">Choose an option</option>
+        <option value="R training">R training</option>
+        <option value="Statistical consulting">Statistical consulting</option>
+        <option value="Both or unsure">Both / not sure yet</option>
+      </select>
+    </div>
+    <div class="mb-3">
+      <label for="contact-message" class="form-label">A little about your project or team</label>
+      <textarea id="contact-message" name="message" rows="5" class="form-control" required="" maxlength="5000" aria-describedby="contact-message-hint"></textarea>
+      <p id="contact-message-hint" class="form-text">A brief outline is enough. Please leave out confidential data.</p>
+    </div>
+    <p id="contact-form-privacy" class="form-text">Your details and message are sent through Formspree so I can respond to your enquiry. See <a href="https://formspree.io/legal/privacy-policy/">Formspree's privacy policy</a>.</p>
+    <button type="submit" class="btn btn-primary">Send enquiry</button>
+  </fieldset>
+</form>
+
+
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
