@@ -25,10 +25,10 @@ reproducible analyses, and lessons from building software and using data to
 answer real questions. Follow along if you value technically careful writing
 that connects theory with practice.
 
-I occasionally help teams with statistical analysis, experiment design, and
-practical R training---especially when a problem sits between statistical
-methodology and implementation. If you think I might be useful for a project or
-workshop, feel free to get in touch.
+I also help teams with statistical analysis, experiment design, and practical
+R training---especially when a problem sits between statistical methodology
+and implementation. See my [services](services.qmd) for more about consulting
+and workshops.
 
 The easiest way to reach me is through
 [LinkedIn](https://www.linkedin.com/in/lindelof/).

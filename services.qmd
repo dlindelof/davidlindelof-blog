@@ -1,0 +1,101 @@
+---
+title: "R training & statistical consulting"
+pagetitle: "R Training & Statistical Consulting — David Lindelöf"
+description: "Practical corporate R training and statistical consulting for startups, with David Lindelöf. Help with experiment design, data analysis, and reproducible work."
+toc: false
+---
+
+I help teams use R and statistics to answer practical questions. I offer
+corporate R training and statistical consulting for startups, particularly
+when the work calls for both statistical reasoning and working software.
+
+My background spans physics, building science, data science, and software
+engineering. The approach is the same across these fields: start with a clear
+question, examine the assumptions, and make the analysis reproducible.
+
+## Corporate R training {#corporate-r-training}
+
+For teams getting started with R or looking to make their day-to-day analysis
+more reliable, I can help with:
+
+- **Working with data:** importing, cleaning, summarizing, and visualizing it.
+- **Applied statistics:** choosing methods, checking assumptions, and
+  interpreting results.
+- **Reproducible analysis:** turning a collection of scripts into an analysis
+  that colleagues can understand, rerun, and maintain.
+
+The starting point is what your team needs to do and what they already know.
+We can discuss the topics, exercises, and workshop format around that. The aim
+is for participants to understand the reasoning as well as the R code, and to
+apply both in their own work.
+
+For a sense of how I explain statistical ideas, see
+[Making sense of non-parametric tests](posts/2026/08/making-sense-of-non-parametric-tests/index.qmd).
+
+## Statistical consulting for startups {#statistical-consulting}
+
+You may have data but still be unsure what it says about your product, or need
+to design an experiment before collecting any. I can help turn the decision
+you face into a question that an analysis can usefully answer.
+
+Examples of work we could tackle together include:
+
+- **Experiment design:** deciding what to measure, how to compare groups, and
+  how much data an experiment needs.
+- **Product and retention analysis:** examining whether a change leads to
+  lasting engagement, and choosing measures that reflect the question.
+- **Statistical review:** checking an analysis, its assumptions, and whether
+  the conclusions follow from the evidence.
+- **Implementation in R:** building a reproducible analysis that your team can
+  inspect and continue using.
+
+My article on
+[measuring retention with survival analysis](posts/2026/08/beyond-dau/index.qmd)
+illustrates the kind of product question I enjoy working through.
+
+## Working together
+
+Tell me what you are trying to achieve, where you are stuck, and any timing
+constraints. For training, it helps to know the size of the team and their
+experience with R. For consulting, a brief description of the decision and the
+available data is enough to start.
+
+We can then agree on a scope and useful deliverables, whether that is a
+workshop, a review of an existing analysis, or help working through a specific
+problem.
+
+## Get in touch {#contact}
+
+Use the form below or reach me on [LinkedIn](https://www.linkedin.com/in/lindelof/).
+
+```{=html}
+<form class="services-contact-form" action="https://formspree.io/f/xdekewdr" method="post" aria-describedby="contact-form-privacy">
+  <fieldset>
+    <legend>Enquire about training or consulting</legend>
+    <div class="mb-3">
+      <label for="contact-name" class="form-label">Name</label>
+      <input id="contact-name" name="name" type="text" autocomplete="name" class="form-control" required maxlength="200">
+    </div>
+    <div class="mb-3">
+      <label for="contact-email" class="form-label">Email</label>
+      <input id="contact-email" name="email" type="email" autocomplete="email" class="form-control" required maxlength="254">
+    </div>
+    <div class="mb-3">
+      <label for="contact-service" class="form-label">What would you like help with?</label>
+      <select id="contact-service" name="service" class="form-select" required>
+        <option value="">Choose an option</option>
+        <option value="R training">R training</option>
+        <option value="Statistical consulting">Statistical consulting</option>
+        <option value="Both or unsure">Both / not sure yet</option>
+      </select>
+    </div>
+    <div class="mb-3">
+      <label for="contact-message" class="form-label">A little about your project or team</label>
+      <textarea id="contact-message" name="message" rows="5" class="form-control" required maxlength="5000" aria-describedby="contact-message-hint"></textarea>
+      <p id="contact-message-hint" class="form-text">A brief outline is enough. Please leave out confidential data.</p>
+    </div>
+    <p id="contact-form-privacy" class="form-text">Your details and message are sent through Formspree so I can respond to your enquiry. See <a href="https://formspree.io/legal/privacy-policy/">Formspree's privacy policy</a>.</p>
+    <button type="submit" class="btn btn-primary">Send enquiry</button>
+  </fieldset>
+</form>
+```

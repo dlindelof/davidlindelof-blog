@@ -15,6 +15,8 @@ website:
   title: "David's blog"
   navbar:
     right:
+      - text: Services
+        href: services.qmd
       - about.qmd
       - text: R-bloggers
         href: https://www.r-bloggers.com/
