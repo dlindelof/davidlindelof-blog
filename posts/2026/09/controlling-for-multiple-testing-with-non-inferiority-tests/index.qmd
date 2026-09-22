@@ -1,5 +1,13 @@
 ---
 title: "Controlling for multiple testing with non-inferiority tests"
+description: "More metrics don’t always mean more false positives. Here’s why requiring every non-inferiority test to pass changes the multiple-testing problem."
+image: preview.png
+image-alt: "For independent metrics, the chance that any ordinary test rejects rises from 5% to 92% as the number of metrics grows from 1 to 50. The chance that every non-inferiority test passes falls from 5% to about 3%, with one metric at the harm threshold."
+image-width: "1200"
+image-height: "630"
+open-graph: true
+twitter-card:
+  card-style: summary_large_image
 date: 2026-09-11
 draft: true
 categories:
@@ -8,17 +16,20 @@ categories:
 
 We all know that multiple hypothesis testing suffers from an inflated false positive rate under the null hypothesis: if you have $N$ independent tests, each has a $\alpha$ probability of yielding a p-value $< \alpha$ , so the probability of *any* test yielding a statistically significant result is the complement of the probability of *no* test yielding a statistically significant result: $1 - (1 - \alpha)^N$ , which for small $\alpha$ is $\sim N\alpha$ . So far so good: $N$ independent tests multiply the false positive rate by about $N$, which is why the Bonferroni correction divides the desired significance level by $N$.
 
-But non-inferiority tests are... weird. You're testing to make sure that the difference $d$  between your proposed treatment's metric and your baseline's metric isn't worse than some (typically small) threshold $- \delta$ , assuming that you want your metric to be large. You'd *think* that the null hypothesis is that there's no difference between treatment and control. Wrong. With non-inferiority tests, the null hypothesis $H0$ is the opposite: $d \in ]-\infty; - \delta]$ . This means that you want the test to actually reject the null hypothesis. So your change will "pass" the test with probability $\alpha$[^1].
+But non-inferiority tests are... weird. You're testing to make sure that the difference $d$  between your proposed treatment's metric and your baseline's metric isn't worse than some (typically small) threshold $- \delta$ , assuming that you want your metric to be large. You'd *think* that the null hypothesis is that there's no difference between treatment and control. Wrong. With non-inferiority tests, the null hypothesis $H_0$ is the opposite: $d \in ]-\infty; - \delta]$ . This means that you want the test to actually reject the null hypothesis. So your change will "pass" the test with probability $\alpha$[^1].
 
 Now what if you have more than one metric? Intuition warns us that you need to watch out for some multiple testing. So let's work this out. Let's assume there is no correlation between the $N$ metrics. The happy path is when we reject the $N$ null hypotheses. The sad path is when *any* metric shows a regression but we reject its null hypothesis (as well as that for every other metric). What's the probability of that happening?
 
-In the worst case (when the regression is exactly $- \delta$), that probability is $\alpha$ times the probability of rejecting the null for each of the other metrics that didn't regress. We don't know what the latter is, because the probability of rejecting the null under the alternative hypothesis is the statistical power of the test and we didn't specify that. But it's a probability (and usually a large one) so let's assume it's slightly smaller than 1. It is *certainly* a far cry from $N$.
+In the worst case (when the regression is exactly $- \delta$), that probability is $\alpha$ times the probability of rejecting the null for each of the other metrics that didn't regress. We don't know what the latter is, because the probability of rejecting the null under the alternative hypothesis is the statistical power of the test and we didn't specify that. But it's a probability (and usually a large one) so let's assume it's slightly smaller than 1. And
+the product of $N-1$ probabilities that are all slightly smaller than 1 will *definitely*
+be far from $N$---let's say it's about 1, so the overall proability of rejecting the null
+is still $\alpha$, or slightly less than $\alpha$.
 
-Wait. What happened.
+Wait. What happened?
 
-We just computed the probability of giving the whole set of tests a "pass", conditional on *one* metric having regressed. No, you don't need to multiply again by the number of metrics because we said it's condition on *one* metric having regressed, so the only metric that "donates" to the overall probability is just that one. (That's unlike the multiple testing above where *every* metric "donates" to the overall probability of having at least *one* test rejecting the null.)
+We just computed the probability of giving the whole set of tests a "pass", conditional on *one* metric having regressed. No, you don't need to multiply again by the number of metrics because we said it's conditional on *one* metric having regressed, so the only metric that "donates" to the overall probability is just that one. (That's unlike the multiple testing above where *every* metric "donates" to the overall probability of having at least *one* test rejecting the null.)
 
-Nah you're not convinced yet. Let's simulate.
+Nah I can see you're not convinced yet. Let's simulate.
 
 We'll simulate independent normally distributed estimates of treatment effects,
 with known standard errors, so we can use one-sided z-tests. We'll use 200
@@ -109,6 +120,12 @@ The key is that our decision requires *every* metric to demonstrate
 non-inferiority. A rule that accepts the treatment when *any* metric passes
 would answer a different question.
 
+On a final note: I should mention that you still need to be careful with choosing your
+$\delta$ (the regression threshold) and your $\alpha$ (your false positive rate). In
+the case of traditional testing, $\alpha$ is how often you will wake up your engineering
+director at night because your testing rig has incorrectly flagged a regression. In
+non-inferiority testing, $\alpha$ is how often Reddit will make fun of your product
+because you shipped a bug.
 
 
 [^1]: That's not quite true because $H0$ is a composite hypothesis, not a simple one. The false positive rate is $\alpha$ only when $d = - \delta$.

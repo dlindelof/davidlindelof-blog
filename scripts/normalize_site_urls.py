@@ -3,14 +3,16 @@
 
 Quarto generates a trailing-slash canonical for a page whose output file is
 ``index.html``. Its sitemap and some generated links still use the physical
-filename, however. This post-render step removes that conflicting signal and
-then verifies the result.
+filename, however. After a full render, this step removes that conflicting
+signal and verifies the result. Preview and incremental renders may reuse
+stale output, so they defer this whole-site check until the next full render.
 """
 
 from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import sys
 from html.parser import HTMLParser
@@ -260,13 +262,29 @@ def parse_args() -> argparse.Namespace:
         help="validate the generated site without modifying it",
     )
     parser.add_argument("--config", type=Path, default=Path("_quarto.yml"))
-    parser.add_argument("--output-dir", type=Path, default=Path("_site"))
+    parser.add_argument(
+        "--output-dir",
+        type=Path,
+        default=Path(os.environ.get("QUARTO_PROJECT_OUTPUT_DIR", "_site")),
+    )
     parser.add_argument("--site-url", help="override website.site-url from the config")
     return parser.parse_args()
 
 
 def main() -> int:
     args = parse_args()
+    # Quarto sets RENDER_ALL only for a full render. Preview can render no
+    # pages at startup, leaving stale pages and sitemap entries in the output.
+    # Standalone invocations and explicit --check must still validate strictly.
+    # https://quarto.org/docs/projects/scripts.html#pre-and-post-render
+    if (
+        not args.check
+        and "QUARTO_PROJECT_OUTPUT_DIR" in os.environ
+        and os.environ.get("QUARTO_PROJECT_RENDER_ALL") != "1"
+    ):
+        print("Skipping whole-site URL normalization for preview/incremental render.")
+        return 0
+
     try:
         site_url = (args.site_url or read_site_url(args.config)).rstrip("/")
         counts = None if args.check else normalize_site(args.output_dir, site_url)
