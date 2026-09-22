@@ -20,7 +20,7 @@ We just computed the probability of giving the whole set of tests a "pass", cond
 
 Nah you're not convinced yet. Let's simulate.
 
-Let's simulate independent normally distributed estimates of treatment effects,
+We'll simulate independent normally distributed estimates of treatment effects,
 with known standard errors, so we can use one-sided z-tests. We'll use 200
 observations per arm and a population standard deviation of 1 in each arm.
 Rather than generate every observation, we can draw each estimated difference
@@ -92,8 +92,8 @@ pass its non-inferiority test. Requiring all of them to pass can only reduce
 the chance that the whole experiment passes. With independent metrics, that
 chance is exactly $\alpha\,\mathrm{power}^{N-1}$ in this scenario.
 
-Simulation illustrates the argument; the proof is even shorter. Whenever at
-least one metric has a true effect $d_j \leq -\delta$, passing every test
+In case you need a formal proof, it's actually quite trivial. When at
+least one metric has a true regression $d_j \leq -\delta$, passing every test
 requires incorrectly rejecting that metric's null hypothesis. Therefore,
 
 $$
