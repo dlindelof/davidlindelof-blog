@@ -151,11 +151,18 @@ ggplot(theory, aes(N, probability, colour = rule)) +
 ```
 
 The ordinary false positive rate climbs from 5% for one metric to about 92%
-for 50 metrics. The non-inferiority false pass rate starts at 5% and falls as
-we add metrics. Here, each metric with zero effect has about 99% power to
-pass its non-inferiority test. Requiring all of them to pass can only reduce
-the chance that the whole experiment passes. With independent metrics, that
-chance is exactly $\alpha\,\mathrm{power}^{N-1}$ in this scenario.
+for 50 metrics. The non-inferiority false pass rate also changes as we add
+metrics, but only modestly in absolute terms: it falls from 5% to about 3.2%,
+remaining close to $\alpha = 5\%$ over the range shown here. Each metric with
+zero effect has power $1 - \beta \approx 99\%$: the probability that its
+non-inferiority test correctly rejects the null and passes. Here, $\beta$
+is the probability of a Type II error---failing to demonstrate
+non-inferiority when the true effect is zero. Requiring all tests to pass
+can only reduce the chance that the whole experiment passes. With independent
+metrics, that chance is exactly $\alpha\,(1 - \beta)^{N-1}$ in this scenario.
+The decline is modest here because $1 - \beta$ is so close to 1; with lower
+power or many more metrics, the false pass rate could fall much further
+below $\alpha$.
 
 In case you need a formal proof, it's actually quite trivial. When at
 least one metric has a true regression $d_j \leq -\delta$, passing every test
