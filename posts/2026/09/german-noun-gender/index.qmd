@@ -435,6 +435,106 @@ be assigned to a single lemma after the spelling filters, rather than POS-tagged
 noun tokens, while the paper's CELEX token row is not subtitle-based. This
 comparison is therefore a diagnostic, not a replication.
 
+## Memorize the costly exceptions
+
+The rule is meant to help with unfamiliar nouns, not replace vocabulary a learner
+already knows. Otherwise a mistake on an extremely common word such as *Frau*,
+*Mädchen*, or *Junge* dominates the usage-weighted loss even though a student is
+unlikely to consult a gender rule for it.
+
+But there is no need to memorize a frequent noun if the compact tree already gets
+it right. In a preliminary pass, the tree correctly classified 51 of the original
+100 most frequent nouns. I keep its 49 mistakes and add *Telefon*, the next most
+frequent mistake, to obtain a round 50-word exception core. The list is frozen
+before refitting the tree below.
+
+This is now an exception list rather than a general beginner vocabulary. It is a
+better match for the practical task: spend memory on the frequent words for which
+the rule is unhelpful. Because the same dataset informed this design choice, the
+combined score remains an exploratory estimate; a separate subtitle corpus would
+be the right final test.
+
+```{r}
+#| label: core-vocabulary
+
+core_lemmas <- c(
+  "Angst", "Arbeit", "Art", "Auge", "Auto",
+  "Baby", "Bett", "Bild", "Blut", "Buch",
+  "Ding", "Ende", "Frau", "Freundin", "Gefühl",
+  "Geld", "Gesicht", "Glück", "Hand", "Haus",
+  "Herz", "Jahr", "Junge", "Kind", "Land",
+  "Mama", "Miss", "Musik", "Mutter", "Mädchen",
+  "Nachricht", "Nacht", "Name", "Nummer", "Polizei",
+  "Problem", "Schiff", "Schuld", "Schwester", "Spiel",
+  "Stadt", "Telefon", "Tochter", "Tür", "Uhr",
+  "Wasser", "Welt", "Wort", "Zeit", "Zimmer"
+)
+
+core_vocabulary_size <- length(core_lemmas)
+
+core_vocabulary <- noun_data |>
+  filter(lemma %in% core_lemmas)
+
+stopifnot(
+  core_vocabulary_size == 50L,
+  nrow(core_vocabulary) == core_vocabulary_size,
+  setequal(core_vocabulary$lemma, core_lemmas)
+)
+
+rule_noun_data <- noun_data |>
+  anti_join(core_vocabulary, by = "lemma")
+
+tibble(
+  vocabulary = c("Memorized exceptions", "Needs a rule"),
+  noun_lemmas = c(nrow(core_vocabulary), nrow(rule_noun_data)),
+  subtitle_tokens = c(
+    sum(core_vocabulary$frequency),
+    sum(rule_noun_data$frequency)
+  )
+) |>
+  mutate(
+    token_share = subtitle_tokens / sum(subtitle_tokens),
+    token_share = percent(token_share, accuracy = 0.1)
+  ) |>
+  kable(
+    col.names = c(
+      "Vocabulary", "Noun lemmas", "Subtitle tokens", "Token share"
+    ),
+    format.args = list(big.mark = ",")
+  )
+```
+
+All tree, baseline, and error scores below are conditional on a noun falling
+outside this core. Later I also report a combined learner-system score that treats
+the memorized exceptions as correct.
+
+Here is the complete exception core, alphabetized by noun. The article is part of
+each entry because that is what must be memorized.
+
+```{r}
+#| label: core-vocabulary-list
+
+core_rows_per_column <- ceiling(nrow(core_vocabulary) / 4)
+
+core_vocabulary |>
+  arrange(str_to_lower(lemma, locale = "de")) |>
+  transmute(
+    entry = paste(gender, lemma),
+    position = row_number(),
+    row = (position - 1L) %% core_rows_per_column + 1L,
+    column = paste0("column_", (position - 1L) %/% core_rows_per_column + 1L)
+  ) |>
+  select(row, column, entry) |>
+  pivot_wider(names_from = column, values_from = entry) |>
+  select(-row) |>
+  kable(
+    col.names = rep("Memorized exceptions", 4),
+    align = rep("l", 4)
+  )
+```
+
+[Download the printable exception core and decision tree (PDF)](/output/pdf/german-noun-gender-core-and-tree.pdf){.btn .btn-primary download="german-noun-gender-core-and-tree.pdf"}
+
 ## Turn spelling into learnable questions
 
 The spelling features are not arbitrary character fragments. They are a short,
@@ -466,11 +566,10 @@ count_written_syllables <- function(words) {
 make_spelling_features <- function(words) {
   lowercase_words <- str_to_lower(words, locale = "de")
 
-  features <- lapply(suffixes, function(suffix) {
-    str_ends(lowercase_words, fixed(suffix))
-  })
-
-  as_tibble(setNames(features, paste0("ends_", names(suffixes)))) |>
+  suffixes |>
+    map(~ str_ends(lowercase_words, fixed(.x))) |>
+    set_names(paste0("ends_", names(suffixes))) |>
+    as_tibble() |>
     mutate(
       starts_ge = str_starts(lowercase_words, fixed("ge")),
       starts_kn = str_starts(lowercase_words, fixed("kn")),
@@ -574,10 +673,10 @@ semantic_sets <- list(
   male = male_people
 )
 
-model_data <- noun_data |>
+model_data <- rule_noun_data |>
   bind_cols(
-    make_spelling_features(noun_data$lemma),
-    make_verbal_features(noun_data$lemma)
+    make_spelling_features(rule_noun_data$lemma),
+    make_verbal_features(rule_noun_data$lemma)
   ) |>
   mutate(
     meaning_calendar = lemma %in% semantic_sets$calendar,
@@ -733,12 +832,12 @@ baseline_scores |>
 
 ## Cross-validate trees of increasing size
 
-To prevent the displayed result from being an in-sample score, I assign each lemma
-to one of ten folds. Every candidate tree is trained on nine folds and predicts the
-tenth. The raw subtitle count is used as its case weight during training as well as
-in the primary evaluation metric.
+To prevent the displayed result from being an in-sample score, I assign each
+non-core lemma to one of ten folds. Every candidate tree is trained on nine folds
+and predicts the tenth. The raw subtitle count is used as its case weight during
+training as well as in the primary evaluation metric.
 
-Tree size is measured in terminal leaves. I allow at most eight leaves for the
+Tree size is measured in terminal leaves. I allow at most nine leaves for the
 eventual learner's tree, but fit budgets up to sixteen to show what extra complexity
 would buy.
 
@@ -860,7 +959,7 @@ ggplot(cv_summary, aes(leaf_budget, usage_weighted_accuracy)) +
   scale_y_continuous(labels = label_percent(accuracy = 0.1)) +
   labs(
     x = "Maximum number of leaves",
-    y = "Usage-weighted accuracy",
+    y = "Usage-weighted accuracy outside exception core",
     caption = "Dotted: one-rule baseline. Dashed: 96% rich-model reference."
   )
 ```
@@ -884,17 +983,16 @@ cv_summary |>
 
 ## Choose and draw one learnable tree
 
-I define “learnable” before looking at the answer: no more than eight leaves and
-no exact-word questions. Among
-those candidates I choose the smallest tree within 0.25 percentage points of the
-best usage-weighted score. The tolerance prevents a barely measurable gain from
-doubling the number of rules.
+I define “learnable” before looking at the answer: no more than nine leaves and
+no exact-word questions. Among those candidates I choose the smallest tree within
+0.25 percentage points of the best usage-weighted score. The tolerance prevents
+a barely measurable gain from adding several more rules.
 
 ```{r}
 #| label: choose-tree
 
 learnable_candidates <- cv_summary |>
-  filter(leaf_budget <= 8)
+  filter(leaf_budget <= 9)
 
 best_learnable_accuracy <- max(
   learnable_candidates$usage_weighted_accuracy
@@ -908,58 +1006,361 @@ chosen_budget <- learnable_candidates |>
   slice_min(leaf_budget, n = 1, with_ties = FALSE) |>
   pull(leaf_budget)
 
-final_tree <- grow_tree(model_data) |>
+full_tree <- grow_tree(model_data)
+final_tree <- full_tree |>
   prune_to_budget(chosen_budget)
 
-chosen_scores <- cv_summary |>
+chosen_tree_size <- cv_summary |>
   filter(leaf_budget == chosen_budget) |>
-  select(leaf_budget, actual_leaves, type_accuracy, usage_weighted_accuracy)
+  transmute(
+    leaf_budget,
+    median_cv_leaves = actual_leaves,
+    final_tree_leaves = sum(final_tree$frame$var == "<leaf>")
+  )
+
+chosen_tree_size |>
+  kable(
+    col.names = c(
+      "Leaf budget", "Median CV leaves", "Final tree leaves"
+    )
+  )
+
+chosen_predictions <- cv_predictions |>
+  filter(leaf_budget == chosen_budget)
+
+chosen_scores <- tibble(
+  evaluation = c(
+    "Tree on nouns outside the exception core",
+    "Exception core memorized plus tree"
+  ),
+  type_accuracy = c(
+    mean(chosen_predictions$truth == chosen_predictions$prediction),
+    (
+      nrow(core_vocabulary) +
+        sum(chosen_predictions$truth == chosen_predictions$prediction)
+    ) / nrow(noun_data)
+  ),
+  usage_weighted_accuracy = c(
+    weighted_accuracy(
+      chosen_predictions$truth,
+      chosen_predictions$prediction,
+      chosen_predictions$frequency
+    ),
+    (
+      sum(core_vocabulary$frequency) +
+        sum(
+          chosen_predictions$frequency *
+            (chosen_predictions$truth == chosen_predictions$prediction)
+        )
+    ) / sum(noun_data$frequency)
+  )
+)
 
 chosen_scores |>
   mutate(across(ends_with("accuracy"), function(x) percent(x, accuracy = 0.1))) |>
-  kable()
+  kable(
+    col.names = c(
+      "Evaluation", "Type accuracy", "Usage-weighted accuracy"
+    )
+  )
 ```
+
+The leaf budget is a ceiling, not a promise. Cost-complexity pruning offers only
+the subtree sizes on its pruning path, so the tree fitted to all the data can
+have fewer leaves than the selected maximum. The table distinguishes its actual
+size from the median size seen in cross-validation.
 
 ```{r}
 #| label: final-tree
-#| fig-cap: "The final frequency-weighted decision tree. Each internal label is a yes/no question and each leaf is an article prediction."
-#| fig-width: 10
-#| fig-height: 6
+#| fig-cap: "The final frequency-weighted decision tree for nouns outside the exception core. Consecutive questions with the same outcome are combined into one OR rule."
+#| fig-width: 9
+#| fig-height: 5.5
 
-plot(
-  final_tree,
-  uniform = TRUE,
-  branch = 0.5,
-  compress = FALSE,
-  margin = 0.08
+question_by_feature <- c(
+  setNames(
+    sprintf("Ends in -%s?", unname(suffixes)),
+    paste0("ends_", names(suffixes))
+  ),
+  starts_ge = "Starts with ge-?",
+  starts_kn = "Starts with kn-?",
+  starts_dr_or_tr = "Starts with dr- or tr-?",
+  one_written_syllable = "One written syllable?",
+  ends_ft_or_xt = "Ends in -ft or -xt?",
+  ends_et_or_ett = "Ends in -et or -ett?",
+  is_infinitive = "Also a verb infinitive?",
+  has_verbal_base = "Has a verbal base?",
+  meaning_calendar = "A day, month, or season?",
+  meaning_direction = "A compass direction?",
+  meaning_colour = "A colour?",
+  meaning_female = "A female person?",
+  meaning_male = "A male person?"
 )
-text(final_tree, use.n = FALSE, all = FALSE, pretty = 0, cex = 0.9)
+
+tree_frame <- final_tree$frame
+article_levels <- levels(model_data$gender)
+
+is_leaf <- function(node) {
+  tree_frame[as.character(node), "var"] == "<leaf>"
+}
+
+node_article <- function(node) {
+  article_levels[tree_frame[as.character(node), "yval"]]
+}
+
+# Logical predictors are stored by rpart as 0/1 numeric splits. The sign of
+# ncat records whether TRUE goes left or right in the fitted tree.
+internal_nodes <- row.names(tree_frame)[tree_frame$var != "<leaf>"]
+split_direction <- setNames(
+  sign(final_tree$splits[, "ncat"]),
+  internal_nodes
+)
+
+stopifnot(all(final_tree$splits[, "index"] == 0.5))
+
+decision_rows <- list()
+current_node <- 1L
+step <- 1L
+
+repeat {
+  feature <- tree_frame[as.character(current_node), "var"]
+  left_node <- current_node * 2L
+  right_node <- left_node + 1L
+  true_goes_left <- split_direction[as.character(current_node)] > 0
+  true_node <- if (true_goes_left) left_node else right_node
+  false_node <- if (true_goes_left) right_node else left_node
+
+  # The selected pruned tree is a decision list: TRUE predicts immediately,
+  # while FALSE either asks the next question or reaches the default leaf.
+  stopifnot(!is_leaf(current_node), is_leaf(true_node))
+
+  decision_rows[[step]] <- tibble(
+    step,
+    feature,
+    question = unname(question_by_feature[feature]),
+    yes_article = node_article(true_node),
+    no_article = if (is_leaf(false_node)) node_article(false_node) else NA_character_
+  )
+
+  if (is_leaf(false_node)) {
+    break
+  }
+
+  current_node <- false_node
+  step <- step + 1L
+}
+
+raw_decision_list <- bind_rows(decision_rows)
+
+collapse_with_or <- function(values) {
+  if (length(values) == 1L) {
+    return(values)
+  }
+
+  if (length(values) == 2L) {
+    return(paste(values, collapse = " or "))
+  }
+
+  paste0(paste(head(values, -1L), collapse = ", "), ", or ", tail(values, 1L))
+}
+
+ending_by_feature <- c(
+  setNames(paste0("-", unname(suffixes)), paste0("ends_", names(suffixes))),
+  ends_ft_or_xt = "-ft/-xt",
+  ends_et_or_ett = "-et/-ett"
+)
+
+combine_questions <- function(features, questions) {
+  if (all(features %in% names(ending_by_feature))) {
+    endings <- unname(ending_by_feature[features])
+    return(paste0("Ends in ", collapse_with_or(endings), "?"))
+  }
+
+  if (length(questions) == 1L) {
+    return(questions)
+  }
+
+  collapse_with_or(questions)
+}
+
+# Consecutive questions with the same Yes outcome are logically one OR rule.
+# Collapsing them makes the learner-facing diagram much less repetitive while
+# preserving the fitted tree's predictions.
+decision_list <- raw_decision_list |>
+  mutate(
+    display_group = cumsum(
+      yes_article != lag(yes_article, default = first(yes_article))
+    )
+  ) |>
+  group_by(display_group) |>
+  summarise(
+    step = min(step),
+    question = combine_questions(feature, question),
+    feature = paste(feature, collapse = "|"),
+    yes_article = first(yes_article),
+    no_article = if (any(!is.na(no_article))) {
+      first(na.omit(no_article))
+    } else {
+      NA_character_
+    },
+    .groups = "drop"
+  ) |>
+  mutate(
+    x = 0,
+    y = rev(seq_len(n()))
+  )
+
+yes_leaves <- decision_list |>
+  transmute(x = 2.35, y, article = yes_article)
+
+default_leaf <- decision_list |>
+  filter(!is.na(no_article)) |>
+  transmute(x = 0, y = 0, article = no_article)
+
+vertical_branches <- decision_list |>
+  transmute(
+    x = 0,
+    xend = 0,
+    y = y - 0.27,
+    yend = y - 0.73,
+    label_x = 0.18,
+    label_y = y - 0.5
+  )
+
+article_colours <- c(
+  der = "#2563EB",
+  die = "#DB2777",
+  das = "#D97706"
+)
+
+ggplot() +
+  geom_segment(
+    data = decision_list,
+    aes(x = 0.78, xend = 1.88, y = y, yend = y),
+    colour = "#64748B",
+    linewidth = 0.7,
+    arrow = grid::arrow(length = grid::unit(0.09, "inches"), type = "closed")
+  ) +
+  geom_segment(
+    data = vertical_branches,
+    aes(x = x, xend = xend, y = y, yend = yend),
+    colour = "#64748B",
+    linewidth = 0.7,
+    arrow = grid::arrow(length = grid::unit(0.09, "inches"), type = "closed")
+  ) +
+  geom_text(
+    data = decision_list,
+    aes(x = 1.32, y = y + 0.16, label = "Yes"),
+    colour = "#475569",
+    size = 3.5
+  ) +
+  geom_text(
+    data = vertical_branches,
+    aes(x = label_x, y = label_y, label = "No"),
+    hjust = 0,
+    colour = "#475569",
+    size = 3.5
+  ) +
+  geom_label(
+    data = decision_list,
+    aes(x = x, y = y, label = question),
+    fill = "#F8F4EA",
+    colour = "#243447",
+    linewidth = 0.35,
+    label.padding = grid::unit(0.28, "lines"),
+    label.r = grid::unit(0.18, "lines"),
+    fontface = "bold",
+    size = 4.1
+  ) +
+  geom_label(
+    data = bind_rows(yes_leaves, default_leaf),
+    aes(x = x, y = y, label = article, fill = article),
+    colour = "white",
+    linewidth = 0,
+    label.padding = grid::unit(0.38, "lines"),
+    label.r = grid::unit(0.6, "lines"),
+    fontface = "bold",
+    size = 4.5
+  ) +
+  annotate(
+    "text",
+    x = -0.34,
+    y = 0,
+    label = "otherwise",
+    hjust = 1,
+    colour = "#64748B",
+    size = 3.4
+  ) +
+  scale_fill_manual(values = article_colours, guide = "none") +
+  coord_cartesian(
+    xlim = c(-1.1, 2.9),
+    ylim = c(-0.5, nrow(decision_list) + 0.55),
+    clip = "off"
+  ) +
+  labs(
+    title = "A compact German noun-gender decision list",
+    subtitle = "For a noun outside the exception core, follow No downward"
+  ) +
+  theme_void(base_size = 13) +
+  theme(
+    plot.title = element_text(face = "bold", colour = "#172033", size = 17),
+    plot.subtitle = element_text(colour = "#64748B", margin = margin(b = 12)),
+    plot.margin = margin(12, 24, 12, 24)
+  )
 ```
 
 Feature names translate directly into questions: `ends_chen` means “does the word
 end in *-chen*?”, and `meaning_calendar` means “is it a weekday, month, or
 canonical season?” Likewise, `is_infinitive` asks whether the spelling occurs in
-the verb lexicon, and `one_written_syllable` uses the deliberately simple vowel-
-group approximation described above. The resulting tree is the object to critique
-as a learner: are its rules memorable, and is the accuracy gain worth each
-additional branch?
+the verb lexicon, and `one_written_syllable` uses the deliberately simple
+vowel-group approximation described above. The resulting tree is the object to
+critique as a learner: are its rules memorable, and is the accuracy gain worth
+each additional branch?
 
-The calendar feature is present in the dataset but does not appear in this small
-tree. That is informative rather than a bug: all of the annotated calendar names
-are masculine, and the default prediction on their spelling branch is already
-*der*. A true linguistic generalization need not buy predictive accuracy. The
-male- and female-person features do enter the fitted tree because they protect or
-correct exceptions that suffixes alone would mishandle.
+One semantic feature now survives pruning: asking whether the noun denotes a male
+person. The other semantic sets do not buy as much predictive accuracy as the
+suffixes. A true linguistic generalization need not earn a place in a severely
+pruned predictive tree.
 
-None of the nine newly added tendencies enters this particular small tree either.
-Their individual hit rates remain useful learner-facing evidence, but under the
-eight-leaf budget the older, broader suffix and person rules buy more accuracy.
+Of the nine newly added tendencies, the *-ft/-xt* rule does enter the final tree.
+The others remain useful learner-facing evidence in the individual-rule table,
+but do not clear the accuracy threshold under the nine-leaf ceiling.
+
+The absence of a *das* leaf is not a plotting error. Under an objective that
+maximizes overall usage-weighted accuracy, the limited leaves are more profitably
+spent identifying feminine endings and using *der* as the fallback. That is an
+important failure mode of aggregate accuracy: if minimum performance on every
+gender matters, the fitting objective would need class weights or an explicit
+per-gender recall constraint.
+
+### Why does the tree have only one continuing branch?
+
+This shape is usually called a **decision list**: both outcomes exist at every
+split, but one outcome receives an article immediately and only the other needs
+another question. The learner-facing diagram combines consecutive questions that
+have the same outcome. Read from the root, it says: endings in *-e* or *-ung* give
+*die*; otherwise a male person gives *der*; otherwise the endings *-ion*, *-heit*,
+*-keit*, *-ft*, and *-xt* give *die*; and the fallback is *der*.
+
+`rpart` does not try to make a visually balanced tree. At each node it greedily
+chooses the split with the greatest information gain. Because most predictors
+here are sparse yes/no rules, a useful split tends to peel off a small,
+high-purity group while leaving a large mixed group for the next rule. The
+frequency weights make that behaviour stronger when the peeled-off nouns are
+common. Splitting the already pure side would buy little accuracy and can also
+run into the `minsplit` and `minbucket` requirements.
+
+The larger `full_tree` shows that this is not a plotting constraint: before
+pruning it contains nodes whose two outcomes both lead to further questions.
+Cross-validation does not find their improvement large enough for the learner's
+complexity budget, so cost-complexity pruning collapses them into leaves and
+leaves the displayed decision list.
 
 ## Inspect the costly mistakes
 
 Accuracy hides which errors matter. The following table uses out-of-fold
 predictions and sorts mistakes by subtitle frequency, so it is also a practical
-study list for exceptions to memorize.
+study list for further exceptions. By construction, memorized words such
+as *Frau*, *Mädchen*, and *Junge* do not appear here.
 
 ```{r}
 #| label: errors
@@ -988,9 +1389,9 @@ spontaneous German conversation.
 The split is also random by lemma. A stricter follow-up would group morphologically
 related nouns or shared compound heads in the same fold, preventing near-duplicate
 formations from appearing in both training and test data. Other useful sensitivity
-checks would replace raw frequency by `log1p(frequency)`, remove the most common
-nouns a learner probably knows already, and expand the semantic annotations with a
-real ontology.
+checks would replace raw frequency by `log1p(frequency)`, vary the 50-word
+exception budget or replace it with a CEFR vocabulary list, and expand the
+semantic annotations with a real ontology.
 
 Most importantly, 96% is a benchmark for a much richer statistical model. The
 point of this post is to measure how much accuracy can be retained after imposing
