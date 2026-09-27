@@ -786,35 +786,35 @@
   {
     "objectID": "services.html",
     "href": "services.html",
-    "title": "R training & statistical consulting",
+    "title": "R training & statistical consulting in Switzerland",
     "section": "",
-    "text": "I help teams use R and statistics to answer practical questions. I offer corporate R training and statistical consulting for startups, particularly when the work calls for both statistical reasoning and working software.\nMy background spans physics, building science, data science, and software engineering. The approach is the same across these fields: start with a clear question, examine the assumptions, and make the analysis reproducible."
+    "text": "Based in Zurich, I help startups, research groups, and technical teams across Switzerland use R, Python, and statistics to answer practical questions. I work particularly with organizations in the Zurich area and the Lake Geneva region—including Lausanne and Geneva—both remotely and on site.\nMy background spans physics, building science, data science, and software engineering. The approach is the same across these fields: start with a clear question, examine the assumptions, and make the analysis reproducible."
   },
   {
     "objectID": "services.html#corporate-r-training",
     "href": "services.html#corporate-r-training",
-    "title": "R training & statistical consulting",
+    "title": "R training & statistical consulting in Switzerland",
     "section": "Corporate R training",
     "text": "Corporate R training\nFor teams getting started with R or looking to make their day-to-day analysis more reliable, I can help with:\n\nWorking with data: importing, cleaning, summarizing, and visualizing it.\nApplied statistics: choosing methods, checking assumptions, and interpreting results.\nReproducible analysis: turning a collection of scripts into an analysis that colleagues can understand, rerun, and maintain.\n\nThe starting point is what your team needs to do and what they already know. We can discuss the topics, exercises, and workshop format around that. The aim is for participants to understand the reasoning as well as the R code, and to apply both in their own work.\nFor a sense of how I explain statistical ideas, see Making sense of non-parametric tests."
   },
   {
     "objectID": "services.html#statistical-consulting",
     "href": "services.html#statistical-consulting",
-    "title": "R training & statistical consulting",
+    "title": "R training & statistical consulting in Switzerland",
     "section": "Statistical consulting for startups",
     "text": "Statistical consulting for startups\nYou may have data but still be unsure what it says about your product, or need to design an experiment before collecting any. I can help turn the decision you face into a question that an analysis can usefully answer.\nExamples of work we could tackle together include:\n\nExperiment design: deciding what to measure, how to compare groups, and how much data an experiment needs.\nProduct and retention analysis: examining whether a change leads to lasting engagement, and choosing measures that reflect the question.\nStatistical review: checking an analysis, its assumptions, and whether the conclusions follow from the evidence.\nImplementation in R: building a reproducible analysis that your team can inspect and continue using.\n\nMy article on measuring retention with survival analysis illustrates the kind of product question I enjoy working through."
   },
   {
     "objectID": "services.html#working-together",
     "href": "services.html#working-together",
-    "title": "R training & statistical consulting",
+    "title": "R training & statistical consulting in Switzerland",
     "section": "Working together",
-    "text": "Working together\nTell me what you are trying to achieve, where you are stuck, and any timing constraints. For training, it helps to know the size of the team and their experience with R. For consulting, a brief description of the decision and the available data is enough to start.\nWe can then agree on a scope and useful deliverables, whether that is a workshop, a review of an existing analysis, or help working through a specific problem."
+    "text": "Working together\nTell me what you are trying to achieve, where you are stuck, and any timing constraints. For training, it helps to know the size of the team and their experience with R. For consulting, a brief description of the decision and the available data is enough to start.\nWe can then agree on a scope and useful deliverables, whether that is a workshop, a review of an existing analysis, or help working through a specific problem.\nMost consulting work can be done remotely. Workshops and selected working sessions can also be delivered on site in Switzerland, particularly around Zurich, Lausanne, and Geneva."
   },
   {
     "objectID": "services.html#contact",
     "href": "services.html#contact",
-    "title": "R training & statistical consulting",
+    "title": "R training & statistical consulting in Switzerland",
     "section": "Get in touch",
     "text": "Get in touch\nUse the form below or reach me on LinkedIn.\n\n  \n    Enquire about training or consulting\n    \n      Name\n      \n    \n    \n      Email\n      \n    \n    \n      What would you like help with?\n      \n        Choose an option\n        R training\n        Statistical consulting\n        Both / not sure yet\n      \n    \n    \n      A little about your project or team\n      \n      A brief outline is enough. Please leave out confidential data.\n    \n    Your details and message are sent through Formspree so I can respond to your enquiry. See Formspree's privacy policy.\n    Send enquiry"
   },
