@@ -1,13 +1,14 @@
 ---
-title: "R training & statistical consulting"
-pagetitle: "R Training & Statistical Consulting — David Lindelöf"
-description: "Practical corporate R training and statistical consulting for startups, with David Lindelöf. Help with experiment design, data analysis, and reproducible work."
+title: "R training & statistical consulting in Switzerland"
+pagetitle: "R Training & Statistical Consulting in Switzerland — David Lindelöf"
+description: "Corporate R training and statistical consulting for startups and research teams in Switzerland, including Zurich, Lausanne, and Geneva. Remote and on-site engagements."
 toc: false
 ---
 
-I help teams use R and statistics to answer practical questions. I offer
-corporate R training and statistical consulting for startups, particularly
-when the work calls for both statistical reasoning and working software.
+Based in Zurich, I help startups, research groups, and technical teams across
+Switzerland use R, Python, and statistics to answer practical questions. I work
+particularly with organizations in the Zurich area and the Lake Geneva
+region---including Lausanne and Geneva---both remotely and on site.
 
 My background spans physics, building science, data science, and software
 engineering. The approach is the same across these fields: start with a clear
@@ -63,6 +64,10 @@ available data is enough to start.
 We can then agree on a scope and useful deliverables, whether that is a
 workshop, a review of an existing analysis, or help working through a specific
 problem.
+
+Most consulting work can be done remotely. Workshops and selected working
+sessions can also be delivered on site in Switzerland, particularly around
+Zurich, Lausanne, and Geneva.
 
 ## Get in touch {#contact}
 
