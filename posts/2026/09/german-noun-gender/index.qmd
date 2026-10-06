@@ -1,10 +1,17 @@
 ---
 title: "How many rules does it take to guess a German noun's gender?"
+description: "A compact decision tree predicts German noun gender from spelling, semantics, and subtitle frequencies—while staying small enough to memorize."
+image: preview.png
+image-alt: "A decision tree asks whether a noun ends in -e or -ung, then -chen, and leads to die, das, or der."
+image-width: "1732"
+image-height: "908"
+open-graph: true
+twitter-card:
+  card-style: summary_large_image
 date: 2026-09-04
 categories:
   - r
   - machine learning
-  - german
 execute:
   warning: false
   message: false
