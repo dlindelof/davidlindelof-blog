@@ -10,42 +10,47 @@ execute:
   message: false
 ---
 
-It's often said that accuracy is a poor performance metric for a given classifier, especially in the
-presence of class imbalance: constantly predicting the most prevalent class will result in an accuracy
-equal to that prevalence.
+Accuracy is often said to be a poor metric for evaluating a classifier, especially
+in the presence of class imbalance: always predicting the most prevalent class
+will achieve accuracy equal to that class's prevalence.
 
-It's also true that in many instances, the cost of a false positive is different from the cost
-of a false negative, for example in medical diagnoses.
+In many applications, the cost of a false positive also differs from that of a
+false negative; medical diagnosis is the standard example.
 
-But there's a classification problem that doesn't suffer from severe class imbalance and where the cost
-of misclassification is about the same. It's a three-class classification problem, one that has haunted
-me since my high school days. I'm talking, of course, of using the right gender for German nouns.
+But there is a classification problem without severe class imbalance and with
+roughly symmetric errors. It has three classes, and it has haunted me since high
+school. I am talking, of course, about using the right gender for German nouns.
 
-I gave up German in my final years of high school and have relied, since then, on a heuristic: unless
-I'm *sure* the noun is neuter, if it ends with -e it's feminine, otherwise it's masculine. Let's see if we can
-come up with a better heuristic.
+I gave up German in my final years of high school. Since then, I have relied on
+one heuristic: unless I am *sure* a noun is neuter, an ending in *-e* makes it
+feminine; otherwise, it is masculine. Let us see whether we can do better.
 
-tl;dr is that we're going to end up with a list of 50 words whose gender you need to memorize; for the rest,
-use the decision tree that you can get here. This will get you to 80% accuracy in normal speech.
+In short, we will end up with 50 words whose gender must be memorized and a
+decision tree for everything else. Together they achieve about 80% usage-weighted
+accuracy on subtitle data, our proxy for everyday speech.
 
 [Download the printable exception core and decision tree (PDF)](/output/pdf/german-noun-gender-core-and-tree.pdf){.btn .btn-primary download="german-noun-gender-core-and-tree.pdf"}
 
-Before you ask: yes, this is a serious inquiry. And yes, this has been tackled
-before.  [Fedden et al.](https://openresearch.surrey.ac.uk/esploro/outputs/journalArticle/Typology-meets-statistical-modeling-The-German/991154296202346)
-claim that a gradient-boosted decision tree can achieve 96% accuracy, using a
-complex set of phonological, semantic, derivational, and inflectional
-information. But we're never going to keep a gradient-boosted decision tree in our heads; instead, here we're
-going to see if we can develop a simple tree and how far it gets us in terms of accuracy.
+Before you ask: yes, this is a serious inquiry. And yes, it has been tackled
+before. [Fedden et al.](https://openresearch.surrey.ac.uk/esploro/outputs/journalArticle/Typology-meets-statistical-modeling-The-German/991154296202346)
+report about 96% accuracy from gradient-boosted decision trees using rich
+phonological, semantic, derivational, and inflectional information. We are never
+going to keep such a model in our heads, though. Instead, I want to find out how
+far one small tree can take us.
 
-We're going to need two datasets:
+The analysis needs two core datasets:
 
-- a German dictionary
-- a frequency distribution
+- a German dictionary;
+- a frequency distribution.
 
-We need a frequency distribution because it would not do to assess the accuracy against the dictionary itself.
-We want to know how many words we get wrong in normal speech, not while reciting the dictionary. So how do we
-get a frequency distribution for normal speech? Turns out there's a dataset giving the frequency distribution of
-German nouns from movie subtitles. We're going to use this as an approximation for "normal speech".
+Evaluating uniformly against the dictionary would answer the wrong question. We
+want to know how often the rule fails in practical use, not while reciting the
+dictionary. For that, I use word frequencies from German movie and television
+subtitles as an approximation to everyday speech.
+
+Two candidate rules also need a verb lexicon. For those I use the infinitive
+column from the Wiktionary-derived
+[german-verbs-database](https://github.com/viorelsfetea/german-verbs-database).
 
 For a fresh R installation, these are the required packages:
 
@@ -80,14 +85,17 @@ theme_set(theme_minimal(base_size = 13))
 The nouns come from the
 [german-nouns](https://github.com/gambolputty/german-nouns) export of German
 Wiktionary. Its CSV contains roughly 100,000 entries, including gender and
-inflected forms, and is published under CC BY-SA 4.0.
+inflected forms, and is published under
+[CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.en).
 
 The frequency distribution comes from Matthias Buchmeier's [German subtitle
 frequency list](https://en.wiktionary.org/wiki/User:Matthias_Buchmeier#German_frequency_list).
 It was made from 25,399,099 words of movie and television subtitles. The list is
-split into pages of 5,000 entries; we'll use the first 10 pages, or the most common 50,000 words.
+split into pages of 5,000 entries; I use the first ten pages, covering the 50,000
+most common words.
 
-The following chunk downloads about 21 MB in total and caches it.
+The following chunk downloads about 21 MB in total and caches the files in the
+project's `data` directory.
 
 ```{r}
 #| label: download-data
@@ -211,18 +219,19 @@ noun_forms <- nouns_raw |>
   ungroup()
 ```
 
-The dictionary also includes case forms (like dative or plural). I reshape
-those columns into a surface-form-to-lemma map. Exact headwords take precedence;
+The dictionary also includes inflected forms, such as dative singulars and
+plurals. I reshape those columns into a surface-form-to-lemma map. Exact
+headwords take precedence;
 other spellings are discarded when they point to more than one lemma. Every
 retained form is therefore assigned to one canonical dictionary lemma;
 occurrences of *Häuser*, for example, contribute to *Haus*. Plural-only nouns
 remain under the lemma supplied by the dictionary.
 
-The subtitle list has no part-of-speech tags, which means that just because a word
-is capitalized doesn't mean it has to be a noun. For example, *Ich* at the start of a sentence
-shouldn't be counted. A
-conservative heuristic is to keep a candidate only when its capitalized count is
-at least five times its lowercase count (or the lowercase spelling is absent).
+The subtitle list has no part-of-speech tags, so a capitalized word is not
+necessarily a noun. For example, *Ich* at the start of a sentence should not be
+counted. A conservative heuristic is to keep a candidate only when its
+capitalized count is at least five times its lowercase count (or the lowercase
+spelling is absent).
 That retains *Frau* and *Mädchen*, whose lowercase occurrences are mostly noise,
 while rejecting *Ich*, *Du*, and *Ist*. It also loses genuinely ambiguous nouns
 such as *Leben*, but avoids assigning millions of pronoun and verb tokens to rare
@@ -232,9 +241,9 @@ There is one residual problem that a context-free frequency list cannot solve:
 some dictionary headwords are also overwhelmingly used as interjections or
 function words in subtitles. I exclude a short, explicit list of those
 homographs. This is intentionally auditable rather than a claim that *Oh* or
-*Aber* can never be used nominally. A stronger follow-up would estimate noun use
-from POS-tagged subtitle sentences instead of assigning every occurrence of a
-spelling to its dictionary noun entry.
+*Aber* can never be used nominally. A stronger follow-up would estimate nominal
+use from POS-tagged subtitle sentences instead of assigning every occurrence of
+a spelling to its dictionary noun entry.
 
 ```{r}
 #| label: clean-frequencies
@@ -345,8 +354,8 @@ noun_frequency |>
   )
 ```
 
-We're going to report two scores. **Type accuracy** is the accuracy against the dictionary, where
-every entry gets one vote. **Usage-weighted accuracy** gives a noun with frequency $f_i$ exactly
+I report two scores. **Type accuracy** gives every dictionary entry one vote.
+**Usage-weighted accuracy** gives a noun with subtitle frequency $f_i$ exactly
 $f_i$ votes:
 
 $$
@@ -363,7 +372,8 @@ frequent words cannot silently define success.
 Before fitting anything, it is useful to ask what the class balance looks like.
 Fedden et al. report two relevant reference distributions. Their cleaned database
 of 30,576 noun types is 36% masculine, 45% feminine, and 19% neuter (their Table
-1). They also reproduce CELEX token counts of 35%, 42%, and 23%, respectively
+1). They also reproduce [CELEX](https://grammis.ids-mannheim.de/korpusgrammatik/4703)
+token counts of 35%, 42%, and 23%, respectively
 (their Table 3).
 
 First, here is the comparison when every noun lemma gets one vote.
@@ -456,8 +466,8 @@ noun tokens, while the paper's CELEX token row is not subtitle-based.
 
 The rule is meant to help with unfamiliar nouns, not replace vocabulary a learner
 already knows. We *all* know that *Mädchen* is neuter even though it refers
-to a female person, and I'm going to assume we can expect a student of German
-to have internalized the genders of the most, say, 50 common nouns.
+to a female person, and I assume that a student of German has internalized the
+genders of, say, the 50 most common nouns.
 
 But there is no need to memorize a frequent noun if the compact tree already gets
 it right. In a preliminary pass, the tree correctly classified 51 of the original
@@ -515,9 +525,9 @@ tibble(
   )
 ```
 
-All tree, baseline, and error scores below are conditional on a noun falling
-outside this core. Later I also report a combined learner-system score that treats
-the memorized exceptions as correct.
+All tree and baseline scores, as well as the error table below, are conditional
+on a noun falling outside this core. Later I also report a combined learner-system
+score that treats the memorized exceptions as correct.
 
 Here is the complete exception core, alphabetized by noun. The article is part of
 each entry because that is what must be memorized.
@@ -842,20 +852,22 @@ baseline_scores |>
 
 ## Cross-validate trees of increasing size
 
-To prevent the displayed result from being an in-sample score, we're going to use the `vfold_cv()` function to make
+To prevent the displayed result from being an in-sample score, I use
+[`vfold_cv()`](https://rsample.tidymodels.org/reference/vfold_cv.html) to create
 ten stratified resamples of the non-core lemmas. Every candidate tree is trained
 on the analysis portion of a split and predicts its assessment portion. The raw
 subtitle count is used as its case weight during training as well as in the
 primary evaluation metric.
 
-I keep the tree fitting and pruning explicit rather than wrapping the model in a
+I keep tree fitting and pruning explicit rather than wrapping the model in a
 larger tuning framework. The unusual constraint here is an exact ceiling on the
-number of leaves; `rpart`'s cost-complexity parameter is only the mechanism used
-to reach each ceiling.
+number of leaves; the cost-complexity parameter used by
+[`rpart`](https://search.r-project.org/CRAN/refmans/rpart/html/rpart.html) is only
+the mechanism for reaching each ceiling.
 
 Tree size is measured in terminal leaves. I allow at most nine leaves for the
-eventual learner's tree, but fit budgets up to sixteen to show what extra complexity
-would buy.
+eventual learner-facing tree, but fit budgets up to sixteen to show what extra
+complexity would buy.
 
 ```{r}
 #| label: cross-validation
@@ -943,10 +955,11 @@ cv_summary <- cv_predictions |>
 
 ## Plot the accuracy--complexity frontier
 
-We're now going to check what each extra leaf buys us in terms of accuracy, aka
-a Pareto frontier.  A point is on the frontier when no smaller tree budget
-achieved equal or better usage-weighted accuracy. The horizontal 96% line is
-completely absurd but comes from that paper mentioned above.
+We can now ask how much accuracy each additional leaf buys. The resulting
+[Pareto frontier](https://en.wikipedia.org/wiki/Pareto_front) contains the tree
+budgets for which no smaller tree has equal or better usage-weighted
+accuracy. The horizontal 96% line is deliberately aspirational: it comes from
+the much richer model and different evaluation protocol of Fedden et al.
 
 ```{r}
 #| label: pareto-frontier
@@ -1083,10 +1096,11 @@ chosen_scores |>
   )
 ```
 
-The leaf budget is a ceiling, not a promise. Cost-complexity pruning offers only
-the subtree sizes on its pruning path, so the tree fitted to all the data can
-have fewer leaves than the selected maximum. The table distinguishes its actual
-size from the median size seen in cross-validation.
+The leaf budget is a ceiling, not a promise.
+[Cost-complexity pruning](https://search.r-project.org/CRAN/refmans/rpart/html/prune.rpart.html)
+offers only the subtree sizes on the pruning path, so the tree fitted to all the
+data can have fewer leaves than the selected maximum. The table distinguishes
+its actual size from the median size seen in cross-validation.
 
 ```{r}
 #| label: final-tree
@@ -1305,8 +1319,8 @@ end in *-chen*?”, and `meaning_calendar` means “is it a weekday, month, or
 canonical season?” Likewise, `is_infinitive` asks whether the spelling occurs in
 the verb lexicon, and `one_written_syllable` uses the deliberately simple
 vowel-group approximation described above. The resulting tree is the object to
-critique as a learner: are its rules memorable, and is the accuracy gain worth
-each additional branch?
+evaluate from a learner's perspective: are its rules memorable, and is the
+accuracy gain worth each additional branch?
 
 One semantic feature now survives pruning: asking whether the noun denotes a male
 person. The other semantic sets do not buy as much predictive accuracy as the
@@ -1326,10 +1340,12 @@ per-gender recall constraint.
 
 ### Why does the tree have only one continuing branch?
 
-This shape is usually called a **decision list**: both outcomes exist at every
-split, but one outcome receives an article immediately and only the other needs
-another question. The plot now shows every split in the fitted `rpart` object;
-the printable handout combines consecutive questions that have the same outcome.
+This shape is usually called a
+[**decision list**](https://people.csail.mit.edu/rivest/pubs/Riv87b.pdf): both
+outcomes exist at every split, but one outcome receives an article immediately
+and only the other needs another question. The plot now shows every split in the
+fitted `rpart` object; the printable handout combines consecutive questions that
+have the same outcome.
 Read from the root, it says: endings in *-e* or *-ung* give *die*; otherwise a
 male person gives *der*; otherwise the endings *-ion*, *-heit*, *-keit*, *-ft*,
 and *-xt* give *die*; and the fallback is *der*.
@@ -1344,9 +1360,9 @@ run into the `minsplit` and `minbucket` requirements.
 
 The larger `full_tree` shows that this is not a plotting constraint: before
 pruning it contains nodes whose two outcomes both lead to further questions.
-Cross-validation does not find their improvement large enough for the learner's
-complexity budget, so cost-complexity pruning collapses them into leaves and
-leaves the displayed decision list.
+Cross-validation does not find the improvement from those splits large enough for
+the learner's complexity budget, so cost-complexity pruning collapses them into
+leaves and gives the displayed tree its decision-list shape.
 
 ## Inspect the costly mistakes
 
@@ -1373,18 +1389,19 @@ cv_predictions |>
 
 This is a model of dictionary lemmas, not noun tokens in context. The conservative
 capitalization filter removes many ambiguous words. The frequency aggregation
-does include every recorded singular and plural case form that maps unambiguously
+does include every recorded singular and plural form that maps unambiguously
 to a lemma, but the source still cannot tell a noun use from a sentence-initial
 homograph. Subtitle dialogue is closer to everyday speech than a dictionary's
 uniform type distribution, but translated dialogue is not identical to
 spontaneous German conversation.
 
-The split is also random by lemma. A stricter follow-up would group morphologically
-related nouns or shared compound heads in the same fold, preventing near-duplicate
-formations from appearing in both training and test data. Other useful sensitivity
-checks would replace raw frequency by `log1p(frequency)`, vary the 50-word
-exception budget or replace it with a CEFR vocabulary list, and expand the
-semantic annotations with a real ontology.
+Apart from gender stratification, the folds are random at the lemma level. A
+stricter follow-up would put morphologically related nouns or shared compound
+heads in the same fold, preventing closely related formations from appearing in
+both training and assessment data. Other useful sensitivity checks would replace
+raw frequency with `log1p(frequency)`, vary the 50-word exception budget or
+replace it with a [CEFR-graded German lexicon](https://cental.uclouvain.be/cefrlex/),
+and expand the semantic annotations with a real ontology.
 
 Most importantly, 96% is a benchmark for a much richer statistical model. The
 point of this post is to measure how much accuracy can be retained after imposing
