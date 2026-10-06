@@ -10,31 +10,63 @@ execute:
   message: false
 ---
 
-German noun gender is a nice case where the most accurate model is not necessarily
-the most useful one. The object I want at the end of this analysis is a single
-decision tree small enough for a learner to remember.
+It's often said that accuracy is a poor performance metric for a given classifier, especially in the
+presence of class imbalance: constantly predicting the most prevalent class will result in an accuracy
+equal to that prevalence.
 
-That gives the exercise two objectives:
+It's also true that in many instances, the cost of a false positive is different from the cost
+of a false negative, for example in medical diagnoses.
 
-1. predict the right article for nouns one is likely to encounter in practice;
-2. use as few intelligible rules as possible.
+But there's a classification problem that doesn't suffer from severe class imbalance and where the cost
+of misclassification is about the same. It's a three-class classification problem, one that has haunted
+me since my high school days. I'm talking, of course, of using the right gender for German nouns.
 
-The output will therefore be a Pareto frontier of predictive accuracy against tree
-size, followed by one deliberately small tree. A flexible model reported by
-[Fedden et al.](https://openresearch.surrey.ac.uk/esploro/outputs/journalArticle/Typology-meets-statistical-modeling-The-German/991154296202346)
-reached about 96% accuracy with much richer phonological, semantic, derivational,
-and inflectional information. I will use that number as a research-grade reference,
-not as a theoretical upper bound or a directly comparable score.
+I gave up German in my final years of high school and have relied, since then, on a heuristic: unless
+I'm *sure* the noun is neuter, if it ends with -e it's feminine, otherwise it's masculine. Let's see if we can
+come up with a better heuristic.
+
+tl;dr is that we're going to end up with a list of 50 words whose gender you need to memorize; for the rest,
+use the decision tree that you can get here. This will get you to 80% accuracy in normal speech.
+
+[Download the printable exception core and decision tree (PDF)](/output/pdf/german-noun-gender-core-and-tree.pdf){.btn .btn-primary download="german-noun-gender-core-and-tree.pdf"}
+
+Before you ask: yes, this is a serious inquiry. And yes, this has been tackled
+before.  [Fedden et al.](https://openresearch.surrey.ac.uk/esploro/outputs/journalArticle/Typology-meets-statistical-modeling-The-German/991154296202346)
+claim that a gradient-boosted decision tree can achieve 96% accuracy, using a
+complex set of phonological, semantic, derivational, and inflectional
+information. But we're never going to keep a gradient-boosted decision tree in our heads; instead, here we're
+going to see if we can develop a simple tree and how far it gets us in terms of accuracy.
+
+We're going to need two datasets:
+
+- a German dictionary
+- a frequency distribution
+
+We need a frequency distribution because it would not do to assess the accuracy against the dictionary itself.
+We want to know how many words we get wrong in normal speech, not while reciting the dictionary. So how do we
+get a frequency distribution for normal speech? Turns out there's a dataset giving the frequency distribution of
+German nouns from movie subtitles. We're going to use this as an approximation for "normal speech".
+
+For a fresh R installation, these are the required packages:
+
+```r
+install.packages(c(
+  "dplyr", "ggparty", "ggplot2", "knitr", "purrr", "readr",
+  "rpart", "rsample", "scales", "stringr", "tibble", "tidyr"
+))
+```
 
 ```{r}
 #| label: setup
 
 library(dplyr)
+library(ggparty)
 library(ggplot2)
 library(knitr)
 library(purrr)
 library(readr)
 library(rpart)
+library(rsample)
 library(scales)
 library(stringr)
 library(tibble)
@@ -45,26 +77,17 @@ theme_set(theme_minimal(base_size = 13))
 
 ## Download the dictionary and subtitle frequencies
 
-The labels come from the
+The nouns come from the
 [german-nouns](https://github.com/gambolputty/german-nouns) export of German
 Wiktionary. Its CSV contains roughly 100,000 entries, including gender and
 inflected forms, and is published under CC BY-SA 4.0.
 
-The usage weights come from Matthias Buchmeier's
-[German subtitle frequency list](https://en.wiktionary.org/wiki/User:Matthias_Buchmeier#German_frequency_list).
-It was made from 25,399,099 words of movie and television subtitles and preserves
-letter case. The list is split into pages of 5,000 entries; the first ten pages are
-enough for this experiment.
+The frequency distribution comes from Matthias Buchmeier's [German subtitle
+frequency list](https://en.wiktionary.org/wiki/User:Matthias_Buchmeier#German_frequency_list).
+It was made from 25,399,099 words of movie and television subtitles. The list is
+split into pages of 5,000 entries; we'll use the first 10 pages, or the most common 50,000 words.
 
-Two of the proposed rules depend on recognizing verbs. For those I use the
-infinitive column from the Wiktionary-derived
-[german-verbs-database](https://github.com/viorelsfetea/german-verbs-database).
-It lets me distinguish a spelling test from a semantic claim: a noun can look
-exactly like an infinitive or verb stem without actually being derived from that
-verb.
-
-The following chunk downloads about 21 MB in total and caches it in this post's
-`data` directory. That directory is ignored by Git.
+The following chunk downloads about 21 MB in total and caches it.
 
 ```{r}
 #| label: download-data
@@ -111,14 +134,6 @@ walk2(subtitle_urls, subtitle_paths, function(url, path) {
 })
 ```
 
-For a fresh R installation, these are the required packages:
-
-```r
-install.packages(c(
-  "dplyr", "ggplot2", "knitr", "purrr", "readr", "rpart",
-  "scales", "stringr", "tibble", "tidyr"
-))
-```
 
 ## Build a frequency-weighted noun dictionary
 
@@ -196,21 +211,22 @@ noun_forms <- nouns_raw |>
   ungroup()
 ```
 
-The dictionary also includes case forms in both singular and plural. I reshape
+The dictionary also includes case forms (like dative or plural). I reshape
 those columns into a surface-form-to-lemma map. Exact headwords take precedence;
 other spellings are discarded when they point to more than one lemma. Every
 retained form is therefore assigned to one canonical dictionary lemma;
 occurrences of *Häuser*, for example, contribute to *Haus*. Plural-only nouns
 remain under the lemma supplied by the dictionary.
 
-The subtitle list has no part-of-speech tags. Capitalization gets us most of the
-way to identifying nouns, but a sentence-initial *Ich* is still capitalized. A
-conservative safeguard is to keep a candidate only when its capitalized count is
+The subtitle list has no part-of-speech tags, which means that just because a word
+is capitalized doesn't mean it has to be a noun. For example, *Ich* at the start of a sentence
+shouldn't be counted. A
+conservative heuristic is to keep a candidate only when its capitalized count is
 at least five times its lowercase count (or the lowercase spelling is absent).
 That retains *Frau* and *Mädchen*, whose lowercase occurrences are mostly noise,
 while rejecting *Ich*, *Du*, and *Ist*. It also loses genuinely ambiguous nouns
 such as *Leben*, but avoids assigning millions of pronoun and verb tokens to rare
-metalinguistic nouns.
+nouns.
 
 There is one residual problem that a context-free frequency list cannot solve:
 some dictionary headwords are also overwhelmingly used as interjections or
@@ -237,7 +253,9 @@ read_frequency_page <- function(path) {
     )
 }
 
-subtitle_frequency <- map_dfr(subtitle_paths, read_frequency_page)
+subtitle_frequency <- subtitle_paths |>
+  map(read_frequency_page) |>
+  list_rbind()
 
 lowercase_frequency <- subtitle_frequency |>
   filter(word == str_to_lower(word, locale = "de")) |>
@@ -327,8 +345,8 @@ noun_frequency |>
   )
 ```
 
-There are two sensible scores. **Type accuracy** gives every dictionary entry one
-vote. **Usage-weighted accuracy** gives a noun with frequency $f_i$ exactly
+We're going to report two scores. **Type accuracy** is the accuracy against the dictionary, where
+every entry gets one vote. **Usage-weighted accuracy** gives a noun with frequency $f_i$ exactly
 $f_i$ votes:
 
 $$
@@ -432,27 +450,20 @@ database, under both counting schemes. That is not necessarily a contradiction:
 the authors' main point in this part of the paper is that gender proportions depend
 on the corpus and the frequency range. Our counts cover dictionary forms that can
 be assigned to a single lemma after the spelling filters, rather than POS-tagged
-noun tokens, while the paper's CELEX token row is not subtitle-based. This
-comparison is therefore a diagnostic, not a replication.
+noun tokens, while the paper's CELEX token row is not subtitle-based.
 
 ## Memorize the costly exceptions
 
 The rule is meant to help with unfamiliar nouns, not replace vocabulary a learner
-already knows. Otherwise a mistake on an extremely common word such as *Frau*,
-*Mädchen*, or *Junge* dominates the usage-weighted loss even though a student is
-unlikely to consult a gender rule for it.
+already knows. We *all* know that *Mädchen* is neuter even though it refers
+to a female person, and I'm going to assume we can expect a student of German
+to have internalized the genders of the most, say, 50 common nouns.
 
 But there is no need to memorize a frequent noun if the compact tree already gets
 it right. In a preliminary pass, the tree correctly classified 51 of the original
 100 most frequent nouns. I keep its 49 mistakes and add *Telefon*, the next most
 frequent mistake, to obtain a round 50-word exception core. The list is frozen
 before refitting the tree below.
-
-This is now an exception list rather than a general beginner vocabulary. It is a
-better match for the practical task: spend memory on the frequent words for which
-the rule is unhelpful. Because the same dataset informed this design choice, the
-combined score remains an exploratory estimate; a separate subtitle corpus would
-be the right final test.
 
 ```{r}
 #| label: core-vocabulary
@@ -533,7 +544,6 @@ core_vocabulary |>
   )
 ```
 
-[Download the printable exception core and decision tree (PDF)](/output/pdf/german-noun-gender-core-and-tree.pdf){.btn .btn-primary download="german-noun-gender-core-and-tree.pdf"}
 
 ## Turn spelling into learnable questions
 
@@ -832,10 +842,16 @@ baseline_scores |>
 
 ## Cross-validate trees of increasing size
 
-To prevent the displayed result from being an in-sample score, I assign each
-non-core lemma to one of ten folds. Every candidate tree is trained on nine folds
-and predicts the tenth. The raw subtitle count is used as its case weight during
-training as well as in the primary evaluation metric.
+To prevent the displayed result from being an in-sample score, we're going to use the `vfold_cv()` function to make
+ten stratified resamples of the non-core lemmas. Every candidate tree is trained
+on the analysis portion of a split and predicts its assessment portion. The raw
+subtitle count is used as its case weight during training as well as in the
+primary evaluation metric.
+
+I keep the tree fitting and pruning explicit rather than wrapping the model in a
+larger tuning framework. The unusual constraint here is an exact ceiling on the
+number of leaves; `rpart`'s cost-complexity parameter is only the mechanism used
+to reach each ceiling.
 
 Tree size is measured in terminal leaves. I allow at most nine leaves for the
 eventual learner's tree, but fit budgets up to sixteen to show what extra complexity
@@ -845,10 +861,7 @@ would buy.
 #| label: cross-validation
 
 set.seed(20260904)
-model_data <- model_data |>
-  group_by(gender) |>
-  mutate(fold = sample(rep(1:10, length.out = n()))) |>
-  ungroup()
+cv_folds <- vfold_cv(model_data, v = 10, strata = gender)
 
 tree_formula <- reformulate(feature_names, response = "gender")
 
@@ -858,6 +871,7 @@ grow_tree <- function(data) {
     data = data,
     weights = frequency,
     method = "class",
+    model = TRUE,
     parms = list(split = "information"),
     control = rpart.control(
       cp = 0,
@@ -883,27 +897,30 @@ prune_to_budget <- function(tree, maximum_leaves) {
 
 leaf_budgets <- 2:16
 
-cv_predictions <- map_dfr(1:10, function(held_out_fold) {
-  training <- filter(model_data, fold != held_out_fold)
-  testing <- filter(model_data, fold == held_out_fold)
-  full_tree <- grow_tree(training)
+cv_predictions <- map2(cv_folds$splits, cv_folds$id, function(split, fold_id) {
+  training <- analysis(split)
+  testing <- assessment(split)
+  grown_tree <- grow_tree(training)
 
-  map_dfr(leaf_budgets, function(budget) {
-    candidate <- prune_to_budget(full_tree, budget)
-    prediction <- predict(candidate, testing, type = "class")
+  leaf_budgets |>
+    map(function(budget) {
+      candidate <- prune_to_budget(grown_tree, budget)
+      prediction <- predict(candidate, testing, type = "class")
 
-    transmute(
-      testing,
-      fold = held_out_fold,
-      leaf_budget = budget,
-      actual_leaves = sum(candidate$frame$var == "<leaf>"),
-      lemma,
-      frequency,
-      truth = gender,
-      prediction
-    )
-  })
-})
+      transmute(
+        testing,
+        fold = fold_id,
+        leaf_budget = budget,
+        actual_leaves = sum(candidate$frame$var == "<leaf>"),
+        lemma,
+        frequency,
+        truth = gender,
+        prediction
+      )
+    }) |>
+    list_rbind()
+}) |>
+  list_rbind()
 
 cv_summary <- cv_predictions |>
   group_by(leaf_budget) |>
@@ -926,9 +943,10 @@ cv_summary <- cv_predictions |>
 
 ## Plot the accuracy--complexity frontier
 
-A point is on the frontier when no smaller tree budget achieved equal or better
-usage-weighted accuracy. The horizontal 96% line is deliberately aspirational: it
-comes from a different study, feature set, and evaluation protocol.
+We're now going to check what each extra leaf buys us in terms of accuracy, aka
+a Pareto frontier.  A point is on the frontier when no smaller tree budget
+achieved equal or better usage-weighted accuracy. The horizontal 96% line is
+completely absurd but comes from that paper mentioned above.
 
 ```{r}
 #| label: pareto-frontier
@@ -1072,9 +1090,9 @@ size from the median size seen in cross-validation.
 
 ```{r}
 #| label: final-tree
-#| fig-cap: "The final frequency-weighted decision tree for nouns outside the exception core. Consecutive questions with the same outcome are combined into one OR rule."
-#| fig-width: 9
-#| fig-height: 5.5
+#| fig-cap: "The actual frequency-weighted rpart tree for nouns outside the exception core, drawn with ggparty. Yes and No are the Boolean outcomes of each question."
+#| fig-width: 10
+#| fig-height: 7
 
 question_by_feature <- c(
   setNames(
@@ -1183,8 +1201,8 @@ combine_questions <- function(features, questions) {
 }
 
 # Consecutive questions with the same Yes outcome are logically one OR rule.
-# Collapsing them makes the learner-facing diagram much less repetitive while
-# preserving the fitted tree's predictions.
+# The printable handout uses this compressed form; the plot below deliberately
+# shows the actual fitted tree.
 decision_list <- raw_decision_list |>
   mutate(
     display_group = cumsum(
@@ -1203,27 +1221,6 @@ decision_list <- raw_decision_list |>
       NA_character_
     },
     .groups = "drop"
-  ) |>
-  mutate(
-    x = 0,
-    y = rev(seq_len(n()))
-  )
-
-yes_leaves <- decision_list |>
-  transmute(x = 2.35, y, article = yes_article)
-
-default_leaf <- decision_list |>
-  filter(!is.na(no_article)) |>
-  transmute(x = 0, y = 0, article = no_article)
-
-vertical_branches <- decision_list |>
-  transmute(
-    x = 0,
-    xend = 0,
-    y = y - 0.27,
-    yend = y - 0.73,
-    label_x = 0.18,
-    label_y = y - 0.5
   )
 
 article_colours <- c(
@@ -1232,79 +1229,74 @@ article_colours <- c(
   das = "#D97706"
 )
 
-ggplot() +
-  geom_segment(
-    data = decision_list,
-    aes(x = 0.78, xend = 1.88, y = y, yend = y),
-    colour = "#64748B",
-    linewidth = 0.7,
-    arrow = grid::arrow(length = grid::unit(0.09, "inches"), type = "closed")
-  ) +
-  geom_segment(
-    data = vertical_branches,
-    aes(x = x, xend = xend, y = y, yend = yend),
-    colour = "#64748B",
-    linewidth = 0.7,
-    arrow = grid::arrow(length = grid::unit(0.09, "inches"), type = "closed")
-  ) +
-  geom_text(
-    data = decision_list,
-    aes(x = 1.32, y = y + 0.16, label = "Yes"),
+party_tree <- partykit::as.party(final_tree)
+tree_plot <- ggparty(party_tree, horizontal = TRUE)
+
+# as.party() numbers nodes in the same preorder used by rpart's frame. This lets
+# us add learner-facing questions, articles, and Boolean edge labels while
+# leaving ggparty responsible for the tree layout.
+stopifnot(
+  nrow(tree_plot$data) == nrow(tree_frame),
+  all(tree_plot$data$id == seq_len(nrow(tree_frame)))
+)
+
+tree_plot$data <- tree_plot$data |>
+  mutate(
+    rpart_node = as.integer(row.names(tree_frame)),
+    parent_rpart_node = rpart_node[match(parent, id)],
+    true_goes_left = unname(
+      split_direction[as.character(parent_rpart_node)]
+    ) > 0,
+    answer = case_when(
+      is.na(parent) ~ NA_character_,
+      (birth_order == 1L) == true_goes_left ~ "Yes",
+      .default = "No"
+    ),
+    question = unname(question_by_feature[splitvar]),
+    article = article_levels[tree_frame$yval]
+  )
+
+tree_plot +
+  geom_edge(colour = "#94A3B8", linewidth = 0.8) +
+  geom_edge_label(
+    aes(label = answer),
+    parse = FALSE,
+    fill = "white",
     colour = "#475569",
-    size = 3.5
+    label.size = 0,
+    size = 3.2
   ) +
-  geom_text(
-    data = vertical_branches,
-    aes(x = label_x, y = label_y, label = "No"),
-    hjust = 0,
-    colour = "#475569",
-    size = 3.5
-  ) +
-  geom_label(
-    data = decision_list,
-    aes(x = x, y = y, label = question),
+  geom_node_label(
+    aes(label = question),
+    ids = "inner",
     fill = "#F8F4EA",
     colour = "#243447",
-    linewidth = 0.35,
-    label.padding = grid::unit(0.28, "lines"),
+    label.size = 0.35,
+    label.padding = grid::unit(0.3, "lines"),
     label.r = grid::unit(0.18, "lines"),
+    fontface = "bold",
+    size = 3.6
+  ) +
+  geom_node_label(
+    aes(label = article, fill = article),
+    ids = "terminal",
+    colour = "white",
+    label.size = 0,
+    label.padding = grid::unit(0.4, "lines"),
+    label.r = grid::unit(0.7, "lines"),
     fontface = "bold",
     size = 4.1
   ) +
-  geom_label(
-    data = bind_rows(yes_leaves, default_leaf),
-    aes(x = x, y = y, label = article, fill = article),
-    colour = "white",
-    linewidth = 0,
-    label.padding = grid::unit(0.38, "lines"),
-    label.r = grid::unit(0.6, "lines"),
-    fontface = "bold",
-    size = 4.5
-  ) +
-  annotate(
-    "text",
-    x = -0.34,
-    y = 0,
-    label = "otherwise",
-    hjust = 1,
-    colour = "#64748B",
-    size = 3.4
-  ) +
   scale_fill_manual(values = article_colours, guide = "none") +
-  coord_cartesian(
-    xlim = c(-1.1, 2.9),
-    ylim = c(-0.5, nrow(decision_list) + 0.55),
-    clip = "off"
-  ) +
   labs(
-    title = "A compact German noun-gender decision list",
-    subtitle = "For a noun outside the exception core, follow No downward"
+    title = "The fitted German noun-gender tree",
+    subtitle = "For a noun outside the 50-word exception core"
   ) +
   theme_void(base_size = 13) +
   theme(
     plot.title = element_text(face = "bold", colour = "#172033", size = 17),
     plot.subtitle = element_text(colour = "#64748B", margin = margin(b = 12)),
-    plot.margin = margin(12, 24, 12, 24)
+    plot.margin = margin(14, 28, 14, 28)
   )
 ```
 
@@ -1336,10 +1328,11 @@ per-gender recall constraint.
 
 This shape is usually called a **decision list**: both outcomes exist at every
 split, but one outcome receives an article immediately and only the other needs
-another question. The learner-facing diagram combines consecutive questions that
-have the same outcome. Read from the root, it says: endings in *-e* or *-ung* give
-*die*; otherwise a male person gives *der*; otherwise the endings *-ion*, *-heit*,
-*-keit*, *-ft*, and *-xt* give *die*; and the fallback is *der*.
+another question. The plot now shows every split in the fitted `rpart` object;
+the printable handout combines consecutive questions that have the same outcome.
+Read from the root, it says: endings in *-e* or *-ung* give *die*; otherwise a
+male person gives *der*; otherwise the endings *-ion*, *-heit*, *-keit*, *-ft*,
+and *-xt* give *die*; and the fallback is *der*.
 
 `rpart` does not try to make a visually balanced tree. At each node it greedily
 chooses the split with the greatest information gain. Because most predictors
