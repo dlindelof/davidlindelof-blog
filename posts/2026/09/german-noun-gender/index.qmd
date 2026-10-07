@@ -8,7 +8,7 @@ image-height: "908"
 open-graph: true
 twitter-card:
   card-style: summary_large_image
-date: 2026-09-04
+date: 2026-10-07
 categories:
   - r
   - machine learning
