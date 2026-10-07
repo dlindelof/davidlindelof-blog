@@ -1,0 +1,92 @@
+---
+title: "Why can both X / Y and Y / X average more than 1?"
+date: 2026-09-24
+draft: true
+categories:
+  - statistics
+  - r
+---
+
+Following up on [the ratio of normal variables](../../../2023/05/is-the-ratio-of-normal-variables-normal/index.qmd): if two independent variables have the same mean, must their ratio average to 1? Let's try both directions, using the same pairs of observations.
+
+```{r}
+set.seed(20260924)
+n <- 1000000
+mu <- 1
+sigma <- 0.2
+X <- rnorm(n, mean = mu, sd = sigma)
+Y <- rnorm(n, mean = mu, sd = sigma)
+
+summarize_ratios <- function(x, y) {
+  data.frame(
+    pairs = length(x),
+    mean_X = mean(x),
+    mean_Y = mean(y),
+    ratio_of_means = mean(x) / mean(y),
+    mean_X_over_Y = mean(x / y),
+    mean_Y_over_X = mean(y / x)
+  )
+}
+
+knitr::kable(summarize_ratios(X, Y), digits = 4)
+```
+
+Both sample averages of ratios are above 1, although the ratio of sample means is close to 1.
+
+One correction to the earlier post: for these independent, untruncated normals, the population ratio mean is actually **undefined**, not the ratio of the means. A normal denominator can land arbitrarily close to zero; a stable-looking simulation does not fix the [absence of finite moments](https://arxiv.org/abs/2310.14306).
+
+To make the expectation argument valid, keep only pairs for which **both** values lie between 0.2 and 1.8. These are now independent truncated normals, still with population means exactly 1 by symmetry, and bounded away from zero. Truncating only at zero would not suffice.
+
+```{r}
+lower <- 0.2
+upper <- 2 * mu - lower
+keep <- X >= lower & X <= upper & Y >= lower & Y <= upper
+x <- X[keep]
+y <- Y[keep]
+
+knitr::kable(summarize_ratios(x, y), digits = 4)
+```
+
+[Jensen's inequality](https://pages.stat.wisc.edu/~shao/stat609/stat609-06.pdf) says that for a convex function, $E[f(Y)] \geq f(E[Y])$. The reciprocal $f(y)=1/y$ is strictly convex for $y>0$: downward fluctuations increase the reciprocal more than equally sized upward fluctuations decrease it. Here, for example, $1/0.8=1.25$, whereas $1/1.2\approx0.833$.
+
+For our truncated variables, independence and strict convexity give
+
+$$
+E[X/Y] = E[X]E[1/Y] > \frac{E[X]}{E[Y]} = 1,
+\qquad
+E[Y/X] = E[Y]E[1/X] > \frac{E[Y]}{E[X]} = 1.
+$$
+
+The inequality is strict because each denominator varies. Since $X$ and $Y$ have the same distribution, the two expectations are equal. Let's compare their running averages with the common expectation, calculated by numerical integration.
+
+```{r}
+#| label: fig-running-ratio-means
+#| fig-width: 7
+#| fig-height: 4
+#| fig-cap: "Both running averages approach the same expectation above 1 for the truncated normals."
+#| fig-alt: "Running averages of X / Y and Y / X plotted against sample size, with reference lines at 1 and their shared theoretical expectation."
+mass <- pnorm(upper, mu, sigma) - pnorm(lower, mu, sigma)
+expected_ratio <- mu * integrate(
+  function(z) dnorm(z, mu, sigma) / (z * mass),
+  lower = lower, upper = upper
+)$value
+
+k <- unique(round(exp(seq(log(100), log(length(x)), length.out = 300))))
+running <- cbind(cumsum(x / y)[k] / k, cumsum(y / x)[k] / k)
+matplot(
+  k, running, type = "l", log = "x", lty = c(1, 2),
+  col = c("#0072B2", "#D55E00"), lwd = 2,
+  ylim = range(1, expected_ratio, running),
+  xlab = "Number of retained pairs", ylab = "Running average"
+)
+abline(h = 1, col = "grey60", lty = 3)
+abline(h = expected_ratio, col = "black", lty = 3)
+legend(
+  "bottomright",
+  legend = c("X / Y", "Y / X", sprintf("Expectation: %.4f", expected_ratio), "1"),
+  col = c("#0072B2", "#D55E00", "black", "grey60"),
+  lty = c(1, 2, 3, 3), bty = "n"
+)
+```
+
+There is no contradiction: the average of reciprocals is not the reciprocal of the average.
