@@ -1,6 +1,8 @@
 ---
 title: "A unit test that Could. Not. Fail. (but did)"
 date: 2009-02-17
+aliases:
+  - /smartbuildings/a-unit-test-that-could-not-fail-but-did/
 categories: 
   - "programming"
 tags: 

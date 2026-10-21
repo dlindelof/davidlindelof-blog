@@ -1,6 +1,8 @@
 ---
 title: "Debian installation on a Soekris embedded PC"
 date: 2008-05-16
+aliases:
+  - /smartbuildings/debian-installation-on-a-soekris-embedded-pc/
 categories: 
   - "home-automation"
   - "programming"
