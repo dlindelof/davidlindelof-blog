@@ -10,7 +10,467 @@
 <atom:link href="https://blog.davidlindelof.com/index.xml" rel="self" type="application/rss+xml"/>
 <description>Notes on statistics, data science, software engineering, and scientific computing.</description>
 <generator>quarto-1.9.38</generator>
-<lastBuildDate>Wed, 07 Oct 2026 00:00:00 GMT</lastBuildDate>
+<lastBuildDate>Wed, 21 Oct 2026 00:00:00 GMT</lastBuildDate>
+<item>
+  <title>Why can both X / Y and Y / X average more than 1?</title>
+  <link>https://blog.davidlindelof.com/posts/2026/09/jensens-inequality-and-ratios/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+
+<p>In an earlier post I explored under what assumptions <a href="../../../../posts/2023/05/is-the-ratio-of-normal-variables-normal/index.html">the ratio of normal variables</a> could be approximately normal. In our simulations, when the means were large compared to the standard deviations, the sample average of the ratio was close to the ratio of the sample means. There is a subtle distinction here between a sample average and a population expectation, which we’ll come back to.</p>
+<p>Things get awkward when the denominator can get close to zero and the ratio can blow up. But here is an even more counterintuitive result: for two independent, identically distributed positive random variables <img src="https://latex.codecogs.com/png.latex?X"> and <img src="https://latex.codecogs.com/png.latex?Y">, both <img src="https://latex.codecogs.com/png.latex?X/Y"> and <img src="https://latex.codecogs.com/png.latex?Y/X"> can have an expected value <img src="https://latex.codecogs.com/png.latex?%3E%201">.</p>
+<p>(The equality is less surprising: because <img src="https://latex.codecogs.com/png.latex?X"> and <img src="https://latex.codecogs.com/png.latex?Y"> are independent and identically distributed, swapping them leaves their joint distribution unchanged. So <img src="https://latex.codecogs.com/png.latex?X/Y"> and <img src="https://latex.codecogs.com/png.latex?Y/X"> have the same distribution, and the same expectation whenever it exists. The puzzle is why that expectation can exceed 1.)</p>
+<p>This matters when summarizing paired measurements, such as right and left foot lengths. Averaging individual ratios estimates a different quantity from taking the ratio of the population means. Neither is inherently wrong, but interpreting the former as relative lift defined by the latter can be misleading. Paired measurements may also be correlated; the simulation below isolates the effect using independent draws.</p>
+<p>Let’s see the effect in action with some simulations. We’re going to draw independent values of <img src="https://latex.codecogs.com/png.latex?X"> and <img src="https://latex.codecogs.com/png.latex?Y">, each normally distributed with mean 1 and standard deviation 0.2, and look at both ratios:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">set.seed</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">20260924</span>)</span>
+<span id="cb1-2">n <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1000000</span></span>
+<span id="cb1-3">mu <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span></span>
+<span id="cb1-4">sigma <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.2</span></span>
+<span id="cb1-5">X <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rnorm</span>(n, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">mean =</span> mu, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">sd =</span> sigma)</span>
+<span id="cb1-6">Y <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rnorm</span>(n, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">mean =</span> mu, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">sd =</span> sigma)</span>
+<span id="cb1-7"></span>
+<span id="cb1-8">summarize_ratios <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span>(x, y) {</span>
+<span id="cb1-9">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">data.frame</span>(</span>
+<span id="cb1-10">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">pairs =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">length</span>(x),</span>
+<span id="cb1-11">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">mean_X =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mean</span>(x),</span>
+<span id="cb1-12">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">mean_Y =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mean</span>(y),</span>
+<span id="cb1-13">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">ratio_of_means =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mean</span>(x) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mean</span>(y),</span>
+<span id="cb1-14">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">mean_X_over_Y =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mean</span>(x <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> y),</span>
+<span id="cb1-15">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">mean_Y_over_X =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mean</span>(y <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> x)</span>
+<span id="cb1-16">  )</span>
+<span id="cb1-17">}</span>
+<span id="cb1-18"></span>
+<span id="cb1-19">knitr<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">kable</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">summarize_ratios</span>(X, Y), <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">digits =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4</span>)</span></code></pre></div></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: right;">pairs</th>
+<th style="text-align: right;">mean_X</th>
+<th style="text-align: right;">mean_Y</th>
+<th style="text-align: right;">ratio_of_means</th>
+<th style="text-align: right;">mean_X_over_Y</th>
+<th style="text-align: right;">mean_Y_over_X</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1e+06</td>
+<td style="text-align: right;">0.9999</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0.9999</td>
+<td style="text-align: right;">1.0461</td>
+<td style="text-align: right;">1.0463</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Both sample averages of ratios are above 1, although the ratio of sample means is close to 1.</p>
+<p>(There is one technical catch: for independent, untruncated normals, the population ratio mean is <strong>undefined</strong>, even when the sample average looks stable.<sup>1</sup> To talk about expectations, we’ll keep both variables within four standard deviations of their mean: between 0.2 and 1.8. The resulting truncated normals remain independent, with population means exactly 1 by symmetry.)</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1">lower <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.2</span></span>
+<span id="cb2-2">upper <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> mu <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> lower</span>
+<span id="cb2-3">keep <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> X <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&gt;=</span> lower <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&amp;</span> X <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&lt;=</span> upper <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&amp;</span> Y <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&gt;=</span> lower <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&amp;</span> Y <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&lt;=</span> upper</span>
+<span id="cb2-4">x <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> X[keep]</span>
+<span id="cb2-5">y <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> Y[keep]</span>
+<span id="cb2-6"></span>
+<span id="cb2-7">knitr<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">kable</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">summarize_ratios</span>(x, y), <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">digits =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4</span>)</span></code></pre></div></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: right;">pairs</th>
+<th style="text-align: right;">mean_X</th>
+<th style="text-align: right;">mean_Y</th>
+<th style="text-align: right;">ratio_of_means</th>
+<th style="text-align: right;">mean_X_over_Y</th>
+<th style="text-align: right;">mean_Y_over_X</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">999870</td>
+<td style="text-align: right;">0.9999</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0.9999</td>
+<td style="text-align: right;">1.0459</td>
+<td style="text-align: right;">1.0462</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>This removes just 130 of our 1,000,000 pairs, and both ratio averages are still above 1.</p>
+<p>So what’s going on here? This is where <a href="https://pages.stat.wisc.edu/~shao/stat609/stat609-06.pdf">Jensen’s inequality</a> comes in. It’s probably the coolest inequality you’ve never heard of, and it says that for a convex function <img src="https://latex.codecogs.com/png.latex?f">, <img src="https://latex.codecogs.com/png.latex?E%5Bf(Y)%5D%20%5Cgeq%20f(E%5BY%5D)">. That felt abstract to me until I noticed that the reciprocal function <img src="https://latex.codecogs.com/png.latex?f(y)=1/y"> is strictly convex for <img src="https://latex.codecogs.com/png.latex?y%3E0">, and this is why downward fluctuations of a denominator (like <img src="https://latex.codecogs.com/png.latex?Y"> in <img src="https://latex.codecogs.com/png.latex?X/Y">) increase the reciprocal more than equally sized upward fluctuations decrease it.</p>
+<p>We can see this directly in our simulated denominators. Average them first and then take the reciprocal: <code>1 / mean(y)</code> is 1.0000. Take each reciprocal first and then average: <code>mean(1 / y)</code> is 1.0460. The same observations give different answers depending on the order of operations. Since the independent numerator has population mean 1, this increase carries over to the expected ratio.</p>
+<p>For our truncated variables, independence and strict convexity give</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Baligned%7D%0AE%5BX/Y%5D%20&amp;=%20E%5BX%5DE%5B1/Y%5D%20%3E%20%5Cfrac%7BE%5BX%5D%7D%7BE%5BY%5D%7D%20=%201,%20%5C%5C%0AE%5BY/X%5D%20&amp;=%20E%5BY%5DE%5B1/X%5D%20%3E%20%5Cfrac%7BE%5BY%5D%7D%7BE%5BX%5D%7D%20=%201.%0A%5Cend%7Baligned%7D%0A"></p>
+<p>The inequality is strict because each denominator varies. Since <img src="https://latex.codecogs.com/png.latex?X"> and <img src="https://latex.codecogs.com/png.latex?Y"> have the same distribution, the two expectations are equal. Let’s compare their running averages with the common expectation, calculated by numerical integration.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1">mass <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">pnorm</span>(upper, mu, sigma) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">pnorm</span>(lower, mu, sigma)</span>
+<span id="cb3-2">expected_ratio <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> mu <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">integrate</span>(</span>
+<span id="cb3-3">  <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span>(z) <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">dnorm</span>(z, mu, sigma) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> (z <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> mass),</span>
+<span id="cb3-4">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">lower =</span> lower, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">upper =</span> upper</span>
+<span id="cb3-5">)<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>value</span>
+<span id="cb3-6"></span>
+<span id="cb3-7">k <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">unique</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">round</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">exp</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">seq</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">log</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">100</span>), <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">log</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">length</span>(x)), <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">length.out =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">300</span>))))</span>
+<span id="cb3-8">running <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">cbind</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">cumsum</span>(x <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> y)[k] <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> k, <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">cumsum</span>(y <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> x)[k] <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> k)</span>
+<span id="cb3-9"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">matplot</span>(</span>
+<span id="cb3-10">  k, running, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">type =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"l"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">log =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"x"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">lty =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>),</span>
+<span id="cb3-11">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">col =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"#0072B2"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"#D55E00"</span>), <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">lwd =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>,</span>
+<span id="cb3-12">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">ylim =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">range</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, expected_ratio, running),</span>
+<span id="cb3-13">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">xlab =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Number of retained pairs"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">ylab =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Running average"</span></span>
+<span id="cb3-14">)</span>
+<span id="cb3-15"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">abline</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">h =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">col =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"grey60"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">lty =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>)</span>
+<span id="cb3-16"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">abline</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">h =</span> expected_ratio, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">col =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"black"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">lty =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>)</span>
+<span id="cb3-17"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">legend</span>(</span>
+<span id="cb3-18">  <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"bottomright"</span>,</span>
+<span id="cb3-19">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">legend =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"X / Y"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Y / X"</span>, <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sprintf</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Expectation: %.4f"</span>, expected_ratio), <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"1"</span>),</span>
+<span id="cb3-20">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">col =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"#0072B2"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"#D55E00"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"black"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"grey60"</span>),</span>
+<span id="cb3-21">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">lty =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>), <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">bty =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"n"</span></span>
+<span id="cb3-22">)</span></code></pre></div></div>
+<div class="cell-output-display">
+<div id="fig-running-ratio-means" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Running averages of X / Y and Y / X plotted against sample size, with reference lines at 1 and their shared theoretical expectation.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-running-ratio-means-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="https://blog.davidlindelof.com/posts/2026/09/jensens-inequality-and-ratios/index_files/figure-html/fig-running-ratio-means-1.png" class="img-fluid figure-img" alt="Running averages of X / Y and Y / X plotted against sample size, with reference lines at 1 and their shared theoretical expectation." width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-running-ratio-means-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Both running averages approach the same expectation above 1 for the truncated normals.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The simulation agrees with the theory: for these independent truncated normals, both sample averages approach the same expectation, about 1.0461. Each pair of ratios multiplies to 1, but their averages need not. Averaging and taking reciprocals are different operations—and Jensen’s inequality tells us which way the difference goes.</p>
+
+
+
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>This corrects the earlier post’s claim about the population mean. A normal variable equals zero with probability zero, but its density stays positive arbitrarily close to zero. Consequently, the integral defining <img src="https://latex.codecogs.com/png.latex?E%5B%7C1/Y%7C%5D"> diverges like <img src="https://latex.codecogs.com/png.latex?%5Cint_0%5E%5Cepsilon%20dy/y">, and the positive and negative parts of the ratio’s expectation both diverge. See <a href="https://arxiv.org/abs/2310.14306">Yang and Gui</a>. Keeping only positive values would still leave an infinite reciprocal mean; a strictly positive lower bound avoids the problem. The upper bound preserves symmetry about 1.↩︎</p></li>
+</ol>
+</section></div> ]]></description>
+  <category>statistics</category>
+  <category>r</category>
+  <guid>https://blog.davidlindelof.com/posts/2026/09/jensens-inequality-and-ratios/</guid>
+  <pubDate>Wed, 21 Oct 2026 00:00:00 GMT</pubDate>
+  <media:content url="https://blog.davidlindelof.com/posts/2026/09/jensens-inequality-and-ratios/preview.png" medium="image" type="image/png" height="75" width="144"/>
+</item>
 <item>
   <title>How many rules does it take to guess a German noun’s gender?</title>
   <link>https://blog.davidlindelof.com/posts/2026/09/german-noun-gender/</link>
@@ -10163,357 +10623,6 @@ font-style: inherit;">data.frame</span>(X, W, Y))</span></code></pre></div></div
   <category>r</category>
   <guid>https://blog.davidlindelof.com/posts/2021/02/no-you-have-not-controlled-for-confounders/</guid>
   <pubDate>Wed, 10 Feb 2021 00:00:00 GMT</pubDate>
-</item>
-<item>
-  <title>A/B testing my resume</title>
-  <link>https://blog.davidlindelof.com/posts/2020/11/a-b-testing-my-resume/</link>
-  <description><![CDATA[ 
-
-
-
-
-
-
-<p>Internet wisdom is divided on whether one-page resumes are more effective at landing you an interview than two-page ones. Most of the advice out there seems much opinion- or anecdotal-based, with very little scientific basis.</p>
-<p>Well, let’s fix that.</p>
-<p>Being currently open to work, I thought this would be the right time to test this scientifically. I have two versions of my resume:</p>
-<ul>
-<li><a href="https://davidlindelof.com/wp-content/uploads/2020/11/Lindelof_CV.pdf">A two-page, employment + education on first page, extra information on the second page</a>&nbsp;such as online courses, hobbies etc.</li>
-<li><a href="https://davidlindelof.com/wp-content/uploads/2020/11/Lindelof-Resume-Dec-20.pdf">A one-page, dense, responsibilities + achievements only</a>, follows template from the&nbsp;<a href="https://www.manager-tools.com/products/resume-workbook">Career Tools resume workbook</a>.</li>
-</ul>
-<p>The purpose of a resume is to land you an interview, so we’ll track for each resume how many applications yield a call for an interview. Non-responses after one week are treated as failures. We’ll model the effectiveness of a resume as a binomial distribution: all other things being considered equal, we’ll assume all applications using the same resume type have the same probability (<img src="https://latex.codecogs.com/png.latex?p1">&nbsp;or&nbsp;<img src="https://latex.codecogs.com/png.latex?p2">) of landing an interview. We’d like to estimate these probabilities, and decide if one resume is more effective than the other.</p>
-<!--more-->
-<p>In a traditional randomized trial, we would randomly assign each job offer to a resume and record the success rate. But let’s estimate the&nbsp;<a href="https://en.wikipedia.org/wiki/Power_of_a_test">statistical power</a>&nbsp;of such a test. From past experience, and also from many plots such as <a href="https://www.reddit.com/r/ProductManagement/comments/j3654d/8_weeks_of_job_search_spree_ended_happily_two/">this one</a>&nbsp;posted on Reddit, it seems reasonable to assign a baseline success rate of about 0.1 (i.e., about one application in 10 yields an interview). Suppose the one-page version is twice as effective and we apply to 100 positions with each. Then the statistical power, i.e.&nbsp;the probability of detecting a statistically significant effect, is given by:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">library</span>(Exact)</span>
-<span id="cb1-2"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">power.exact.test</span>(<span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">p1 =</span> <span class="fl" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0.2</span>, <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">p2 =</span> <span class="fl" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0.1</span>, <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">n1 =</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">100</span>, <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">n2 =</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">100</span>)</span></code></pre></div></div>
-<pre><code>## 
-##      Z-pooled Exact Test 
-## 
-##          n1, n2 = 100, 100
-##          p1, p2 = 0.2, 0.1
-##           alpha = 0.05
-##           power = 0.501577
-##     alternative = two.sided
-##           delta = 0</code></pre>
-<p>That is, we have only about 50% chances of detecting the effect with 0.05 confidence. This is not going to work; at a rate of about 10 applications per month, this would require 20 months.</p>
-<p>Instead I’m going to frame this as a&nbsp;<a href="https://en.wikipedia.org/wiki/Multi-armed_bandit">multi-armed bandit</a>&nbsp;problem: I have two resumes and I don’t know which one is the most effective, so I’d like to test them both&nbsp;<em>but</em>&nbsp;give preference to the one that seems to have the highest rate of success—also known as trading off exploration vs exploitation.</p>
-<p>We’ll begin by assuming again that we think each has about 10% chance of success, but since this is based on a limited experience it makes sense to treat this probability as the expected value of a beta distribution parameterized by, say, 1 success and 9 failures.</p>
-<p>So whenever we apply for a new job, we:</p>
-<ul>
-<li>draw a new&nbsp;<img src="https://latex.codecogs.com/png.latex?p1">&nbsp;and&nbsp;<img src="https://latex.codecogs.com/png.latex?p2">&nbsp;from each beta distribution</li>
-<li>apply to the one with the highest drawn probability</li>
-<li>update the selected resume’s beta distribution according to its success or failure.</li>
-</ul>
-<p>Let’s simulate this, assuming that we know immediately if the application was successful or not. Let’s take the “true” probabilities to be 0.14 and 0.11 for the one-page and two-page resumes respectively. We’ll keep track of the simulation state in a simple list:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1">new_stepper <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
-background-color: null;
-font-weight: bold;
-font-style: inherit;">function</span>() {</span>
-<span id="cb3-2">  state <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">list</span>(<span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">k1 =</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>, <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">n1 =</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">10</span>, <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">p1 =</span> <span class="fl" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0.14</span>, <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">k2 =</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>, <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">n2 =</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">10</span>, <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">p2 =</span> <span class="fl" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0.11</span>)</span>
-<span id="cb3-3">  step <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
-background-color: null;
-font-weight: bold;
-font-style: inherit;">function</span>() {</span>
-<span id="cb3-4">    old_state <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> state</span>
-<span id="cb3-5">    state <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;&lt;-</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">next_state</span>(state)</span>
-<span id="cb3-6">    old_state</span>
-<span id="cb3-7">  }</span>
-<span id="cb3-8">  step</span>
-<span id="cb3-9">}</span></code></pre></div></div>
-<p><code>new_stepper()</code>&nbsp;returns a closure that keeps a reference to the simulation state. Each call to that closure updates the state using the&nbsp;<code>next_state</code>&nbsp;function:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1">next_state <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
-background-color: null;
-font-weight: bold;
-font-style: inherit;">function</span>(state) {</span>
-<span id="cb4-2">  p1 <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">rbeta</span>(<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>, state<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">$</span>k1, state<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">$</span>n1 <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">-</span> state<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">$</span>k1)</span>
-<span id="cb4-3">  p2 <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">rbeta</span>(<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>, state<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">$</span>k2, state<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">$</span>n2 <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">-</span> state<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">$</span>k2)</span>
-<span id="cb4-4">  pull1 <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> p1 <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">&gt;</span> p2</span>
-<span id="cb4-5">  result <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">rbinom</span>(<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>, <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>, <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">ifelse</span>(pull1, state<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">$</span>p1, state<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">$</span>p2))</span>
-<span id="cb4-6">  <span class="cf" style="color: #003B4F;
-background-color: null;
-font-weight: bold;
-font-style: inherit;">if</span> (pull1) {</span>
-<span id="cb4-7">    state<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">$</span>n1 <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> state<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">$</span>n1 <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">+</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span></span>
-<span id="cb4-8">    state<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">$</span>k1 <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> state<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">$</span>k1 <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">+</span> result</span>
-<span id="cb4-9">  } <span class="cf" style="color: #003B4F;
-background-color: null;
-font-weight: bold;
-font-style: inherit;">else</span> {</span>
-<span id="cb4-10">    state<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">$</span>n2 <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> state<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">$</span>n2 <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">+</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span></span>
-<span id="cb4-11">    state<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">$</span>k2 <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> state<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">$</span>k2 <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">+</span> result</span>
-<span id="cb4-12">  }</span>
-<span id="cb4-13">  state</span>
-<span id="cb4-14">}</span></code></pre></div></div>
-<p>So let’s now simulate 1000 steps:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1">step <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">new_stepper</span>()</span>
-<span id="cb5-2">sim <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">data.frame</span>(<span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">t</span>(<span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">replicate</span>(<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1000</span>, <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">unlist</span>(<span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">step</span>()))))</span></code></pre></div></div>
-<p>The estimated effectiveness of each resume is given by the number of successes divided by the number of applications made with that resume:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1">sim<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">$</span>one_page <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> sim<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">$</span>k1 <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">/</span> sim<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">$</span>n1</span>
-<span id="cb6-2">sim<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">$</span>two_page <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> sim<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">$</span>k2 <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">/</span> sim<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">$</span>n2</span>
-<span id="cb6-3">sim<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">$</span>id <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span><span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">:</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">nrow</span>(sim)</span></code></pre></div></div>
-<p>The follow plot shows how that estimated probability evolves over time:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">library</span>(reshape2)</span>
-<span id="cb7-2"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">library</span>(ggplot2)</span>
-<span id="cb7-3">sim_long <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">melt</span>(sim, <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">measure.vars =</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">c</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'one_page'</span>, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'two_page'</span>))</span>
-<span id="cb7-4"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">ggplot</span>(sim_long, <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">aes</span>(<span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">x =</span> id, <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">y =</span> value, <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">col =</span> variable)) <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">+</span></span>
-<span id="cb7-5">  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">geom_line</span>() <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">+</span></span>
-<span id="cb7-6">  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">xlab</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'Applications'</span>) <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">+</span></span>
-<span id="cb7-7">  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">ylab</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'Estimated probability of success'</span>)</span></code></pre></div></div>
-<figure class="figure">
-<p><img src="https://blog.davidlindelof.com/posts/2020/11/a-b-testing-my-resume/images/image-5-1024x731.png" class="img-fluid figure-img"></p>
-<figcaption>
-<p><em>Wouldn’t that be nice</em></p>
-</figcaption>
-</figure>
-<p>As you can see, the algorithm decides pretty rapidly (after about 70 applications) that the one-page resume is more effective.</p>
-<p>So here’s the protocol I’ve begun to follow since about mid-November:</p>
-<ul>
-<li>Apply only to jobs that I would normally have applied to</li>
-<li>Go through the entire application procedure, including writing cover letter etc, until uploading the resume becomes unavoidable (I do this mainly to avoid any personal bias when writing cover letters)</li>
-<li>Draw&nbsp;<img src="https://latex.codecogs.com/png.latex?p1">&nbsp;and&nbsp;<img src="https://latex.codecogs.com/png.latex?p2">&nbsp;as described above; select resume type with highest&nbsp;<img src="https://latex.codecogs.com/png.latex?p"></li>
-<li>Adjust the resume according to the job requirements, but keep the changes to a minimum and don’t change the overall format</li>
-<li>Finish the application, and record a failure until a call for an interview comes in.</li>
-</ul>
-<p>I’ll be sure to report on the results in a future blog post.</p>
-
-
-
- ]]></description>
-  <category>r</category>
-  <guid>https://blog.davidlindelof.com/posts/2020/11/a-b-testing-my-resume/</guid>
-  <pubDate>Tue, 24 Nov 2020 00:00:00 GMT</pubDate>
 </item>
 </channel>
 </rss>
