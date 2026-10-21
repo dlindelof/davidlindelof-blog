@@ -1,13 +1,30 @@
 ---
 title: "Why can both X / Y and Y / X average more than 1?"
-date: 2026-09-24
-draft: true
+date: 2026-10-21
+description: "Why can X / Y and Y / X both average above 1? An R simulation shows how Jensen’s inequality explains the surprising behavior of ratios."
+image: preview.png
+image-width: "1734"
+image-height: "907"
+image-alt: "X / Y and Y / X both have means of approximately 1.046 for independent truncated normals, illustrating Jensen’s inequality."
+open-graph: true
+twitter-card:
+  card-style: summary_large_image
+draft: false
 categories:
   - statistics
   - r
 ---
 
-Following up on [the ratio of normal variables](../../../2023/05/is-the-ratio-of-normal-variables-normal/index.qmd): if two independent variables have the same mean, must their ratio average to 1? Let's try both directions, using the same pairs of observations.
+In an earlier post I explored under what assumptions [the ratio of normal variables](../../../2023/05/is-the-ratio-of-normal-variables-normal/index.qmd) could be approximately normal. In our simulations, when the means were large compared to the standard deviations, the sample average of the ratio was close to the ratio of the sample means. There is a subtle distinction here between a sample average and a population expectation, which we’ll come back to.
+
+Things get awkward when the denominator can get close to zero and the ratio can blow up. But here is an even more counterintuitive result: for two independent, identically distributed positive random
+variables $X$ and $Y$, both $X/Y$ and $Y/X$ can have an expected value $> 1$.
+
+(The equality is less surprising: because $X$ and $Y$ are independent and identically distributed, swapping them leaves their joint distribution unchanged. So $X/Y$ and $Y/X$ have the same distribution, and the same expectation whenever it exists. The puzzle is why that expectation can exceed 1.)
+
+This matters when summarizing paired measurements, such as right and left foot lengths. Averaging individual ratios estimates a different quantity from taking the ratio of the population means. Neither is inherently wrong, but interpreting the former as relative lift defined by the latter can be misleading. Paired measurements may also be correlated; the simulation below isolates the effect using independent draws.
+
+Let's see the effect in action with some simulations. We're going to draw independent values of $X$ and $Y$, each normally distributed with mean 1 and standard deviation 0.2, and look at both ratios:
 
 ```{r}
 set.seed(20260924)
@@ -33,9 +50,9 @@ knitr::kable(summarize_ratios(X, Y), digits = 4)
 
 Both sample averages of ratios are above 1, although the ratio of sample means is close to 1.
 
-One correction to the earlier post: for these independent, untruncated normals, the population ratio mean is actually **undefined**, not the ratio of the means. A normal denominator can land arbitrarily close to zero; a stable-looking simulation does not fix the [absence of finite moments](https://arxiv.org/abs/2310.14306).
+(There is one technical catch: for independent, untruncated normals, the population ratio mean is **undefined**, even when the sample average looks stable.[^normal-ratio] To talk about expectations, we'll keep both variables within four standard deviations of their mean: between 0.2 and 1.8. The resulting truncated normals remain independent, with population means exactly 1 by symmetry.)
 
-To make the expectation argument valid, keep only pairs for which **both** values lie between 0.2 and 1.8. These are now independent truncated normals, still with population means exactly 1 by symmetry, and bounded away from zero. Truncating only at zero would not suffice.
+[^normal-ratio]: This corrects the earlier post's claim about the population mean. A normal variable equals zero with probability zero, but its density stays positive arbitrarily close to zero. Consequently, the integral defining $E[|1/Y|]$ diverges like $\int_0^\epsilon dy/y$, and the positive and negative parts of the ratio's expectation both diverge. See [Yang and Gui](https://arxiv.org/abs/2310.14306). Keeping only positive values would still leave an infinite reciprocal mean; a strictly positive lower bound avoids the problem. The upper bound preserves symmetry about 1.
 
 ```{r}
 lower <- 0.2
@@ -47,14 +64,20 @@ y <- Y[keep]
 knitr::kable(summarize_ratios(x, y), digits = 4)
 ```
 
-[Jensen's inequality](https://pages.stat.wisc.edu/~shao/stat609/stat609-06.pdf) says that for a convex function, $E[f(Y)] \geq f(E[Y])$. The reciprocal $f(y)=1/y$ is strictly convex for $y>0$: downward fluctuations increase the reciprocal more than equally sized upward fluctuations decrease it. Here, for example, $1/0.8=1.25$, whereas $1/1.2\approx0.833$.
+This removes just `r sum(!keep)` of our `r format(n, scientific = FALSE, big.mark = ",")` pairs, and both ratio averages are still above 1.
+
+So what's going on here? This is where
+[Jensen's inequality](https://pages.stat.wisc.edu/~shao/stat609/stat609-06.pdf) comes in. It's probably the coolest inequality you've never heard of, and it says that for a convex function $f$, $E[f(Y)] \geq f(E[Y])$. That felt abstract to me until I noticed that the reciprocal function $f(y)=1/y$ is strictly convex for $y>0$, and this is why downward fluctuations of a denominator (like $Y$ in $X/Y$) increase the reciprocal more than equally sized upward fluctuations decrease it.
+
+We can see this directly in our simulated denominators. Average them first and then take the reciprocal: `1 / mean(y)` is `r sprintf("%.4f", 1 / mean(y))`. Take each reciprocal first and then average: `mean(1 / y)` is `r sprintf("%.4f", mean(1 / y))`. The same observations give different answers depending on the order of operations. Since the independent numerator has population mean 1, this increase carries over to the expected ratio.
 
 For our truncated variables, independence and strict convexity give
 
 $$
-E[X/Y] = E[X]E[1/Y] > \frac{E[X]}{E[Y]} = 1,
-\qquad
-E[Y/X] = E[Y]E[1/X] > \frac{E[Y]}{E[X]} = 1.
+\begin{aligned}
+E[X/Y] &= E[X]E[1/Y] > \frac{E[X]}{E[Y]} = 1, \\
+E[Y/X] &= E[Y]E[1/X] > \frac{E[Y]}{E[X]} = 1.
+\end{aligned}
 $$
 
 The inequality is strict because each denominator varies. Since $X$ and $Y$ have the same distribution, the two expectations are equal. Let's compare their running averages with the common expectation, calculated by numerical integration.
@@ -89,4 +112,4 @@ legend(
 )
 ```
 
-There is no contradiction: the average of reciprocals is not the reciprocal of the average.
+The simulation agrees with the theory: for these independent truncated normals, both sample averages approach the same expectation, about `r sprintf("%.4f", expected_ratio)`. Each pair of ratios multiplies to 1, but their averages need not. Averaging and taking reciprocals are different operations—and Jensen’s inequality tells us which way the difference goes.
