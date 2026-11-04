@@ -1,17 +1,17 @@
 ---
 title: "A histogram of lifts is not an effect estimate"
-date: 2026-10-09
-draft: true
+date: 2026-11-04
+draft: false
 categories:
   - statistics
   - experimentation
   - r
 image: lift-histogram.png
+resources:
+  - ctr-exposure-simulation.R
 ---
 
-A very common experiment in online commerce consists in trying different variants for an impressed item. (For the sake of this discussion,
-let's assume the variants consist of different thumbnails showing the item.) The traditional way of running this experiment consists in randomly
-selecting the variant that's shown to the user when the item's impression is requested, and record whether the user clicked on it:
+A very common experiment in online commerce consists in trying different variants for an impressed item---say, different thumbnails showing an item for sale. The traditional way of running this experiment consists in randomly selecting the variant that's shown to the user when the item's impression is requested, and record whether the user clicked on it:
 
 ```{mermaid}
 flowchart TD
@@ -25,21 +25,23 @@ flowchart TD
     aggregate --> report["Report CTR = clicks / impressions"]
 ```
 
-You'd like to know if variant B outperforms variant A and by how much. As every item has an equal probability of showing A or B,
-and assuming you have enough impressions (say, at least 1000 per arm), it's very tempting to take each item $i$, calculate its click-through rate under algorithms A and B, and plot a histogram of the relative lift,
+You'd like to know if variant B outperforms variant A and by how much. Every item has an equal probability of showing A or B, and number of impressions (say, at least 1000 per arm) isn't an issue, so you have an estimate of the click-through rate CTR for each variant. It's very tempting to plot a histogram of the relative lift
 
 $$
 \widehat L_i = \frac{\widehat{\mathrm{CTR}}_{Bi}}{\widehat{\mathrm{CTR}}_{Ai}}-1,
 $$
 
-and use the empirical mean and standard deviation of the $\widehat L_i$ to report the estimated effect and its uncertainty. But there are at least
-two problems with this approach:
+and use the empirical mean and standard deviation of $\widehat L_i$ to report the estimated effect and its uncertainty. And I've seen this happen.
 
-- this assumes that every $\widehat L_i$ is drawn from the same distribution
+There are at least two problems with this approach:
+
+- the observed lifts have different precisions, depending on both impression counts and baseline click probabilities; their empirical standard deviation describes the spread across items, not the standard error of the mean
 - this doesn't address the possibility that the click counts on A are zero
 
-As always, let's simulate to see if I'm just blowing things out of proportion or if this can really happen.
+Let's run a simulation to see if I'm just blowing things out of proportion or if this is a serious concern.
 
+
+The flowchart uses independent 50/50 assignment; the simulation below fixes equal counts per arm to isolate the problem from random allocation imbalance.
 
 ## A constant effect
 
@@ -61,7 +63,7 @@ where $t=0$ for A and $t=1$ for B, $\alpha=\operatorname{logit}(0.002)$, and $\b
 
 B multiplies every item's **odds** of a click by exactly 1.2. The effect is constant on the log-odds scale, matching the model we will fit.
 
-A 20% odds increase is not exactly a 20% CTR increase. If $r=\exp(\beta)$, an item's true relative CTR lift is
+By the way, a 20% odds increase is not exactly a 20% CTR increase. If $r=\exp(\beta)$, an item's true relative CTR lift is
 
 $$
 L_i=\frac{r}{1+(r-1)p_{Ai}}-1.
@@ -71,7 +73,16 @@ It depends on baseline CTR. In these simulated items, true mean CTR lift is **19
 
 ## What the histogram says
 
-![Histogram of finite observed item lifts in the first seeded experiment, showing the true mean and observed mean and median.](lift-histogram.png)
+![Histogram zoomed to 10–40% lift, showing the true mean and observed mean and median. All finite ratios are used to calculate the summaries.](lift-histogram.png)
+
+The plot zooms in around the three summaries; values outside the window still contribute to the calculations.
+
+<details>
+<summary>Show the full distribution, including extreme lifts</summary>
+
+![Full histogram of finite observed item lifts, including the long right tail.](lift-histogram-full.png)
+
+</details>
 
 In the first experiment, the histogram mean is **27.31%**, while its median is **18.49%**. The mixed model's predicted mean CTR lift is **20.38%**.
 
@@ -85,11 +96,15 @@ Three issues are entangled here:
 
 The median is less sensitive to extreme ratios, but it is still the median of noisy, discrete measurements in a selected sample. There is no general identity equating that median with the median of the underlying effects. The directions of the distortions here are simulation results, not universal rules.
 
+To see how precision varies, separate the same experiment's observed lifts by impression count. Each dot below represents one item with at least one A click. Its height is its observed relative lift; the small horizontal offsets simply keep dots from overlapping. The dashed line marks the true mean item lift, about 19.90%.
+
 ![Observed item lifts split by impression count per arm. Low-traffic items have much noisier estimates.](lift-by-exposure.png)
+
+The items with 100,000 impressions per arm cluster much more tightly around the true mean than those with less traffic. Yet the largest outlier is in the 10,000-impression group: impression count alone does not determine precision, because an item with a low baseline CTR can still receive very few clicks. A large observed lift can therefore reflect an unusually small denominator rather than an unusually strong treatment effect. The histogram gives each of these noisy ratios the same weight as a much more precise one.
 
 ## Fit the counts, with an intercept for each item
 
-Instead of summarizing the ratios, fit a binomial logistic regression with a shared treatment coefficient and an item-level random intercept:
+Instead of summarizing the ratios, a far better approach is to fit a binomial logistic regression with a shared treatment coefficient and an item-level random intercept:
 
 ```r
 library(lme4)
@@ -101,9 +116,9 @@ fit <- glmer(
 )
 ```
 
-There are two rows per item, one per arm, with `arm` coded 0 for A and 1 for B. The response supplies both clicks and non-clicks. The item intercept represents baseline propensity; the arm coefficient estimates the common conditional log-odds effect. This grouped binomial syntax and random-effects specification are supported by [`lme4::glmer`](https://lme4.github.io/lme4/reference/glmer.html).
+There are two rows per item, one per arm, with `arm` coded 0 for A and 1 for B. The response supplies both clicks and non-clicks. The item intercept represents baseline propensity; the arm coefficient estimates the common conditional log-odds effect. Those kinds of models are what [`lme4::glmer`](https://lme4.github.io/lme4/reference/glmer.html) was designed for.
 
-The binomial likelihood uses each row's impression count. We do not give a noisy observed ratio the same status as a precise one, nor manually assign weights to ratios. Item intercepts are partially pooled through their shared normal distribution. Zero-click rows remain valid binomial observations.
+The binomial likelihood uses each row's impression count. We do not give a noisy observed ratio the same status as a precise one, nor manually assign weights to ratios; their precision is implicitly taken into account from their impression count. Item intercepts are partially pooled through their shared normal distribution. Zero-click rows remain valid binomial observations.
 
 To report **CTR lift**, predict each observed item's probability under both arms, retaining its fitted random intercept:
 
@@ -119,12 +134,16 @@ Then take the mean or median of those predicted lifts, depending on the question
 
 We hold the 300 items, their probabilities, and their impression counts fixed, then redraw clicks and refit the model 200 times.
 
+Each repetition now contributes one estimated mean and one estimated median for each method. The curves below show the distributions of those estimates across experiments, rather than the distribution of individual item lifts. Orange represents summaries of the observed lift histogram; green represents summaries of the mixed model's predicted lifts. The upper panel compares mean estimates and the lower panel compares median estimates, each against its own true target, marked by a dashed line.
+
 ![Repeated-experiment distributions of histogram and model summaries, with a separate true target for the mean and median.](lift-estimators.png)
+
+The orange mean estimates sit mostly to the right of their target, while the orange median estimates sit mostly to the left. The discrepancy in the first experiment was therefore not just an unlucky draw: these summaries systematically overestimate or underestimate their respective targets in this simulation. The green curves are both closer to their targets and narrower, showing that the model reduces both bias and variability across repeated experiments. These are sampling distributions, not confidence intervals from a single experiment; their widths show how much the estimates change when we redraw the clicks.
 
 | Summary | True target | Average estimate across 200 experiments |
 |---|---:|---:|
 | Histogram mean | 19.90% mean item lift | 25.49% |
-| Model-predicted mean | 19.90% mean item lift | 19.85% |
+| Model-predicted mean | 19.90% mean item lift | 19.84% |
 | Histogram median | 19.96% median item lift | 18.28% |
 | Model-predicted median | 19.96% median item lift | 19.90% |
 
@@ -134,22 +153,22 @@ All 200 fits passed the script's convergence and non-singularity checks. The mea
 
 **Use the binomial counts and model item baselines when estimating the shared conditional algorithm effect. A histogram of observed ratios is an exploratory plot, not a substitute for that analysis.** A logistic model with item random effects does this well in our example.
 
-It would be too strong to claim that this is the *only* way to estimate an effect. For example, with the identical exposure mixes used here, the pooled CTR ratio estimates an impression-level relative effect: its true target is 19.65%, and its average estimate is 19.60%. That is a different target from mean item lift, but it is a legitimate one. Item fixed-effect or conditional logistic approaches can also address a common conditional odds effect under suitable assumptions.
+It would be too strong to claim that this is the *only* way to estimate an effect. For example, with the identical exposure mixes used here, the pooled CTR ratio estimates an impression-level relative effect: its true target is 19.66%, and its average estimate is 19.60%. That is a different target from mean item lift, but it is a legitimate one. Item fixed-effect or conditional logistic approaches can also address a common conditional odds effect under suitable assumptions.
 
 The mixed model succeeds here under a data-generating process that matches its assumptions. A random intercept does not fix audience confounding, dependence from repeated users, or an incorrect assumption of a shared treatment effect. If the treatment effect itself varies between items, random slopes may be needed. If a constant *relative CTR lift* is the scientific assumption, a constant logistic coefficient is not that assumption.
 
 ## Reproduce the simulation
 
-Install `ggplot2` and `lme4`, then run from the repository root:
+[Download the simulation script](ctr-exposure-simulation.R){download="ctr-exposure-simulation.R"} and run it from the folder where you saved it:
 
 ```bash
-Rscript scripts/ctr-exposure-simulation.R
+Rscript ctr-exposure-simulation.R
 ```
 
-For the temporary library used to validate this draft locally:
+The script requires `ggplot2` and `lme4`. It checks that both are available and stops with an explicit error naming any missing packages; it does not install anything. Results are written to a `ctr-simulation-output` folder in your current working directory. To choose another output folder, pass its path as the first argument:
 
 ```bash
-R_LIBS_USER=/private/tmp/ctr-r-library Rscript scripts/ctr-exposure-simulation.R
+Rscript ctr-exposure-simulation.R my-results
 ```
 
-The seed is `20261010`. Outputs include all three graphs, [each repetition and its model diagnostics](simulation-draws.csv), [summary results](simulation-summary.csv), [the first experiment's item counts and true probabilities](example-items.csv), [the first fitted model](example-model.txt), and [R session information](simulation-session.txt). Repetition one supplies the example histogram; it was not selected from the repetitions for an especially large discrepancy.
+The seed is `20261010`. Outputs include all four graphs, [each repetition and its model diagnostics](simulation-draws.csv), [summary results](simulation-summary.csv), [the first experiment's item counts and true probabilities](example-items.csv), [the first fitted model](example-model.txt), and [R session information](simulation-session.txt). Repetition one supplies the example histogram; it was not selected from the repetitions for an especially large discrepancy.

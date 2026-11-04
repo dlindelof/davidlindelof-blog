@@ -1,9 +1,17 @@
-# Run from the repository root: Rscript scripts/ctr-exposure-simulation.R
-# Install ggplot2 and lme4 first. Set R_LIBS_USER for a non-default library.
+# Run: Rscript ctr-exposure-simulation.R [output-directory]
+# Defaults to ctr-simulation-output in the current working directory.
+required <- c("ggplot2", "lme4")
+missing <- required[!vapply(required, requireNamespace, logical(1), quietly = TRUE)]
+if (length(missing)) {
+  stop("Missing required R package(s): ", paste(missing, collapse = ", "),
+       ". Install them before running this simulation.", call. = FALSE)
+}
 library(ggplot2)
 library(lme4)
 set.seed(20261010)
-out <- "posts/2026/10/when-pooled-ctr-misleads"
+args <- commandArgs(trailingOnly = TRUE)
+if (length(args) > 1L) stop("Usage: Rscript ctr-exposure-simulation.R [output-directory]", call. = FALSE)
+out <- if (length(args)) args[[1]] else "ctr-simulation-output"
 dir.create(out, recursive = TRUE, showWarnings = FALSE)
 repetitions <- 200L
 beta <- log(1.2)
@@ -90,16 +98,35 @@ finite <- subset(d, clicks_A > 0)
 lines <- data.frame(value = 100 * c(truth["mean"], first$result$histogram_mean,
                                   first$result$histogram_median),
                     label = c("True mean lift", "Histogram mean", "Histogram median"))
-save_plot("lift-histogram.png", ggplot(finite, aes(100 * observed_lift)) +
-  geom_histogram(binwidth = 10, boundary = 0, fill = "#9AB6CC", colour = "white") +
+colours <- c("True mean lift" = "#008574", "Histogram mean" = "#D55E00",
+             "Histogram median" = "#65459B")
+legend_labels <- setNames(sprintf("%s: %.2f%%", lines$label, lines$value), lines$label)
+histogram <- ggplot(finite, aes(100 * observed_lift)) +
+  geom_histogram(binwidth = 2, boundary = 0, fill = "#9AB6CC", colour = "white") +
   geom_vline(data = lines, aes(xintercept = value, colour = label), linewidth = 1) +
-  scale_colour_manual(values = c("True mean lift" = "#008574",
-                                "Histogram mean" = "#D55E00", "Histogram median" = "#65459B")) +
-  labs(title = "The lift histogram mixes effect with measurement noise",
-    subtitle = sprintf("Equal A/B exposures per item; true mean %.1f%%, observed mean %.1f%%, median %.1f%%.",
-      100 * truth["mean"], 100 * first$result$histogram_mean, 100 * first$result$histogram_median),
-    x = "Observed item CTR lift (%)", y = "Number of items", colour = NULL,
-    caption = sprintf("First seeded experiment. Full finite range shown; %d of 300 items have zero A clicks and cannot enter this histogram.", first$result$zero_A)))
+  scale_colour_manual(values = colours, labels = legend_labels) +
+  labs(x = "Observed item CTR lift (%)", y = "Number of items", colour = NULL) +
+  theme(legend.text = element_text(size = 10))
+# Zoom the coordinates only: all finite ratios still contribute to the summaries.
+zoom <- c(10, 40)
+outside <- sum(100 * finite$observed_lift < zoom[1] |
+               100 * finite$observed_lift > zoom[2])
+save_plot("lift-histogram.png", histogram +
+  coord_cartesian(xlim = zoom, expand = FALSE) +
+  scale_x_continuous(breaks = seq(10, 40, 5)) +
+  labs(title = "Three summaries, three different answers",
+    subtitle = "Zoom around the estimates; equal A/B exposures per item.",
+    caption = sprintf(paste0("View restricted to 10–40%% lift; %d finite ratios lie outside this window. Summaries use ALL finite ratios.\n",
+                             "%d of 300 items have zero A clicks. The full distribution is shown separately."),
+                      outside, first$result$zero_A)))
+full_histogram <- histogram
+full_histogram$layers[[1]] <- geom_histogram(
+  binwidth = 10, boundary = 0, fill = "#9AB6CC", colour = NA)
+save_plot("lift-histogram-full.png", full_histogram +
+  labs(title = "The full distribution has a long right tail",
+    subtitle = "Same data and summary lines; wider bins make the full range readable.",
+    caption = sprintf("Full finite range shown; %d of 300 items have zero A clicks and cannot enter this histogram.",
+                      first$result$zero_A)))
 
 comparison <- rbind(
   data.frame(target = "Mean item CTR lift", method = "Histogram", value = results$histogram_mean),
