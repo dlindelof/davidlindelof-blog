@@ -10,7 +10,213 @@
 <atom:link href="https://blog.davidlindelof.com/index-r.xml" rel="self" type="application/rss+xml"/>
 <description>Notes on statistics, data science, software engineering, and scientific computing.</description>
 <generator>quarto-1.9.38</generator>
-<lastBuildDate>Wed, 21 Oct 2026 00:00:00 GMT</lastBuildDate>
+<lastBuildDate>Wed, 04 Nov 2026 00:00:00 GMT</lastBuildDate>
+<item>
+  <title>A histogram of lifts is not an effect estimate</title>
+  <link>https://blog.davidlindelof.com/posts/2026/10/when-pooled-ctr-misleads/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+
+<p>A very common experiment in online commerce consists in trying different variants for an impressed item—say, different thumbnails showing an item for sale. The traditional way of running this experiment consists in randomly selecting the variant that’s shown to the user when the item’s impression is requested, and record whether the user clicked on it:</p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart TD
+    request["Impression requested for an item"] --&gt; randomize{"Randomly assign variant"}
+    randomize --&gt;|50%| a["Select thumbnail A"]
+    randomize --&gt;|50%| b["Select thumbnail B"]
+    a --&gt; impression["Display and record impression"]
+    b --&gt; impression
+    impression --&gt; outcome["Record whether the user clicks"]
+    outcome --&gt; aggregate["Aggregate clicks and impressions by item and variant"]
+    aggregate --&gt; report["Report CTR = clicks / impressions"]
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<p>You’d like to know if variant B outperforms variant A and by how much. Every item has an equal probability of showing A or B, and number of impressions (say, at least 1000 per arm) isn’t an issue, so you have an estimate of the click-through rate CTR for each variant. It’s very tempting to plot a histogram of the relative lift</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cwidehat%20L_i%20=%20%5Cfrac%7B%5Cwidehat%7B%5Cmathrm%7BCTR%7D%7D_%7BBi%7D%7D%7B%5Cwidehat%7B%5Cmathrm%7BCTR%7D%7D_%7BAi%7D%7D-1,%0A"></p>
+<p>and use the empirical mean and standard deviation of <img src="https://latex.codecogs.com/png.latex?%5Cwidehat%20L_i"> to report the estimated effect and its uncertainty. And I’ve seen this happen.</p>
+<p>There are at least two problems with this approach:</p>
+<ul>
+<li>the observed lifts have different precisions, depending on both impression counts and baseline click probabilities; their empirical standard deviation describes the spread across items, not the standard error of the mean</li>
+<li>this doesn’t address the possibility that the click counts on A are zero</li>
+</ul>
+<p>Let’s run a simulation to see if I’m just blowing things out of proportion or if this is a serious concern.</p>
+<p>The flowchart uses independent 50/50 assignment; the simulation below fixes equal counts per arm to isolate the problem from random allocation imbalance.</p>
+<section id="a-constant-effect" class="level2">
+<h2 class="anchored" data-anchor-id="a-constant-effect">A constant effect</h2>
+<p>We simulate 300 items; 100 of them receive 1,000 impressions <em>per arm</em>, 100 receive 10,000, and 100 receive 100,000. This is important because the distribution of <img src="https://latex.codecogs.com/png.latex?%5Cwidehat%20L_i"> will depend on the distribution of each arm’s CTR, which is a binomial distribution divided by a constant and so will depend on the number of impressions.</p>
+<p>We’ll also assume a different baseline click probability for each item, modeled with a normally distributed random effect.</p>
+<p>Baseline click probabilities vary between items. We generate them with a random-intercept logistic model:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0AY_%7Bit%7D%5Csim%5Coperatorname%7BBinomial%7D(n_i,p_%7Bit%7D),%20%5Cqquad%0A%5Coperatorname%7Blogit%7D(p_%7Bit%7D)=%5Calpha+u_i+%5Cbeta%20t,%0A%5Cqquad%20u_i%5Csim%20N(0,1.2%5E2),%0A"></p>
+<p>where <img src="https://latex.codecogs.com/png.latex?t=0"> for A and <img src="https://latex.codecogs.com/png.latex?t=1"> for B, <img src="https://latex.codecogs.com/png.latex?%5Calpha=%5Coperatorname%7Blogit%7D(0.002)">, and <img src="https://latex.codecogs.com/png.latex?%5Cbeta=%5Clog(1.2)">. Item intercepts are independent of impression counts. Click counts are independent conditional on the item intercepts.</p>
+<p>B multiplies every item’s <strong>odds</strong> of a click by exactly 1.2. The effect is constant on the log-odds scale, matching the model we will fit.</p>
+<p>By the way, a 20% odds increase is not exactly a 20% CTR increase. If <img src="https://latex.codecogs.com/png.latex?r=%5Cexp(%5Cbeta)">, an item’s true relative CTR lift is</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0AL_i=%5Cfrac%7Br%7D%7B1+(r-1)p_%7BAi%7D%7D-1.%0A"></p>
+<p>It depends on baseline CTR. In these simulated items, true mean CTR lift is <strong>19.90%</strong> and true median CTR lift is <strong>19.96%</strong>. We use those exact probability-based targets when judging the histogram, rather than treating odds lift and CTR lift as interchangeable.</p>
+</section>
+<section id="what-the-histogram-says" class="level2">
+<h2 class="anchored" data-anchor-id="what-the-histogram-says">What the histogram says</h2>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://blog.davidlindelof.com/posts/2026/10/when-pooled-ctr-misleads/lift-histogram.png" class="img-fluid figure-img"></p>
+<figcaption>Histogram zoomed to 10–40% lift, showing the true mean and observed mean and median. All finite ratios are used to calculate the summaries.</figcaption>
+</figure>
+</div>
+<p>The plot zooms in around the three summaries; values outside the window still contribute to the calculations.</p>
+<details>
+<summary>
+Show the full distribution, including extreme lifts
+</summary>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://blog.davidlindelof.com/posts/2026/10/when-pooled-ctr-misleads/lift-histogram-full.png" class="img-fluid figure-img"></p>
+<figcaption>Full histogram of finite observed item lifts, including the long right tail.</figcaption>
+</figure>
+</div>
+</details>
+<p>In the first experiment, the histogram mean is <strong>27.31%</strong>, while its median is <strong>18.49%</strong>. The mixed model’s predicted mean CTR lift is <strong>20.38%</strong>.</p>
+<p>There are also 30 items missing from that histogram because A recorded no clicks. Twelve have no clicks in either arm, producing <img src="https://latex.codecogs.com/png.latex?0/0">; the other eighteen have positive B clicks and an infinite observed ratio. We explicitly omit these items from the histogram and report how many. We retain all of them when fitting the model. No finite ratios are trimmed, and no pseudocounts are added.</p>
+<p>Three issues are entangled here:</p>
+<ul>
+<li><strong>The denominator is noisy.</strong> A downward fluctuation in A’s observed CTR can produce a very large ratio. An upward fluctuation does not produce a symmetric movement in the opposite direction. The numerator being unbiased does not make the ratio unbiased.</li>
+<li><strong>Each bar gives items equal representation despite unequal precision.</strong> A ratio based on a few clicks has the same vote in the histogram mean as one based on thousands.</li>
+<li><strong>Omitting zero denominators selects on the observed outcome.</strong> It changes which items enter the summary. Adding an arbitrary pseudocount would define a different estimator, not eliminate the need to examine its behaviour.</li>
+</ul>
+<p>The median is less sensitive to extreme ratios, but it is still the median of noisy, discrete measurements in a selected sample. There is no general identity equating that median with the median of the underlying effects. The directions of the distortions here are simulation results, not universal rules.</p>
+<p>To see how precision varies, separate the same experiment’s observed lifts by impression count. Each dot below represents one item with at least one A click. Its height is its observed relative lift; the small horizontal offsets simply keep dots from overlapping. The dashed line marks the true mean item lift, about 19.90%.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://blog.davidlindelof.com/posts/2026/10/when-pooled-ctr-misleads/lift-by-exposure.png" class="img-fluid figure-img"></p>
+<figcaption>Observed item lifts split by impression count per arm. Low-traffic items have much noisier estimates.</figcaption>
+</figure>
+</div>
+<p>The items with 100,000 impressions per arm cluster much more tightly around the true mean than those with less traffic. Yet the largest outlier is in the 10,000-impression group: impression count alone does not determine precision, because an item with a low baseline CTR can still receive very few clicks. A large observed lift can therefore reflect an unusually small denominator rather than an unusually strong treatment effect. The histogram gives each of these noisy ratios the same weight as a much more precise one.</p>
+</section>
+<section id="fit-the-counts-with-an-intercept-for-each-item" class="level2">
+<h2 class="anchored" data-anchor-id="fit-the-counts-with-an-intercept-for-each-item">Fit the counts, with an intercept for each item</h2>
+<p>Instead of summarizing the ratios, a far better approach is to fit a binomial logistic regression with a shared treatment coefficient and an item-level random intercept:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(lme4)</span>
+<span id="cb1-2">fit <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">glmer</span>(</span>
+<span id="cb1-3">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">cbind</span>(clicks, impressions <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> clicks) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span> arm <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> (<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|</span> item),</span>
+<span id="cb1-4">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">data =</span> experiment,</span>
+<span id="cb1-5">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">family =</span> binomial,</span>
+<span id="cb1-6">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">nAGQ =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">9</span></span>
+<span id="cb1-7">)</span></code></pre></div></div>
+<p>There are two rows per item, one per arm, with <code>arm</code> coded 0 for A and 1 for B. The response supplies both clicks and non-clicks. The item intercept represents baseline propensity; the arm coefficient estimates the common conditional log-odds effect. Those kinds of models are what <a href="https://lme4.github.io/lme4/reference/glmer.html"><code>lme4::glmer</code></a> was designed for.</p>
+<p>The binomial likelihood uses each row’s impression count. We do not give a noisy observed ratio the same status as a precise one, nor manually assign weights to ratios; their precision is implicitly taken into account from their impression count. Item intercepts are partially pooled through their shared normal distribution. Zero-click rows remain valid binomial observations.</p>
+<p>To report <strong>CTR lift</strong>, predict each observed item’s probability under both arms, retaining its fitted random intercept:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cwidehat%20L_i%5E%7B%5Cmathrm%7Bmodel%7D%7D%0A=%5Cfrac%7B%5Coperatorname%7Blogit%7D%5E%7B-1%7D(%5Cwidehat%5Calpha+%5Cwidehat%20u_i+%5Cwidehat%5Cbeta)%7D%0A%7B%5Coperatorname%7Blogit%7D%5E%7B-1%7D(%5Cwidehat%5Calpha+%5Cwidehat%20u_i)%7D-1.%0A"></p>
+<p>Then take the mean or median of those predicted lifts, depending on the question. These are plug-in summaries for the observed items, not predictions for a new population of items. Reporting <img src="https://latex.codecogs.com/png.latex?%5Cexp(%5Cwidehat%5Cbeta)-1"> directly would instead report the proportional change in odds.</p>
+</section>
+<section id="repeat-the-experiment" class="level2">
+<h2 class="anchored" data-anchor-id="repeat-the-experiment">Repeat the experiment</h2>
+<p>We hold the 300 items, their probabilities, and their impression counts fixed, then redraw clicks and refit the model 200 times.</p>
+<p>Each repetition now contributes one estimated mean and one estimated median for each method. The curves below show the distributions of those estimates across experiments, rather than the distribution of individual item lifts. Orange represents summaries of the observed lift histogram; green represents summaries of the mixed model’s predicted lifts. The upper panel compares mean estimates and the lower panel compares median estimates, each against its own true target, marked by a dashed line.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://blog.davidlindelof.com/posts/2026/10/when-pooled-ctr-misleads/lift-estimators.png" class="img-fluid figure-img"></p>
+<figcaption>Repeated-experiment distributions of histogram and model summaries, with a separate true target for the mean and median.</figcaption>
+</figure>
+</div>
+<p>The orange mean estimates sit mostly to the right of their target, while the orange median estimates sit mostly to the left. The discrepancy in the first experiment was therefore not just an unlucky draw: these summaries systematically overestimate or underestimate their respective targets in this simulation. The green curves are both closer to their targets and narrower, showing that the model reduces both bias and variability across repeated experiments. These are sampling distributions, not confidence intervals from a single experiment; their widths show how much the estimates change when we redraw the clicks.</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Summary</th>
+<th style="text-align: right;">True target</th>
+<th style="text-align: right;">Average estimate across 200 experiments</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Histogram mean</td>
+<td style="text-align: right;">19.90% mean item lift</td>
+<td style="text-align: right;">25.49%</td>
+</tr>
+<tr class="even">
+<td>Model-predicted mean</td>
+<td style="text-align: right;">19.90% mean item lift</td>
+<td style="text-align: right;">19.84%</td>
+</tr>
+<tr class="odd">
+<td>Histogram median</td>
+<td style="text-align: right;">19.96% median item lift</td>
+<td style="text-align: right;">18.28%</td>
+</tr>
+<tr class="even">
+<td>Model-predicted median</td>
+<td style="text-align: right;">19.96% median item lift</td>
+<td style="text-align: right;">19.90%</td>
+</tr>
+</tbody>
+</table>
+<p>All 200 fits passed the script’s convergence and non-singularity checks. The mean estimated log-odds effect was 0.18182, versus the true 0.18232. Approximate 95% Wald intervals for that coefficient covered it in 96.5% of these repetitions. That coverage calculation concerns the log-odds coefficient, not the derived CTR summaries.</p>
+</section>
+<section id="what-to-report" class="level2">
+<h2 class="anchored" data-anchor-id="what-to-report">What to report</h2>
+<p><strong>Use the binomial counts and model item baselines when estimating the shared conditional algorithm effect. A histogram of observed ratios is an exploratory plot, not a substitute for that analysis.</strong> A logistic model with item random effects does this well in our example.</p>
+<p>It would be too strong to claim that this is the <em>only</em> way to estimate an effect. For example, with the identical exposure mixes used here, the pooled CTR ratio estimates an impression-level relative effect: its true target is 19.66%, and its average estimate is 19.60%. That is a different target from mean item lift, but it is a legitimate one. Item fixed-effect or conditional logistic approaches can also address a common conditional odds effect under suitable assumptions.</p>
+<p>The mixed model succeeds here under a data-generating process that matches its assumptions. A random intercept does not fix audience confounding, dependence from repeated users, or an incorrect assumption of a shared treatment effect. If the treatment effect itself varies between items, random slopes may be needed. If a constant <em>relative CTR lift</em> is the scientific assumption, a constant logistic coefficient is not that assumption.</p>
+</section>
+<section id="reproduce-the-simulation" class="level2">
+<h2 class="anchored" data-anchor-id="reproduce-the-simulation">Reproduce the simulation</h2>
+<p><a href="ctr-exposure-simulation.R" download="ctr-exposure-simulation.R">Download the simulation script</a> and run it from the folder where you saved it:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><span class="ex" style="color: null;
+background-color: null;
+font-style: inherit;">Rscript</span> ctr-exposure-simulation.R</span></code></pre></div></div>
+<p>The script requires <code>ggplot2</code> and <code>lme4</code>. It checks that both are available and stops with an explicit error naming any missing packages; it does not install anything. Results are written to a <code>ctr-simulation-output</code> folder in your current working directory. To choose another output folder, pass its path as the first argument:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><span class="ex" style="color: null;
+background-color: null;
+font-style: inherit;">Rscript</span> ctr-exposure-simulation.R my-results</span></code></pre></div></div>
+<p>The seed is <code>20261010</code>. Outputs include all four graphs, <a href="simulation-draws.csv">each repetition and its model diagnostics</a>, <a href="simulation-summary.csv">summary results</a>, <a href="example-items.csv">the first experiment’s item counts and true probabilities</a>, <a href="example-model.txt">the first fitted model</a>, and <a href="simulation-session.txt">R session information</a>. Repetition one supplies the example histogram; it was not selected from the repetitions for an especially large discrepancy.</p>
+
+
+</section>
+
+ ]]></description>
+  <category>statistics</category>
+  <category>experimentation</category>
+  <category>r</category>
+  <guid>https://blog.davidlindelof.com/posts/2026/10/when-pooled-ctr-misleads/</guid>
+  <pubDate>Wed, 04 Nov 2026 00:00:00 GMT</pubDate>
+  <media:content url="https://blog.davidlindelof.com/posts/2026/10/when-pooled-ctr-misleads/lift-histogram.png" medium="image" type="image/png" height="79" width="144"/>
+</item>
 <item>
   <title>Why can both X / Y and Y / X average more than 1?</title>
   <link>https://blog.davidlindelof.com/posts/2026/09/jensens-inequality-and-ratios/</link>
