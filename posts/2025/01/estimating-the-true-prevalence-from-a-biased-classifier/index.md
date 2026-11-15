@@ -1,6 +1,7 @@
 ---
 title: "Your Classifier Is Broken, But It Is Still Useful"
 date: 2025-01-08
+description: "How to estimate the true prevalence of a condition from an imperfect binary classifier using Rogan-Gladen prevalence adjustment (sensitivity and specificity) in R."
 categories: 
   - "r"
 coverImage: "Pasted-image-20241216172508.png"

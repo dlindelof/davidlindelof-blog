@@ -1,6 +1,7 @@
 ---
 title: "How to set up a reverse SSH tunnel with Amazon Web Services"
 date: 2023-05-31
+description: "Step-by-step guide to connecting to remote devices behind NAT or firewalls by setting up a reverse SSH tunnel through a free-tier AWS EC2 instance."
 ---
 
 When the startup shut down there were still dozens of netbooks out there in the wild collecting data on the residential houses fitted with our adaptive heating control algorithms, hopelessly attempting to connect to our VPN server that didn't exist anymore in order to upload all that data to our now-defunct database. That's a lot of data, sitting and growing on a lot of internet-connected devices.

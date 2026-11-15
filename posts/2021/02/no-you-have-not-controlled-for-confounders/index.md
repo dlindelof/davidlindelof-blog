@@ -1,6 +1,7 @@
 ---
 title: "No, you have not controlled for confounders"
 date: 2021-02-10
+description: "Why simply adding confounding variables to a linear regression or random forest fails to recover causal treatment effects—compared with causal forests (grf) and double ML in R."
 categories: 
   - "r"
 ---

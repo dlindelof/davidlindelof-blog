@@ -1,6 +1,7 @@
 ---
 title: "Controlling for covariates is not the same as \"slicing\""
 date: 2023-04-05
+description: "Why splitting an A/B test into subgroup slices loses statistical power compared to including covariates in a regression model, demonstrated with R simulations."
 categories: 
   - "r"
 ---

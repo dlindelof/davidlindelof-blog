@@ -1,6 +1,7 @@
 ---
 title: "Quick note about bootstrapping"
 date: 2023-02-06
+description: "Why bootstrap model validation evaluates models fitted on bootstrap resamples against the full original dataset rather than only out-of-bag samples."
 ---
 
 Cross-validation---the act of keeping a subset of data to measure the performance of a model trained on the rest of the data---never sounded right to me.

@@ -1,6 +1,7 @@
 ---
 title: "Event rate of arrival analysis with R"
 date: 2010-02-18
+description: "How to analyze event timestamp logs in R using Little's Law and concurrency counts instead of noisy histograms or kernel density plots."
 categories: 
   - "programming"
 ---

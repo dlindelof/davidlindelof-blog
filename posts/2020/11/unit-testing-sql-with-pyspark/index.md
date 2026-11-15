@@ -1,6 +1,7 @@
 ---
 title: "Unit testing SQL with PySpark"
 date: 2020-11-16
+description: "How to apply Test-Driven Development (TDD) and pytest unit testing to SQL queries using a local PySpark session, temporary views, and fixtures."
 categories: 
   - "python"
 ---

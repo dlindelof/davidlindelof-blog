@@ -1,6 +1,7 @@
 ---
 title: "A histogram of lifts is not an effect estimate"
 date: 2026-11-04
+description: "Why averaging per-item CTR lifts or pooling uneven exposures misleads in online experiments—and how mixed-effects logistic regression recovers the true lift."
 draft: false
 categories:
   - statistics

@@ -1,6 +1,7 @@
 ---
 title: "How to determine if a sample is drawn from a normal distribution"
 date: 2014-09-25
+description: "How to test whether a sample comes from a normal distribution in R using normal Q-Q plots (qqnorm, qqline) and the Shapiro-Wilk test (shapiro.test)."
 ---
 
 Suppose you've performed some experiment on a given population sample. Each experiment yields a single numeric result. You have also derived the usual statistics (say, the sample mean and the sample standard deviation). Now you want to draw inferences about the rest of the population. How do you do that?

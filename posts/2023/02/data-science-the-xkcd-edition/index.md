@@ -1,6 +1,7 @@
 ---
 title: "xkcd and Data Science"
 date: 2023-02-20
+description: "A curated collection of xkcd comics about data science, statistics, probability, hypothesis testing, p-values, machine learning, and data visualization."
 ---
 
 I've been collecting all [xkcd comics](https://xkcd.com/) related to Data Science and/or Statistics. Here they are, but if you think I'm missing any please let me know in the comments. Use at will in your data visualisations but remember to attribute. Sorted in reverse chronological order.

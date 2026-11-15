@@ -1,6 +1,7 @@
 ---
 title: "Reading S3 data from a local PySpark session"
 date: 2020-09-25
+description: "How to read S3 data into a local PySpark DataFrame using Hadoop 3, org.apache.hadoop:hadoop-aws, s3a://, and temporary AWS session credentials."
 categories: 
   - "python"
 ---

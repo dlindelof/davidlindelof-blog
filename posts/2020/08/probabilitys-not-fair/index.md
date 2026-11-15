@@ -1,6 +1,7 @@
 ---
 title: "Probability's not fair"
 date: 2020-08-10
+description: "If a coin is known to be loaded—but you don't know which way—what is the probability of heads? A Bayesian symmetry argument shows why the answer is still 1/2."
 categories: 
   - "maths"
 ---

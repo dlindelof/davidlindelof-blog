@@ -1,6 +1,7 @@
 ---
 title: "Scraping real estate for fun"
 date: 2020-11-06
+description: "Scraping 12,000+ Swiss real estate listings with Python's Scrapy library and exploring room counts, floor areas, prices, and data outliers in R."
 ---
 
 Here's a fun weekend project: scrape the real estate classifieds of the website of your choice, and do some analytics on the data. I did just that last weekend, using the [Scrapy](https://scrapy.org/) Python library for web scraping, which I then let loose on one of the major real estate classifieds website in Switzerland (can't tell you which one---not sure they would love me for it).

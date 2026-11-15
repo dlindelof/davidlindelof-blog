@@ -1,5 +1,7 @@
 ---
 title: "About"
+pagetitle: "About David Lindelöf — Statistics, Data Science & Software Engineering"
+description: "David Lindelöf writes about statistics, data science, experimentation, R, and software engineering, and offers statistical consulting and R training in Switzerland."
 image: profile.jpg
 about:
   template: jolla

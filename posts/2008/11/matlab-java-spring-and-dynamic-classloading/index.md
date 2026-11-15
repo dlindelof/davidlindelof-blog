@@ -1,6 +1,7 @@
 ---
 title: "MATLAB, Java, Spring and dynamic classloading"
 date: 2008-11-28
+description: "Why dynamic Java classloading fails with Spring inside MATLAB's JVM (Class.forName), and how to fix it with static classpath.txt and a fat Maven JAR."
 categories: 
   - "home-automation"
   - "programming"

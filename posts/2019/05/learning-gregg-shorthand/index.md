@@ -1,6 +1,7 @@
 ---
 title: "Learning Gregg shorthand"
 date: 2019-05-29
+description: "Practical lessons from learning Gregg shorthand as an adult: the best manual, online generators, Anki flashcard decks, and daily reading habits."
 ---
 
 _This piece is a writing assignment for the [Learning How To Learn](https://www.coursera.org/learn/learning-how-to-learn/home/welcome) online class, in which we are asked to reflect on a recent learning challenge._

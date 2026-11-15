@@ -1,6 +1,7 @@
 ---
 title: "How Are P-values Distributed Under The Null?"
 date: 2025-01-22
+description: "Why p-values are uniformly distributed between 0 and 1 under any true null hypothesis—with an intuitive proof and R simulations for t-tests and chi-squared tests."
 categories: 
   - "r"
 ---

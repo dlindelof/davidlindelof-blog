@@ -1,6 +1,7 @@
 ---
 title: "Machine Learning in R: Start with an End-to-End Test"
 date: 2019-11-13
+description: "Why production machine learning packages in R should start with an end-to-end integration test using testthat and testthis before writing model code."
 categories: 
   - "r"
 ---

@@ -1,6 +1,7 @@
 ---
 title: "Testing Scientific Software with Hypothesis"
 date: 2020-10-28
+description: "How to unit test scientific and numerical Python code when exact outputs aren't known in advance, using test oracles and property-based testing with Hypothesis."
 categories: 
   - "python"
 ---

@@ -1,6 +1,7 @@
 ---
 title: "Feature standardization considered harmful"
 date: 2021-06-11
+description: "An R simulation from The Elements of Statistical Learning showing how standardizing features before K-means clustering can amplify noise and destroy cluster separation."
 categories: 
   - "r"
 ---

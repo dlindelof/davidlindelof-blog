@@ -1,6 +1,7 @@
 ---
 title: "Source code filtering with Maven"
 date: 2009-04-30
+description: "How to filter tokens inside Java source files before compilation in Maven using maven-antrun-plugin, build-helper-maven-plugin, and compiler exclusions."
 categories: 
   - "programming"
 tags: 

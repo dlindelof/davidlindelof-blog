@@ -1,6 +1,7 @@
 ---
 title: "Polyphasic sleep"
 date: 2009-07-04
+description: "First-hand notes and resources on experimenting with polyphasic sleep and strategic daytime naps to stay alert despite a long daily commute."
 tags: 
   - "health"
   - "lifehack"
