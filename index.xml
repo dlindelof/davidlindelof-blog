@@ -8900,18 +8900,50 @@ treatcontrol -0.3825046 -0.03425957</code></pre>
 <figure class="figure">
 <p><img src="https://blog.davidlindelof.com/posts/2023/03/the-law-of-total-probability-applied-to-a-conditional-probability/images/conditional_risk.png" class="img-fluid figure-img"></p>
 <figcaption>
-<p><em>So what is the probability of dying from a lighting strike if you’re an American who knows this statistic?</em></p>
+<p><em>So what is the probability of dying from a lightning strike if you’re an American who knows this statistic?</em></p>
 </figcaption>
 </figure>
-<p>The law of total probability says that if you can decompose the set of possible events into disjoint subsets (say <img src="https://latex.codecogs.com/png.latex?B"> and <img src="https://latex.codecogs.com/png.latex?%5C%5Coverline%7BB%7D">), then (with obvious generalization to more than two subsets):</p>
-<p><img src="https://latex.codecogs.com/png.latex?%5C%5CPr(A)%20=%20%5C%5CPr(A%20%5C%5Cmid%20B)%20%5C%5CPr(B)%20+%20%5C%5CPr(A%20%5C%5Cmid%20%5C%5Coverline%7BB%7D)%20%5C%5CPr(%5C%5Coverline%7BB%7D)"></p>
-<p>But what if you’re dealing with <img src="https://latex.codecogs.com/png.latex?%5C%5CPr(A%20%5C%5Cmid%20C)"> instead of just <img src="https://latex.codecogs.com/png.latex?%5C%5CPr(A)">? What’s the formula for the law of total probability in that case? What you’re searching for can be found by googling for “total law probability conditional”:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%5C%5CPr(A%20%5C%5Cmid%20C)%20=%20%5C%5CPr(A%20%5C%5Cmid%20B,%20C)%20%5C%5CPr(B%20%5C%5Cmid%20C)%20+%20%5C%5CPr(A%20%5C%5Cmid%20%5C%5Coverline%7BB%7D,%20C)%20%5C%5CPr(%5C%5Coverline%7BB%7D%20%5C%5Cmid%20C)%20"></p>
-<p>There’s a great derivation here: <a href="https://math.stackexchange.com/questions/2377816/applying-law-of-total-probability-to-conditional-probability">https://math.stackexchange.com/questions/2377816/applying-law-of-total-probability-to-conditional-probability</a>.</p>
+<p>The law of total probability says that if you can decompose the set of possible events into disjoint subsets (say <img src="https://latex.codecogs.com/png.latex?B"> and <img src="https://latex.codecogs.com/png.latex?%5Coverline%7BB%7D">), then (with obvious generalization to more than two subsets):</p>
+<p><img src="https://latex.codecogs.com/png.latex?%5CPr(A)%20=%20%5CPr(A%20%5Cmid%20B)%20%5CPr(B)%20+%20%5CPr(A%20%5Cmid%20%5Coverline%7BB%7D)%20%5CPr(%5Coverline%7BB%7D)"></p>
+<p>But what if you’re dealing with <img src="https://latex.codecogs.com/png.latex?%5CPr(A%20%5Cmid%20C)"> instead of just <img src="https://latex.codecogs.com/png.latex?%5CPr(A)">? What’s the formula for the law of total probability in that case? What you’re searching for can be found by googling for “total law probability conditional”:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%5CPr(A%20%5Cmid%20C)%20=%20%5CPr(A%20%5Cmid%20B,%20C)%20%5CPr(B%20%5Cmid%20C)%20+%20%5CPr(A%20%5Cmid%20%5Coverline%7BB%7D,%20C)%20%5CPr(%5Coverline%7BB%7D%20%5Cmid%20C)"></p>
+<p>More generally, for any mutually exclusive and exhaustive partition <img src="https://latex.codecogs.com/png.latex?B_1,%20B_2,%20%5Cdots,%20B_n"> of the sample space:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%5CPr(A%20%5Cmid%20C)%20=%20%5Csum_%7Bi=1%7D%5En%20%5CPr(A%20%5Cmid%20B_i,%20C)%20%5CPr(B_i%20%5Cmid%20C)"></p>
+<p>The rule of thumb is simple: <strong>every probability in the unconditional formula picks up <img src="https://latex.codecogs.com/png.latex?C"> on the right-hand side of the conditioning bar.</strong></p>
+<section id="three-line-derivation" class="level2">
+<h2 class="anchored" data-anchor-id="three-line-derivation">Three-line derivation</h2>
+<p>You don’t need to memorize the formula if you remember how to derive it from the definition of conditional probability, <img src="https://latex.codecogs.com/png.latex?%5CPr(X%20%5Cmid%20Y)%20=%20%5Cfrac%7B%5CPr(X,%20Y)%7D%7B%5CPr(Y)%7D"> (assuming <img src="https://latex.codecogs.com/png.latex?%5CPr(C)%20%3E%200">):</p>
+<ol type="1">
+<li>Write <img src="https://latex.codecogs.com/png.latex?%5CPr(A%20%5Cmid%20C)"> as a ratio and split the joint event <img src="https://latex.codecogs.com/png.latex?(A,%20C)"> across the disjoint sets <img src="https://latex.codecogs.com/png.latex?B"> and <img src="https://latex.codecogs.com/png.latex?%5Coverline%7BB%7D">: <img src="https://latex.codecogs.com/png.latex?%5CPr(A%20%5Cmid%20C)%20=%20%5Cfrac%7B%5CPr(A,%20C)%7D%7B%5CPr(C)%7D%20=%20%5Cfrac%7B%5CPr(A,%20B,%20C)%20+%20%5CPr(A,%20%5Coverline%7BB%7D,%20C)%7D%7B%5CPr(C)%7D"></li>
+<li>Factor each numerator term using the chain rule <img src="https://latex.codecogs.com/png.latex?%5CPr(A,%20B,%20C)%20=%20%5CPr(A%20%5Cmid%20B,%20C)%5CPr(B%20%5Cmid%20C)%5CPr(C)">: <img src="https://latex.codecogs.com/png.latex?%5CPr(A%20%5Cmid%20C)%20=%20%5Cfrac%7B%5CPr(A%20%5Cmid%20B,%20C)%5CPr(B%20%5Cmid%20C)%5CPr(C)%20+%20%5CPr(A%20%5Cmid%20%5Coverline%7BB%7D,%20C)%5CPr(%5Coverline%7BB%7D%20%5Cmid%20C)%5CPr(C)%7D%7B%5CPr(C)%7D"></li>
+<li>Cancel <img src="https://latex.codecogs.com/png.latex?%5CPr(C)"> from the numerator and denominator: <img src="https://latex.codecogs.com/png.latex?%5CPr(A%20%5Cmid%20C)%20=%20%5CPr(A%20%5Cmid%20B,%20C)%5CPr(B%20%5Cmid%20C)%20+%20%5CPr(A%20%5Cmid%20%5Coverline%7BB%7D,%20C)%5CPr(%5Coverline%7BB%7D%20%5Cmid%20C)"></li>
+</ol>
+<p>(See also <a href="https://math.stackexchange.com/questions/2377816/applying-law-of-total-probability-to-conditional-probability">this Math StackExchange thread</a> for the same derivation.)</p>
+</section>
+<section id="two-common-pitfalls" class="level2">
+<h2 class="anchored" data-anchor-id="two-common-pitfalls">Two common pitfalls</h2>
+<ol type="1">
+<li><strong>Forgetting to condition the weights on <img src="https://latex.codecogs.com/png.latex?C">:</strong> It is tempting to write <img src="https://latex.codecogs.com/png.latex?%5CPr(A%20%5Cmid%20B,%20C)%5CPr(B)"> instead of <img src="https://latex.codecogs.com/png.latex?%5CPr(A%20%5Cmid%20B,%20C)%5CPr(B%20%5Cmid%20C)">. That is only valid when <img src="https://latex.codecogs.com/png.latex?B"> and <img src="https://latex.codecogs.com/png.latex?C"> are statistically independent (<img src="https://latex.codecogs.com/png.latex?%5CPr(B%20%5Cmid%20C)%20=%20%5CPr(B)">).</li>
+<li><strong>Dropping <img src="https://latex.codecogs.com/png.latex?C"> from the likelihood term:</strong> Conversely, you can only simplify <img src="https://latex.codecogs.com/png.latex?%5CPr(A%20%5Cmid%20B,%20C)"> to <img src="https://latex.codecogs.com/png.latex?%5CPr(A%20%5Cmid%20B)"> when <img src="https://latex.codecogs.com/png.latex?A"> is conditionally independent of <img src="https://latex.codecogs.com/png.latex?C"> given <img src="https://latex.codecogs.com/png.latex?B"> (for instance, when <img src="https://latex.codecogs.com/png.latex?B"> mediates the entire effect of <img src="https://latex.codecogs.com/png.latex?C"> on <img src="https://latex.codecogs.com/png.latex?A">).</li>
+</ol>
+</section>
+<section id="worked-example" class="level2">
+<h2 class="anchored" data-anchor-id="worked-example">Worked example</h2>
+<p>In the <a href="https://xkcd.com/795/">xkcd comic</a> above, suppose we want the probability of being struck by lightning (<img src="https://latex.codecogs.com/png.latex?A">) given that a thunderstorm is overhead (<img src="https://latex.codecogs.com/png.latex?C">), and we partition by whether a person stays outdoors (<img src="https://latex.codecogs.com/png.latex?B">) or goes indoors (<img src="https://latex.codecogs.com/png.latex?%5Coverline%7BB%7D">):</p>
+<ul>
+<li>Given a storm is overhead (<img src="https://latex.codecogs.com/png.latex?C">), suppose <img src="https://latex.codecogs.com/png.latex?10%5C%25"> of people stay outdoors (<img src="https://latex.codecogs.com/png.latex?%5CPr(B%20%5Cmid%20C)%20=%200.10">) and <img src="https://latex.codecogs.com/png.latex?90%5C%25"> go indoors (<img src="https://latex.codecogs.com/png.latex?%5CPr(%5Coverline%7BB%7D%20%5Cmid%20C)%20=%200.90">).</li>
+<li>During a storm, suppose the probability of being struck while outdoors is <img src="https://latex.codecogs.com/png.latex?%5CPr(A%20%5Cmid%20B,%20C)%20=%2010%5E%7B-4%7D">, while indoors it is <img src="https://latex.codecogs.com/png.latex?%5CPr(A%20%5Cmid%20%5Coverline%7BB%7D,%20C)%20=%2010%5E%7B-7%7D">.</li>
+</ul>
+<p>Applying the conditional law of total probability:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%5Cbegin%7Baligned%7D%0A%5CPr(A%20%5Cmid%20C)%20&amp;=%20%5CPr(A%20%5Cmid%20B,%20C)%5CPr(B%20%5Cmid%20C)%20+%20%5CPr(A%20%5Cmid%20%5Coverline%7BB%7D,%20C)%5CPr(%5Coverline%7BB%7D%20%5Cmid%20C)%20%5C%5C%0A&amp;=%20(10%5E%7B-4%7D)(0.10)%20+%20(10%5E%7B-7%7D)(0.90)%20%5C%5C%0A&amp;=%201.009%20%5Ctimes%2010%5E%7B-5%7D%0A%5Cend%7Baligned%7D"></p>
+<p>Notice why conditioning both terms on <img src="https://latex.codecogs.com/png.latex?C"> matters: on a sunny day, far more than <img src="https://latex.codecogs.com/png.latex?10%5C%25"> of people might be outdoors (<img src="https://latex.codecogs.com/png.latex?%5CPr(B)%20%5Cgg%20%5CPr(B%20%5Cmid%20C)">), and the risk of lightning without a storm is effectively zero (<img src="https://latex.codecogs.com/png.latex?%5CPr(A%20%5Cmid%20B)%20%5Cll%20%5CPr(A%20%5Cmid%20B,%20C)">). Conditioning on <img src="https://latex.codecogs.com/png.latex?C"> must be carried through both factors.</p>
 
 
+</section>
 
  ]]></description>
+  <category>maths</category>
+  <category>statistics</category>
   <guid>https://blog.davidlindelof.com/posts/2023/03/the-law-of-total-probability-applied-to-a-conditional-probability/</guid>
   <pubDate>Wed, 08 Mar 2023 00:00:00 GMT</pubDate>
 </item>

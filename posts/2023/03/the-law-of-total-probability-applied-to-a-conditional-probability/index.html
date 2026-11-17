@@ -7,6 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="dcterms.date" content="2023-03-08">
+<meta name="description" content="How to apply the law of total probability to a conditional probability Pr(A | C): the exact formula, a three-line derivation, common pitfalls, and a worked example.">
 
 <title>The law of total probability applied to a conditional probability – David’s blog</title>
 <style>
@@ -337,7 +338,16 @@ window.Quarto = {
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
       <h1 class="title">The law of total probability applied to a conditional probability</h1>
-                      </div>
+                  <div>
+        <div class="description">
+          How to apply the law of total probability to a conditional probability Pr(A | C): the exact formula, a three-line derivation, common pitfalls, and a worked example.
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">maths</div>
+                <div class="quarto-category">statistics</div>
+              </div>
+                  </div>
   </div>
     
   
@@ -358,8 +368,16 @@ window.Quarto = {
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#three-line-derivation" id="toc-three-line-derivation" class="nav-link active" data-scroll-target="#three-line-derivation">Three-line derivation</a></li>
+  <li><a href="#two-common-pitfalls" id="toc-two-common-pitfalls" class="nav-link" data-scroll-target="#two-common-pitfalls">Two common pitfalls</a></li>
+  <li><a href="#worked-example" id="toc-worked-example" class="nav-link" data-scroll-target="#worked-example">Worked example</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content quarto-banner-title-block" id="quarto-document-content">
@@ -374,16 +392,50 @@ window.Quarto = {
 <figure class="figure">
 <p><img src="images/conditional_risk.png" class="img-fluid figure-img"></p>
 <figcaption>
-<p><em>So what is the probability of dying from a lighting strike if you’re an American who knows this statistic?</em></p>
+<p><em>So what is the probability of dying from a lightning strike if you’re an American who knows this statistic?</em></p>
 </figcaption>
 </figure>
-<p>The law of total probability says that if you can decompose the set of possible events into disjoint subsets (say <span class="math inline">\(B\)</span> and <span class="math inline">\(\\overline{B}\)</span>), then (with obvious generalization to more than two subsets):</p>
-<p><span class="math display">\[\\Pr(A) = \\Pr(A \\mid B) \\Pr(B) + \\Pr(A \\mid \\overline{B}) \\Pr(\\overline{B})\]</span></p>
-<p>But what if you’re dealing with <span class="math inline">\(\\Pr(A \\mid C)\)</span> instead of just <span class="math inline">\(\\Pr(A)\)</span>? What’s the formula for the law of total probability in that case? What you’re searching for can be found by googling for “total law probability conditional”:</p>
-<p><span class="math display">\[\\Pr(A \\mid C) = \\Pr(A \\mid B, C) \\Pr(B \\mid C) + \\Pr(A \\mid \\overline{B}, C) \\Pr(\\overline{B} \\mid C) \]</span></p>
-<p>There’s a great derivation here: <a href="https://math.stackexchange.com/questions/2377816/applying-law-of-total-probability-to-conditional-probability">https://math.stackexchange.com/questions/2377816/applying-law-of-total-probability-to-conditional-probability</a>.</p>
+<p>The law of total probability says that if you can decompose the set of possible events into disjoint subsets (say <span class="math inline">\(B\)</span> and <span class="math inline">\(\overline{B}\)</span>), then (with obvious generalization to more than two subsets):</p>
+<p><span class="math display">\[\Pr(A) = \Pr(A \mid B) \Pr(B) + \Pr(A \mid \overline{B}) \Pr(\overline{B})\]</span></p>
+<p>But what if you’re dealing with <span class="math inline">\(\Pr(A \mid C)\)</span> instead of just <span class="math inline">\(\Pr(A)\)</span>? What’s the formula for the law of total probability in that case? What you’re searching for can be found by googling for “total law probability conditional”:</p>
+<p><span class="math display">\[\Pr(A \mid C) = \Pr(A \mid B, C) \Pr(B \mid C) + \Pr(A \mid \overline{B}, C) \Pr(\overline{B} \mid C)\]</span></p>
+<p>More generally, for any mutually exclusive and exhaustive partition <span class="math inline">\(B_1, B_2, \dots, B_n\)</span> of the sample space:</p>
+<p><span class="math display">\[\Pr(A \mid C) = \sum_{i=1}^n \Pr(A \mid B_i, C) \Pr(B_i \mid C)\]</span></p>
+<p>The rule of thumb is simple: <strong>every probability in the unconditional formula picks up <span class="math inline">\(C\)</span> on the right-hand side of the conditioning bar.</strong></p>
+<section id="three-line-derivation" class="level2">
+<h2 class="anchored" data-anchor-id="three-line-derivation">Three-line derivation</h2>
+<p>You don’t need to memorize the formula if you remember how to derive it from the definition of conditional probability, <span class="math inline">\(\Pr(X \mid Y) = \frac{\Pr(X, Y)}{\Pr(Y)}\)</span> (assuming <span class="math inline">\(\Pr(C) &gt; 0\)</span>):</p>
+<ol type="1">
+<li>Write <span class="math inline">\(\Pr(A \mid C)\)</span> as a ratio and split the joint event <span class="math inline">\((A, C)\)</span> across the disjoint sets <span class="math inline">\(B\)</span> and <span class="math inline">\(\overline{B}\)</span>: <span class="math display">\[\Pr(A \mid C) = \frac{\Pr(A, C)}{\Pr(C)} = \frac{\Pr(A, B, C) + \Pr(A, \overline{B}, C)}{\Pr(C)}\]</span></li>
+<li>Factor each numerator term using the chain rule <span class="math inline">\(\Pr(A, B, C) = \Pr(A \mid B, C)\Pr(B \mid C)\Pr(C)\)</span>: <span class="math display">\[\Pr(A \mid C) = \frac{\Pr(A \mid B, C)\Pr(B \mid C)\Pr(C) + \Pr(A \mid \overline{B}, C)\Pr(\overline{B} \mid C)\Pr(C)}{\Pr(C)}\]</span></li>
+<li>Cancel <span class="math inline">\(\Pr(C)\)</span> from the numerator and denominator: <span class="math display">\[\Pr(A \mid C) = \Pr(A \mid B, C)\Pr(B \mid C) + \Pr(A \mid \overline{B}, C)\Pr(\overline{B} \mid C)\]</span></li>
+</ol>
+<p>(See also <a href="https://math.stackexchange.com/questions/2377816/applying-law-of-total-probability-to-conditional-probability">this Math StackExchange thread</a> for the same derivation.)</p>
+</section>
+<section id="two-common-pitfalls" class="level2">
+<h2 class="anchored" data-anchor-id="two-common-pitfalls">Two common pitfalls</h2>
+<ol type="1">
+<li><strong>Forgetting to condition the weights on <span class="math inline">\(C\)</span>:</strong> It is tempting to write <span class="math inline">\(\Pr(A \mid B, C)\Pr(B)\)</span> instead of <span class="math inline">\(\Pr(A \mid B, C)\Pr(B \mid C)\)</span>. That is only valid when <span class="math inline">\(B\)</span> and <span class="math inline">\(C\)</span> are statistically independent (<span class="math inline">\(\Pr(B \mid C) = \Pr(B)\)</span>).</li>
+<li><strong>Dropping <span class="math inline">\(C\)</span> from the likelihood term:</strong> Conversely, you can only simplify <span class="math inline">\(\Pr(A \mid B, C)\)</span> to <span class="math inline">\(\Pr(A \mid B)\)</span> when <span class="math inline">\(A\)</span> is conditionally independent of <span class="math inline">\(C\)</span> given <span class="math inline">\(B\)</span> (for instance, when <span class="math inline">\(B\)</span> mediates the entire effect of <span class="math inline">\(C\)</span> on <span class="math inline">\(A\)</span>).</li>
+</ol>
+</section>
+<section id="worked-example" class="level2">
+<h2 class="anchored" data-anchor-id="worked-example">Worked example</h2>
+<p>In the <a href="https://xkcd.com/795/">xkcd comic</a> above, suppose we want the probability of being struck by lightning (<span class="math inline">\(A\)</span>) given that a thunderstorm is overhead (<span class="math inline">\(C\)</span>), and we partition by whether a person stays outdoors (<span class="math inline">\(B\)</span>) or goes indoors (<span class="math inline">\(\overline{B}\)</span>):</p>
+<ul>
+<li>Given a storm is overhead (<span class="math inline">\(C\)</span>), suppose <span class="math inline">\(10\%\)</span> of people stay outdoors (<span class="math inline">\(\Pr(B \mid C) = 0.10\)</span>) and <span class="math inline">\(90\%\)</span> go indoors (<span class="math inline">\(\Pr(\overline{B} \mid C) = 0.90\)</span>).</li>
+<li>During a storm, suppose the probability of being struck while outdoors is <span class="math inline">\(\Pr(A \mid B, C) = 10^{-4}\)</span>, while indoors it is <span class="math inline">\(\Pr(A \mid \overline{B}, C) = 10^{-7}\)</span>.</li>
+</ul>
+<p>Applying the conditional law of total probability:</p>
+<p><span class="math display">\[\begin{aligned}
+\Pr(A \mid C) &amp;= \Pr(A \mid B, C)\Pr(B \mid C) + \Pr(A \mid \overline{B}, C)\Pr(\overline{B} \mid C) \\
+&amp;= (10^{-4})(0.10) + (10^{-7})(0.90) \\
+&amp;= 1.009 \times 10^{-5}
+\end{aligned}\]</span></p>
+<p>Notice why conditioning both terms on <span class="math inline">\(C\)</span> matters: on a sunny day, far more than <span class="math inline">\(10\%\)</span> of people might be outdoors (<span class="math inline">\(\Pr(B) \gg \Pr(B \mid C)\)</span>), and the risk of lightning without a storm is effectively zero (<span class="math inline">\(\Pr(A \mid B) \ll \Pr(A \mid B, C)\)</span>). Conditioning on <span class="math inline">\(C\)</span> must be carried through both factors.</p>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
