@@ -1,6 +1,6 @@
 ---
 title: "Log-transforming the outcome vs. using a log-link GLM in skewed creator experiments"
-date: 2026-11-11
+date: 2026-11-18
 description: "In A/B tests on content creators, revenue is zero-inflated and heavily skewed. Why we can't just compare group means—and what changes when we replace log(Y + 1) OLS with a GLM."
 image: preview.png
 image-width: "1200"
@@ -9,7 +9,7 @@ image-alt: "OLS on log(Y + c) estimates a +79.1% lift in cents (c = $0.01) and +
 open-graph: true
 twitter-card:
   card-style: summary_large_image
-draft: true
+draft: false
 code-fold: true
 categories:
   - statistics
