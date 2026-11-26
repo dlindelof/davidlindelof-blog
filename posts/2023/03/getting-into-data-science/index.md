@@ -1,6 +1,7 @@
 ---
 title: "Getting into data science"
 date: 2023-03-22
+description: "Recommended books and online courses for scientists and programmers moving into data science, statistical modeling, R, Python, and causal inference."
 ---
 
 A while back I had the pleasure to address a team of user experience researchers at YouTube, and I got asked for a few resources that could help someone pretty good at science, math, and programming who wanted to get into data science. Here's the list I gave. These have worked for me in the past, with the caveat that I'm _very_ partial towards books.
@@ -77,7 +78,7 @@ Hadley Wickam's companion book to [the tidyverse](https://www.tidyverse.org/). E
 
 </figure>
 
-The "grown-up" version of ISLR (mentioned above). Covers a lot of theoretical ground, including a great discussion of the variance-bias tradeoff so beloved of interviewers. That book taught me to stop [blindly normalizing covariates](https://davidlindelof.com/feature-standardization-considered-harmful/) before running clustering algorithms.
+The "grown-up" version of ISLR (mentioned above). Covers a lot of theoretical ground, including a great discussion of the variance-bias tradeoff so beloved of interviewers. That book taught me to stop [blindly normalizing covariates](/posts/2021/06/feature-standardization-considered-harmful/) before running clustering algorithms.
 
 <figure>
 

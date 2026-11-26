@@ -1,6 +1,7 @@
 ---
 title: "The most under-rated programming books"
 date: 2021-06-16
+description: "Underrated software engineering books on test-driven object-oriented design, software forensics, UML, Scheme, evolutionary database refactoring, and debugging."
 ---
 
 Ask any programmer what their favourite programming book is, and their answer will be one of the usual suspects: _Code Complete, The Pragmatic Programmer,_ or _Design Patterns._ And rightly so; these are outstanding and highly-regarded works that belong to every programmer's bookshelf. (If you're just starting out building up your bookshelf, [Jeff Atwood has some great recommendations](https://blog.codinghorror.com/recommended-reading-for-developers/)).
@@ -19,7 +20,7 @@ Imagine looking over the shoulders of a master programmer as she develops a real
 
 Unlike traditional books on test-driven development (TDD), this one begins by setting up a test harness around the _entire system_, simulating the chat-based API of the auction system. That makes it possible to write end-to-end tests for each use case, _before_ switching to TDD to write the classes that implement the use case.
 
-It's the only book I know that covers a complete case study like this. It's quite possibly the only programming book I've read twice, and it has had a profound impact on the way I now develop machine-learning systems. This book inspired me to begin a machine-learning project in R with a test harness mimicking the production database systems; [I've given an overview of the project elsewhere](https://davidlindelof.com/machine-learning-in-r-start-with-an-end-to-end-test/).
+It's the only book I know that covers a complete case study like this. It's quite possibly the only programming book I've read twice, and it has had a profound impact on the way I now develop machine-learning systems. This book inspired me to begin a machine-learning project in R with a test harness mimicking the production database systems; [I've given an overview of the project elsewhere](/posts/2019/11/machine-learning-in-r-start-with-an-end-to-end-test/).
 
 This book also helped me understand the importance of mocking class collaborators: classes whose behaviour needs to be stubbed in order to write unit tests. I used to frown on excessive use of collaborators; now I fully embrace them. But one of the book's key takeaway messages is perhaps too easy to overlook in some languages such as Python: _never mock a class you don't own_. Except for primitive, stable classes (such as `String`), it's almost always better to write a thin wrapper for third-party libraries (heavily covered by its own integration tests), and then mock _the wrapper_ (which you own) instead of the third-party library (which you don't).
 
@@ -31,7 +32,7 @@ Version-control systems such as Git are essential for coordinating work between 
 
 Adam Tornhill wrote this amazing introduction to _Software Forensics_: mining the history of your version-control system to detect signs of bad design (such as overly complex classes or excessive coupling), and forecasting where bugs are more likely to lurk.
 
-Every chapter is immediately actionable, whether by a software engineering manager or by the team itself. During my startup days I was able to run this on our codebase, correlating change frequency with module size, and came up with a [heatmap I've documented elsewhere](https://davidlindelof.com/predicting-where-the-bugs-are/), showing where to focus testing efforts. Sure enough, the largest, most frequently changed modules were the most prone to defects.
+Every chapter is immediately actionable, whether by a software engineering manager or by the team itself. During my startup days I was able to run this on our codebase, correlating change frequency with module size, and came up with a [heatmap I've documented elsewhere](/posts/2016/07/predicting-where-the-bugs-are/), showing where to focus testing efforts. Sure enough, the largest, most frequently changed modules were the most prone to defects.
 
 It's a novel way to exploit the information in your version-control system which, as far as I know, has never been proposed elsewhere (and certainly not in software engineering classes). As an additional benefit, it may also put more pressure on the team to be disciplined in keeping the version-control system log clean and tidy.
 
@@ -82,7 +83,7 @@ This book taught me a method to find the root cause, or fault, of any software e
 2. Write a prediction based on the hypothesis (_with this set of inputs, the variable `avg` will be smaller than the elements, triggering the assertion failure on next line_)
 3. Run an experiment that will refute the prediction if it's wrong; typically, this means running the code in the debugger, setting local variables or function arguments to the desired values
 4. Observe the output (_wow, indeed `avg` is smaller than all the elements_)
-5. Confirm of refute the original hypothesis. Refine the hypothesis (_maybe this is caused by floating-point rounding errors?_), and return to 1) until the defect has been isolated. [Maybe write a blog post about it](https://davidlindelof.com/where-all-floating-point-values-are-above-average/).
+5. Confirm of refute the original hypothesis. Refine the hypothesis (_maybe this is caused by floating-point rounding errors?_), and return to 1) until the defect has been isolated. [Maybe write a blog post about it](/posts/2016/04/where-all-floating-point-values-are-above-average/).
 
 There's a lot more in the book and Andreas Zeller also has [a highly recommended free course on Udacity covering the same topics](https://www.udacity.com/course/software-debugging--cs259), such as delta-debugging (reducing failure-causing input to the smallest possible failing case) and fuzz testing (randomly evolving the program input to find failures). Both techniques are used today in advanced error-finding tools such as [Hypothesis](https://hypothesis.readthedocs.io/en/latest/) and the [American Fuzzy Lop](https://github.com/google/AFL). Both have been parts of my standard toolkit for years.
 
