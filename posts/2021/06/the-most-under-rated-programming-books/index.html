@@ -7,6 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="dcterms.date" content="2021-06-16">
+<meta name="description" content="Underrated software engineering books on test-driven object-oriented design, software forensics, UML, Scheme, evolutionary database refactoring, and debugging.">
 
 <title>The most under-rated programming books – David’s blog</title>
 <style>
@@ -81,9 +82,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../../../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../../../site_libs/bootstrap/bootstrap-2fba797252ead22fd2c3d23db1025ab0.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../../../../site_libs/bootstrap/bootstrap-dark-87ab554955c2d18650cbf97883b47a6d.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="../../../../site_libs/bootstrap/bootstrap-2fba797252ead22fd2c3d23db1025ab0.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="../../../../site_libs/bootstrap/bootstrap-cf57e984f718405fabbc00271f59937d.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../../../site_libs/bootstrap/bootstrap-dark-ad35117cbcc312011df8e9afd4660f0c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../../../site_libs/bootstrap/bootstrap-cf57e984f718405fabbc00271f59937d.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -343,7 +344,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
       <h1 class="title">The most under-rated programming books</h1>
-                      </div>
+                  <div>
+        <div class="description">
+          Underrated software engineering books on test-driven object-oriented design, software forensics, UML, Scheme, evolutionary database refactoring, and debugging.
+        </div>
+      </div>
+                </div>
   </div>
     
   
@@ -406,7 +412,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <!--more-->
 <p>Imagine looking over the shoulders of a master programmer as she develops a real-world application, feature by feature, beginning each feature with an automated end-to-end integration test, and ending it with a round of refactoring. This is what you get reading this book, as the authors walk you through the development of an automated auction bidding system.</p>
 <p>Unlike traditional books on test-driven development (TDD), this one begins by setting up a test harness around the <em>entire system</em>, simulating the chat-based API of the auction system. That makes it possible to write end-to-end tests for each use case, <em>before</em> switching to TDD to write the classes that implement the use case.</p>
-<p>It’s the only book I know that covers a complete case study like this. It’s quite possibly the only programming book I’ve read twice, and it has had a profound impact on the way I now develop machine-learning systems. This book inspired me to begin a machine-learning project in R with a test harness mimicking the production database systems; <a href="https://davidlindelof.com/machine-learning-in-r-start-with-an-end-to-end-test/">I’ve given an overview of the project elsewhere</a>.</p>
+<p>It’s the only book I know that covers a complete case study like this. It’s quite possibly the only programming book I’ve read twice, and it has had a profound impact on the way I now develop machine-learning systems. This book inspired me to begin a machine-learning project in R with a test harness mimicking the production database systems; <a href="../../../../posts/2019/11/machine-learning-in-r-start-with-an-end-to-end-test/">I’ve given an overview of the project elsewhere</a>.</p>
 <p>This book also helped me understand the importance of mocking class collaborators: classes whose behaviour needs to be stubbed in order to write unit tests. I used to frown on excessive use of collaborators; now I fully embrace them. But one of the book’s key takeaway messages is perhaps too easy to overlook in some languages such as Python: <em>never mock a class you don’t own</em>. Except for primitive, stable classes (such as <code>String</code>), it’s almost always better to write a thin wrapper for third-party libraries (heavily covered by its own integration tests), and then mock <em>the wrapper</em> (which you own) instead of the third-party library (which you don’t).</p>
 </section>
 <section id="your-code-as-a-crime-scene" class="level2">
@@ -414,7 +420,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><img src="images/B00ZB5XWBI.01.L.jpg" class="img-fluid"></p>
 <p>Version-control systems such as Git are essential for coordinating work between team members and for occasionally rolling back a system that fails in production. But they also provide priceless insights into potential issues with your development process.</p>
 <p>Adam Tornhill wrote this amazing introduction to <em>Software Forensics</em>: mining the history of your version-control system to detect signs of bad design (such as overly complex classes or excessive coupling), and forecasting where bugs are more likely to lurk.</p>
-<p>Every chapter is immediately actionable, whether by a software engineering manager or by the team itself. During my startup days I was able to run this on our codebase, correlating change frequency with module size, and came up with a <a href="https://davidlindelof.com/predicting-where-the-bugs-are/">heatmap I’ve documented elsewhere</a>, showing where to focus testing efforts. Sure enough, the largest, most frequently changed modules were the most prone to defects.</p>
+<p>Every chapter is immediately actionable, whether by a software engineering manager or by the team itself. During my startup days I was able to run this on our codebase, correlating change frequency with module size, and came up with a <a href="../../../../posts/2016/07/predicting-where-the-bugs-are/">heatmap I’ve documented elsewhere</a>, showing where to focus testing efforts. Sure enough, the largest, most frequently changed modules were the most prone to defects.</p>
 <p>It’s a novel way to exploit the information in your version-control system which, as far as I know, has never been proposed elsewhere (and certainly not in software engineering classes). As an additional benefit, it may also put more pressure on the team to be disciplined in keeping the version-control system log clean and tidy.</p>
 </section>
 <section id="applying-uml-and-patterns" class="level2">
@@ -456,7 +462,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>Write a prediction based on the hypothesis (<em>with this set of inputs, the variable <code>avg</code> will be smaller than the elements, triggering the assertion failure on next line</em>)</li>
 <li>Run an experiment that will refute the prediction if it’s wrong; typically, this means running the code in the debugger, setting local variables or function arguments to the desired values</li>
 <li>Observe the output (<em>wow, indeed <code>avg</code> is smaller than all the elements</em>)</li>
-<li>Confirm of refute the original hypothesis. Refine the hypothesis (<em>maybe this is caused by floating-point rounding errors?</em>), and return to 1) until the defect has been isolated. <a href="https://davidlindelof.com/where-all-floating-point-values-are-above-average/">Maybe write a blog post about it</a>.</li>
+<li>Confirm of refute the original hypothesis. Refine the hypothesis (<em>maybe this is caused by floating-point rounding errors?</em>), and return to 1) until the defect has been isolated. <a href="../../../../posts/2016/04/where-all-floating-point-values-are-above-average/">Maybe write a blog post about it</a>.</li>
 </ol>
 <p>There’s a lot more in the book and Andreas Zeller also has <a href="https://www.udacity.com/course/software-debugging--cs259">a highly recommended free course on Udacity covering the same topics</a>, such as delta-debugging (reducing failure-causing input to the smallest possible failing case) and fuzz testing (randomly evolving the program input to find failures). Both techniques are used today in advanced error-finding tools such as <a href="https://hypothesis.readthedocs.io/en/latest/">Hypothesis</a> and the <a href="https://github.com/google/AFL">American Fuzzy Lop</a>. Both have been parts of my standard toolkit for years.</p>
 </section>
